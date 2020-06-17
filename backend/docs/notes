@@ -1,0 +1,110 @@
+___________________________________________________________________________________________________
+USER
+
+UserController
+    - /register POST
+    - /login POST
+    - /:id GET
+    - /update-profile/:id PUT
+    - /change-password/:id PUT
+    - /delete-account/:id POST
+
+UserDB
+    - id
+    - first_name
+    - last_name
+    - email
+    - phone_number
+    - hash
+    - avatar
+    - usergroup_id
+    - created_at
+    - updated_at
+
+UserAddressDB
+    - id
+    - user_id
+    - address_one
+    - address_two
+    - city
+    - postcode
+    - state
+    - country
+    - created_at
+    - updated_at
+___________________________________________________________________________________________________
+PRODUCT
+
+ProductController
+    - /create POST
+    - / GET
+    - /:id GET
+    - /update/:id POST
+    - /delete/:id POST
+
+ProductDB
+    - id
+    - product_name
+    - slug
+    - category_id
+    - description
+    - images
+    - price
+    - created_at
+    - updated_at
+
+ProductVariationDB
+    - id
+    - product_id
+    - variation_description
+    - price
+    - quantity
+    - created_at
+    - updated_at
+___________________________________________________________________________________________________
+ORDER
+
+OrderController
+    - /create POST
+    - / GET
+    - /:id GET
+    - /update/:id POST
+    - /delete/:id POST
+
+OrderDB
+    - id
+    - user_id
+    - total_price_paid
+    - created_at
+    - updated_at
+
+OrderDetailDB
+    - id
+    - order_id
+    - product_id
+    - quantity
+    - product_variation_id
+    - status_id
+    - created_at
+    - updated_at
+
+___________________________________________________________________________________________________
+LOOKUP
+
+UsergroupDB
+    - id
+    - usergroup_name
+
+CountryDB
+    - id
+    - country_name
+    - country_code
+
+CategoryDB
+    - id
+    - category_name
+
+OrderStatusDB
+    - id
+    - order_status_name
+

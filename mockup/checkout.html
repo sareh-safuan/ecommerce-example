@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-commerce</title>
+    <link rel="stylesheet" href="public/css/pure.css">
+    <link rel="stylesheet" href="public/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <nav>
+                <div class="nav-logo">
+                    <img src="public/images/logo.png" width="120px" alt="">
+                </div>
+                <div class="nav-link">
+                    <div class="pure-menu pure-menu-horizontal">
+                        <ul class="pure-menu-list">
+                            <li class="pure-menu-item nav-link-item">
+                                <a href="#">Home</a>
+                            </li>
+                            <li class="pure-menu-item nav-link-item">
+                                <a href="#">Cart</a>
+                            </li>
+                            <li class="pure-menu-item nav-link-item">
+                                <a href="#">Account</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <main>
+            <div class="empty-50"></div>
+            <div class="row-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="card width-50">
+                            <ul class="pure-menu-list checkout">
+                                <li class="pure-menu-item">
+                                    <div class="row">
+                                        <div class="container-full">
+                                            <div class="checkout-step-header">
+                                                1) Customer
+                                            </div>
+                                            <div class="checkout-step-body" style="display: none;" >
+                                                <p>Continue as guest?</p>
+                                                <label for="email" class="label-block">Email Address: </label>
+                                                <div>
+                                                    <input type="email" name="email" class="width-60">
+                                                </div>
+                                                <div>
+                                                    <button class="pure-button pure-button-primary">Continue</button>
+                                                </div>
+                                                <p>Already have account?
+                                                    <a href="#">Sign in now</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="pure-menu-item">
+                                    <div class="row">
+                                        <div class="container-full">
+                                            <div class="checkout-step-header">
+                                                2) Shipping
+                                            </div>
+                                            <div class="checkout-step-body" style="display: none;">
+                                                <div>
+                                                    <div>
+                                                        <input type="text" placeholder="First Name" class="width-50">
+                                                        <input type="text" placeholder="Last Name" class="width-50">
+                                                    </div>
+                                                    <div>
+                                                        <input type="text" placeholder="Address Line 1"
+                                                            class="width-100">
+                                                    </div>
+                                                    <div>
+                                                        <input type="text" placeholder="Address Line 2"
+                                                            class="width-100">
+                                                    </div>
+                                                    <div>
+                                                        <input type="text" placeholder="Postal Code" class="width-30">
+                                                        <input type="text" placeholder="City" class="width-70">
+                                                    </div>
+                                                    <div>
+                                                        <select name="" class="width-50">
+                                                            <option selected disabled>Country</option>
+                                                        </select>
+                                                        <input type="text" placeholder="Phone Number" class="width-50">
+                                                    </div>
+                                                    <div>
+                                                        <button
+                                                            class="pure-button pure-button-primary">Continue</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="pure-menu-item">
+                                    <div class="row">
+                                        <div class="container-full">
+                                            <div class="checkout-step-header">
+                                                3) Payment
+                                            </div>
+                                            <div class="checkout-step-body">
+                                                <label for="card-number" class="label-block">Card Number</label>
+                                                <div>
+                                                    <input type="text" class="width-90" placeholder="Eg: 5500 0000 0000 0004">
+                                                </div>
+                                                <div class="row">
+                                                    <div class="width-70">
+                                                        <label for="" class="label-block">Expiry Date</label>
+                                                        <select name="" id="" class="width-50">
+                                                            <option selected disabled>Month</option>
+                                                        </select>
+                                                        <input type="text" class="width-40" placeholder="Eg: 2022">
+                                                    </div>
+                                                    <div class="width-20">
+                                                        <label for="cvv" class="label-block">CVV</label>
+                                                        <input type="text" class="width-70">
+                                                    </div>
+                                                </div>
+                                                <div style="margin-top: 10px;">
+                                                    <label for="country" class="label-block">Country</label>
+                                                    <select class="width-90">
+                                                        <option disabled selected>Select a country</option>
+                                                        <option value="">America</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <button class="pure-button pure-button-primary">
+                                                        Pay Now
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card width-50">
+                            <div class="card">
+                                <div class="card-body order-summary">
+                                    <div class="row">
+                                        Order Summary
+                                    </div>
+                                    <div class="row">
+                                        <div class="width-30">
+                                            <img src="public/images/products/banana.jpg" class="img-responsive" alt="">
+                                        </div>
+                                        <div class="width-40">
+                                            2 x Pack (L)
+                                        </div>
+                                        <div class="width-30">
+                                            RM 67.00
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="width-70">
+                                            <p>Shipping</p>
+                                            <p>Tax</p>
+                                        </div>
+                                        <div class="width-30">
+                                            <p>RM 13.00</p>
+                                            <p>RM 0.00</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="width-70">
+                                            Total (RM)
+                                        </div>
+                                        <div class="width-30">
+                                            RM 80.00
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="empty-50"></div>
+        </main>
+        <footer>
+            <div class="footer-copyright">
+                &copy; 2020 Premium Fruit
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

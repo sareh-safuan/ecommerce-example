@@ -1,0 +1,209 @@
+/*csslint adjoining-classes: false, box-model:false*/
+/* CORE */
+.pure-menu {
+    box-sizing: border-box;
+}
+
+.pure-menu-fixed {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 3;
+}
+
+.pure-menu-list,
+.pure-menu-item {
+    position: relative;
+}
+
+.pure-menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.pure-menu-item {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+.pure-menu-link,
+.pure-menu-heading {
+    display: block;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+/* HORIZONTAL MENU */
+.pure-menu-horizontal {
+    width: 100%;
+    white-space: nowrap;
+}
+
+.pure-menu-horizontal .pure-menu-list {
+    display: inline-block;
+}
+
+/* Initial menus should be inline-block so that they are horizontal */
+.pure-menu-horizontal .pure-menu-item,
+.pure-menu-horizontal .pure-menu-heading,
+.pure-menu-horizontal .pure-menu-separator {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+/* BUTTTON */
+.pure-button {
+    /* Structure */
+    display: inline-block;
+    line-height: normal;
+    white-space: nowrap;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+    -webkit-user-drag: none;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+/* Firefox: Get rid of the inner focus border */
+.pure-button::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+
+/* Inherit .pure-g styles */
+.pure-button-group {
+    letter-spacing: -0.31em; /* Webkit: collapse white-space between units */
+    text-rendering: optimizespeed; /* Webkit: fixes text-rendering: optimizeLegibility */
+}
+
+.opera-only :-o-prefocus,
+.pure-button-group {
+    word-spacing: -0.43em;
+}
+
+.pure-button-group .pure-button {
+    letter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: top;
+    text-rendering: auto;
+}
+
+/*csslint outline-none:false*/
+
+.pure-button {
+    font-family: inherit;
+    font-size: 90%;
+    padding: 0.5em 1em;
+    color: rgba(0, 0, 0, 0.80);
+    border: none rgba(0, 0, 0, 0);
+    background-color: #E6E6E6;
+    text-decoration: none;
+    border-radius: 2px;
+}
+
+.pure-button-hover,
+.pure-button:hover,
+.pure-button:focus {
+    background-image: linear-gradient(transparent, rgba(0,0,0, 0.05) 40%, rgba(0,0,0, 0.10));
+}
+.pure-button:focus {
+    outline: 0;
+}
+.pure-button-active,
+.pure-button:active {
+    box-shadow: 0 0 0 1px rgba(0,0,0, 0.15) inset, 0 0 6px rgba(0,0,0, 0.20) inset;
+    border-color: #000;
+}
+
+.pure-button[disabled],
+.pure-button-disabled,
+.pure-button-disabled:hover,
+.pure-button-disabled:focus,
+.pure-button-disabled:active {
+    border: none;
+    background-image: none;
+    opacity: 0.40;
+    cursor: not-allowed;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+.pure-button-hidden {
+    display: none;
+}
+
+.pure-button-primary,
+.pure-button-selected,
+a.pure-button-primary,
+a.pure-button-selected {
+    background-color: #9abb92;
+    color: #fff;
+}
+
+/* Button Groups */
+.pure-button-group .pure-button {
+    margin: 0;
+    border-radius: 0;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+
+}
+
+.pure-button-group .pure-button:first-child {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+.pure-button-group .pure-button:last-child {
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-right: none;
+}
+
+/* FORM */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="week"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+select,
+textarea {
+    padding: 0.5em 0.6em;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 3px #ddd;
+    border-radius: 4px;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+select:focus,
+textarea:focus {
+    outline: 0;
+    border-color: #65995c;
+}
