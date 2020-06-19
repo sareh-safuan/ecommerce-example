@@ -4,13 +4,13 @@ const UserController = [
         fn: 'register',
         request: {
             body: {
-                firstName: 'John',
-                lastName: 'Doe',
+                first_name: 'John',
+                last_name: 'Doe',
                 email: 'johndoe@dmmy.com',
-                phoneNumber: 111122223333,
+                phone_number: 111122223333,
                 password: 'mysecretpassword',
-                avatar: 'myprofileimage.jpg',
-                usergroupId: 1
+                password_confirmation: 'mysecretpassword',
+                usergroup_id: 1
             }
         },
         response: {

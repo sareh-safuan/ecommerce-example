@@ -26,6 +26,7 @@ UserAddressDB
     - user_id
     - address_one
     - address_two
+    - type
     - city
     - postcode
     - state
