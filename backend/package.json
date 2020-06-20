@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "tsc && node ./dist/src/server.js",
-    "test": "mocha"
+    "test": "mocha",
+    "knex": "knex"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,8 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "express-validator": "^6.5.0"
+    "express-validator": "^6.5.0",
+    "knex": "^0.21.1",
+    "mysql": "^2.18.1"
   }
 }
