@@ -1,4 +1,5 @@
 import { body, validationResult } from 'express-validator'
+import errorHandler from '../../utils/errorHandler'
 
 export const registerUser = (req: any, res: any, next: any) => {
 
@@ -45,12 +46,7 @@ export const registerUser = (req: any, res: any, next: any) => {
         next()
     })
     .catch(err => {
-        console.log(err) // TODO change to logger
-
-        return res.status(500).json({
-            success: 0,
-            msg: 'Server error.'
-        })
+        errorHandler(req, res, err.message)
     })
 
 }
