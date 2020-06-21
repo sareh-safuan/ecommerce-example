@@ -3,6 +3,7 @@ USER
 
 UserController
     - /register POST
+        - v_registerUser
     - /login POST
     - /:id GET
     - /update-profile/:id PUT
