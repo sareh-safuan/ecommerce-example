@@ -88,7 +88,28 @@ describe('Route /user/register: Method POST', function () {
             })
     })
 
-    // 3) email already registered
+    it('Email already registered', function (done) {
+        chai.request(baseUrl)
+            .post(route)
+            .send({
+                first_name: "Carlynne",
+                last_name: "Antonchik",
+                email: "cantonchik0@blogtalkradio.com",
+                phone_number: "6001730216",
+                password: 'mysecretpassword',
+                password_confirmation: 'mysecretpassword',
+                usergroup_id: 1
+            })
+            .then(function (res) {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(function (err) {
+                throw err
+            })
+    })
 
     it('Success registration', function (done) {
         const data = user().ok()
@@ -100,7 +121,7 @@ describe('Route /user/register: Method POST', function () {
                 expect(res).to.be.json
                 expect(res).to.have.status(201)
                 expect(res.body['success']).to.equal(1)
-                expect(res.body['data']['msg']).to.equal('User registered')
+                expect(res.body['msg']).to.equal('User registered.')
                 done()
             })
             .catch(function (err) {
@@ -108,3 +129,7 @@ describe('Route /user/register: Method POST', function () {
             })
     })
 })
+
+/**
+ * Route /user/login: Method POST
+ */

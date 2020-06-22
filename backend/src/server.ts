@@ -2,7 +2,8 @@ import http from 'http'
 import app from './app/app'
 
 const server = http.createServer(app)
+const port = process.env.PORT as string
 
-server.listen(3000, () => {
-    console.log('Server running at port 3000')
+server.listen(port, () => {
+    console.log('Server running at port ' + port)
 })

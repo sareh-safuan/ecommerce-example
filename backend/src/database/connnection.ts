@@ -1,6 +1,6 @@
-import _knex from 'knex'
+import knex from 'knex'
 
-const database = _knex({
+const connection = knex({
     client: 'mysql',
     connection: {
         host: '127.0.0.1',
@@ -10,9 +10,9 @@ const database = _knex({
     },
     pool: {
         min: 0,
-        max: 5
+        max: 7
     }
 })
 
-export default database
+export default connection
 
