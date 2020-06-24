@@ -51,7 +51,6 @@ const user = function () {
 }
 
 describe('Route /user/register: Method POST', function () {
-
     const route = '/user/register'
 
     it('Missing all or some required fields', function (done) {
@@ -130,6 +129,43 @@ describe('Route /user/register: Method POST', function () {
     })
 })
 
-/**
- * Route /user/login: Method POST
- */
+describe('Route /user/login: Method POST', function () {
+    const route = '/user/login'
+    /**
+     * 1) Missing email or password or both
+     * 2) Unregister email
+     * 3) Wrong password
+     * 4) Success login
+     */
+
+    it('Missing email or password or both', function (done) {
+        const email = 'ali@email.com'
+        const password = 'mysecretpassword'
+        const firstData = { email }
+        const secondData = { password }
+        const thirdData = {}
+        const random = Math.floor(Math.random() * 3)
+        let data
+
+        switch(random) {
+            case 1:
+                data = firstData
+                break
+            case 2:
+                data = secondData
+                break
+            default:
+                data = thirdData
+                break
+        }
+
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send(data)
+            .then(function () {})
+            .catch(function (err) {
+                throw err
+            })
+    })
+})
