@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { Ul, Li } from '../Core.jsx'
-import logo from '../../logo.png'
+import logo from '../../images/logo.png'
 
 class TheHeader extends React.Component {
     constructor(props) {

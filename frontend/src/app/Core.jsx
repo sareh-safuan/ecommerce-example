@@ -1,8 +1,11 @@
 import React from 'react'
 
-export const Ul = ({ children }) => {
+export const Ul = ({ children, css }) => {
+    let _css = "pure-menu-list "
+    if (css) _css += css
+
     return (
-        <ul className="pure-menu-list">
+        <ul className={_css}>
             {children}
         </ul>
     )
@@ -19,14 +22,14 @@ export const Li = ({ children, css }) => {
     )
 }
 
-export const Button = ({ css, text, clickHandle, style }) => {
+export const Button = ({ css, style, text, clickHandler }) => {
     let _css = "pure-button "
     if (css) _css += css
 
     return (
         <button
             className={_css}
-            onClick={clickHandle}
+            onClick={clickHandler}
             style={style}
         >
             {text}
@@ -88,12 +91,12 @@ export const BlockInput = ({ css, type, name, value, placeholder, changeHandler 
     )
 }
 
-export const Card = ({ children, css }) => {
+export const Card = ({ children, css, style }) => {
     let _css = "card "
     if (css) _css += css
 
     return (
-        <div className={_css}>
+        <div className={_css} style={style} >
             {children}
         </div>
     )
@@ -128,6 +131,17 @@ export const CardTitle = ({ children, css }) => {
     return (
         <div className={_css}>
             {children}
+        </div>
+    )
+}
+
+export const CardFooter = ({ children, css, style }) => {
+    let _css = "card-footer"
+    if (css) _css += css
+
+    return (
+        <div className={_css} style={style}>
+            { children }
         </div>
     )
 }
