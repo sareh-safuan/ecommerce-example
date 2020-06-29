@@ -22,7 +22,7 @@ export const Li = ({ children, css }) => {
     )
 }
 
-export const Button = ({ css, style, text, clickHandler }) => {
+export const Button = ({ css, id, style, text, clickHandler }) => {
     let _css = "pure-button "
     if (css) _css += css
 
@@ -31,6 +31,7 @@ export const Button = ({ css, style, text, clickHandler }) => {
             className={_css}
             onClick={clickHandler}
             style={style}
+            id={id}
         >
             {text}
         </button>
@@ -57,7 +58,9 @@ export const Label = ({ css, htmlFor, text }) => {
     )
 }
 
-export const Input = ({ css, type, name, value, placeholder, changeHandler }) => {
+export const Input = (
+    { css, type, name, value, placeholder, style, changeHandler }
+    ) => {
     let _css = ""
     if (css) _css += css
 
@@ -67,13 +70,16 @@ export const Input = ({ css, type, name, value, placeholder, changeHandler }) =>
             type={type}
             name={name}
             value={value}
+            style={style}
             placeholder={placeholder}
             onChange={changeHandler}
         />
     )
 }
 
-export const BlockInput = ({ css, type, name, value, placeholder, changeHandler }) => {
+export const BlockInput = (
+    { css, type, name, value, placeholder, style, changeHandler }
+    ) => {
     let _css = ""
     if (css) _css += css
 
@@ -84,6 +90,7 @@ export const BlockInput = ({ css, type, name, value, placeholder, changeHandler 
                 type={type}
                 name={name}
                 value={value}
+                style={style}
                 placeholder={placeholder}
                 onChange={changeHandler}
             />

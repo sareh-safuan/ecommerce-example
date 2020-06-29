@@ -5,12 +5,14 @@ import { Ul, Li } from '../Core.jsx'
 import logo from '../../images/logo.png'
 
 class TheHeader extends React.Component {
-    constructor(props) {
-        super()
-    }
 
     render() {
-        const { total } = this.props
+        const { cart } = this.props.cart
+        let quantity = 0
+
+        for (let i of cart) {
+            quantity += i.quantity
+        }
 
         return (
             <HeaderWrapper>
@@ -25,7 +27,7 @@ class TheHeader extends React.Component {
                             <Link to="/">Home</Link>
                         </Li>
                         <Li css="nav-link-item">
-                            <Link to="/cart">{`Cart(${total})`}</Link>
+                            <Link to="/cart">{`Cart(${quantity})`}</Link>
                         </Li>
                         <Li css="nav-link-item">
                             <Link to="/sign-in">Account</Link>
@@ -60,7 +62,7 @@ const NavLinkHorizontal = ({ children }) => (
 )
 
 const mapStateToProps = (state) => {
-    return { total: state.total }
+    return { cart: state.cart }
 }
 
 const Header = connect(mapStateToProps)(TheHeader)

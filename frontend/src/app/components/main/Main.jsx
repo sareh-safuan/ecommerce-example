@@ -15,7 +15,7 @@ class Main extends React.Component {
             <Wrapper>
                 <Switch>
                     <Route exact path="/" component={Index} />
-                    <Route path="/product" component={Product} />
+                    <Route path="/product/:name" component={Product} />
                     <Route path="/cart" component={Cart} />        
                     <Route path="/sign-in" component={Login} />
                     <Route path="/register" component={Register} />
