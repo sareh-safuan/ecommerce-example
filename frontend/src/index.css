@@ -423,7 +423,7 @@ nav {
   font-size: 14px;
 }
 
-.checkout-step-body div {
+.checkout-step-body > div > div {
   margin: 5px 0 0;
 }
 

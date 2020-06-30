@@ -32,7 +32,7 @@ class Product extends React.Component {
                     fruit.price * 1.9
                 ]
             })
-        }, 1300)
+        }, 500)
     }
 
     changeHandler(e) {
