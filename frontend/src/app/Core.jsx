@@ -1,154 +1,202 @@
 import React from 'react'
 
-export const Ul = ({ children, css }) => {
-    let _css = "pure-menu-list "
-    if (css) _css += css
+export const Ul = (props) => {
+    const className = props.className ?
+        "pure-menu-list " + props.className : "pure-menu-list"
 
     return (
-        <ul className={_css}>
-            {children}
+        <ul className={className}>
+            {props.children}
         </ul>
     )
 }
 
-export const Li = ({ children, css }) => {
-    let _css = "pure-menu-item "
-    if (css) _css += css
+export const Li = (props) => {
+    const className = props.className ?
+        "pure-menu-item " + props.className : "pure-menu-item"
 
     return (
-        <li className={_css}>
-            {children}
+        <li className={className}>
+            {props.children}
         </li>
     )
 }
 
-export const Button = ({ css, id, style, text, clickHandler }) => {
-    let _css = "pure-button "
-    if (css) _css += css
+export const Button = (props) => {
+    const className = props.className ?
+        "pure-button " + props.className : "pure-button"
+
+    if (props.isLoading) {
+        return (
+            <button
+                className={className}
+                style=    {props.style}
+                disabled
+            >
+                Loading...
+            </button>
+        )
+    }
 
     return (
         <button
-            className={_css}
-            onClick={clickHandler}
-            style={style}
-            id={id}
+            className={className}
+            onClick=  {props.clickHandler}
+            style=    {props.style}
+            id=       {props.id}
         >
-            {text}
+            {props.text}
         </button>
     )
 }
 
-export const Image = ({ css, src, alt }) => {
-    let _css = "img-responsive "
-    if (css) _css += css
+export const Image = (props) => {
+    const className = props.className ?
+        "img-responsive " + props.className : "img-responsive"
 
     return (
-        <img src={src} alt={alt} className={_css} />
-    )
-}
-
-export const Label = ({ css, htmlFor, text }) => {
-    let _css = "label-block "
-    if (css) _css += css
-
-    return (
-        <label className={_css} htmlFor={htmlFor}>
-            {text}
-        </label>
-    )
-}
-
-export const Input = (
-    { css, type, name, value, placeholder, style, changeHandler }
-    ) => {
-    let _css = ""
-    if (css) _css += css
-
-    return (
-        <input
-            className={_css}
-            type={type}
-            name={name}
-            value={value}
-            style={style}
-            placeholder={placeholder}
-            onChange={changeHandler}
+        <img
+            className={className}
+            src=      {props.src}
+            alt=      {props.alt}
         />
     )
 }
 
-export const BlockInput = (
-    { css, type, name, value, placeholder, style, changeHandler }
-    ) => {
-    let _css = ""
-    if (css) _css += css
+export const Label = (props) => {
+    const className = props.className ?
+        "label-block " + props.className : "label-block"
 
     return (
-        <div>
+        <label 
+            className={className}
+            htmlFor=  {props.htmlFor}>
+            {props.text}
+        </label>
+    )
+}
+
+export const Input = (props) => {
+    const className = props.className ?
+        props.className : null
+
+    return (
+        <input
+            className=  {className}
+            type=       {props.type}
+            name=       {props.name}
+            value=      {props.value}
+            style=      {props.style}
+            placeholder={props.placeholder}
+            onChange=   {props.inputHandler}
+        />
+    )
+}
+
+export const BlockInput = (props) => {
+    const className = props.className ?
+        props.className : null
+
+    const tooltip = props.field.error ?
+        (<div className="tooltip">
+            <span>{props.field.error}</span>
+        </div>) :
+        <span></span>
+
+    return (
+        <div style={{ position: 'relative' }} >
             <input
-                className={_css}
-                type={type}
-                name={name}
-                value={value}
-                style={style}
-                placeholder={placeholder}
-                onChange={changeHandler}
+                className=  {className}
+                type=       {props.type}
+                name=       {props.name}
+                value=      {props.field.value}
+                style=      {props.style}
+                placeholder={props.placeholder}
+                onChange=   {props.inputHandler}
             />
+            { tooltip }
         </div>
     )
 }
 
-export const Card = ({ children, css, style }) => {
-    let _css = "card "
-    if (css) _css += css
+export const Card = (props) => {
+    const className = props.className ?
+        "card " + props.className : "card"
 
     return (
-        <div className={_css} style={style} >
-            {children}
+        <div 
+            className={className}
+            style=    {props.style}
+        >
+            {props.children}
         </div>
     )
 }
 
-export const CardBody = ({ children, css }) => {
-    let _css = "card-body "
-    if (css) _css += css
+export const CardBody = (props) => {
+    const className = props.className ?
+        "card-body " + props.className : "card-body"
 
     return (
-        <div className={_css}>
-            {children}
+        <div className={className}>
+            {props.children}
         </div>
     )
 }
 
-export const CardImage = ({ children, css }) => {
-    let _css = "card-img "
-    if (css) _css += css
+export const CardImage = (props) => {
+    const className = props.className ?
+        "card-image " + props.className : "card-image"
 
     return (
-        <div className={_css}>
-            {children}
+        <div className={className}>
+            {props.children}
         </div>
     )
 }
 
-export const CardTitle = ({ children, css }) => {
-    let _css = "card-title "
-    if (css) _css += css
+export const CardTitle = (props) => {
+    const className = props.className ?
+        "card-title " + props.className : "card-title"
 
     return (
-        <div className={_css}>
-            {children}
+        <div className={className}>
+            {props.children}
         </div>
     )
 }
 
-export const CardFooter = ({ children, css, style }) => {
-    let _css = "card-footer"
-    if (css) _css += css
+export const CardFooter = (props) => {
+    const className = props.className ?
+        "card-footer " + props.className : "card-footer"
 
     return (
-        <div className={_css} style={style}>
-            { children }
+        <div 
+            className={className} 
+            style=    {props.style}
+        >
+            {props.children}
+        </div>
+    )
+}
+
+export const Alert = (props) => {
+    if(!props.className) return <span></span>
+
+    const className = "alert " + props.className
+
+    return (
+        <div
+            className={className}
+            style=    {props.style}
+        >
+            <span
+                className="alert-close"
+                onClick=  {props.clickHandler}
+            >
+                &times;
+            </span>
+            {props.children}
         </div>
     )
 }

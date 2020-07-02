@@ -18,19 +18,19 @@ class TheHeader extends React.Component {
             <HeaderWrapper>
                 <NavLogo>
                     <Link to="/">
-                        <img src={logo} width="120px" alt="" />
+                        <img src={logo} width="120px" alt="main-logo" />
                     </Link>
                 </NavLogo>
                 <NavLinkHorizontal>
                     <Ul>
-                        <Li css="nav-link-item">
+                        <Li className="nav-link-item">
                             <Link to="/">Home</Link>
                         </Li>
-                        <Li css="nav-link-item">
+                        <Li className="nav-link-item">
                             <Link to="/cart">{`Cart(${quantity})`}</Link>
                         </Li>
-                        <Li css="nav-link-item">
-                            <Link to="/sign-in">Account</Link>
+                        <Li className="nav-link-item">
+                            <Link to="/register">Account</Link>
                         </Li>
                     </Ul>
                 </NavLinkHorizontal>

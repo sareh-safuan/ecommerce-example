@@ -343,6 +343,61 @@ h1, h2, h3, h4, h5, p {
   bottom: 10px;
 }
 
+.alert {
+  padding: 15px;
+  color: white;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.alert-close {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.alert-danger {
+  background-color: #f44336;
+}
+
+.alert-success {
+  background-color: #9abb92;
+}
+
+.tooltip {
+  width: 240px;
+  height: 28px;
+  background-color: #FF0000;
+  opacity: .5;
+  color: #fff;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  top: -4px;
+  left: 101%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tooltip::after {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  right: 100%; /* To the left of the tooltip */
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent #FF0000 transparent transparent;
+}
+
 /* Specificic style */
 
 header {

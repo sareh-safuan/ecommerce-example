@@ -40,7 +40,7 @@ class Address extends React.Component {
                                         <p>{a.postcode}</p>
                                         <p>{a.state}</p>
                                     </div>
-                                    <div class="row-end">
+                                    <div className="row-end">
                                         <Button
                                             text="Edit"
                                             onClick={null}

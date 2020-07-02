@@ -53,7 +53,7 @@ class Order extends React.Component {
                                     </CardTitle>
                                     {
                                         order.fruits.map((fruit, j) => (
-                                            <div className="row">
+                                            <div className="row" key={j}>
                                                 <div className="width-10">
                                                     <img src={fruit.img} alt="Not Found" className="img-responsive" />
                                                 </div>
@@ -66,7 +66,7 @@ class Order extends React.Component {
                                             </div>
                                         ))
                                     }
-                                    <div class="row-end">
+                                    <div className="row-end">
                                         <div>
                                             <div>Total: RM {(order.total).toFixed(2)}</div>
                                             <div>{order.status}</div>
