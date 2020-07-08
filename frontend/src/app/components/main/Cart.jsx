@@ -1,27 +1,26 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import Select from 'react-select'
 import validate from 'validate.js'
 import constraint from '../../controllers/constraint.js'
-import { Input, BlockInput, Label, Button } from '../../Core.jsx'
+import { BlockInput, Label, Button } from '../../Core.jsx'
+
+/**
+ * TODO:
+ *  1) year constraint more than current year
+ *  2) CC should cover more CC provider: VISA MC AMEX...
+ *  3) 
+ * 
+ */
 
 class Cart extends React.Component {
     constructor() {
         super()
         this.state = {
-            email: { field: '', error: '' },
-            first_name: { field: '', error: '' },
-            last_name: { field: '', error: '' },
-            address_one: { field: '', error: '' },
-            address_two: { field: '', error: '' },
-            postal_code: { field: '', error: '' },
-            city: { field: '', error: '' },
-            country: { field: '', error: '' },
-            phone_number: { field: '', error: '' },
-            credit_card: { field: '', error: '' },
-            expiry_year: { field: '', error: '' },
-            cvv: { field: '', error: '' }
+            credit_card: { value: '', error: '' },
+            expiry_year: { value: '', error: '' },
+            cvv: { value: '', error: '' }
         }
 
         this.inputHandler = this.inputHandler.bind(this)
@@ -50,8 +49,7 @@ class Cart extends React.Component {
     render() {
         const { cart } = this.props
         const {
-            email, first_name, last_name, address_one, address_two, postal_code,
-            city, country, phone_number, credit_card, expiry_year, cvv
+            credit_card, expiry_year, cvv
         } = this.state
         const selectStyle = {
             control: base => ({
@@ -71,6 +69,20 @@ class Cart extends React.Component {
                 display: 'none'
             })
         }
+        const months = [
+            { value: 1, label: 'January' },
+            { value: 2, label: 'February' },
+            { value: 3, label: 'March' },
+            { value: 4, label: 'April' },
+            { value: 5, label: 'May' },
+            { value: 6, label: 'June' },
+            { value: 7, label: 'July' },
+            { value: 8, label: 'August' },
+            { value: 9, label: 'September' },
+            { value: 10, label: 'October' },
+            { value: 11, label: 'September' },
+            { value: 12, label: 'December' }
+        ]
 
         if (!cart.length) {
             return <h4>Your cart is empty</h4>
@@ -79,126 +91,7 @@ class Cart extends React.Component {
         return (
             <Wrapper>
                 <Checkout>
-                    <List header="1) Customer">
-                        <div className="checkout-step-body">
-                            <p>Continue as guest?</p>
-                            <Label htmlFor="email" text="Email Address:" />
-                            <BlockInput
-                                className="width-100"
-                                type="email"
-                                name="email"
-                                field={email}
-                                inputHandler={this.inputHandler}
-                            />
-                            <div>
-                                <Button
-                                    className="pure-button-primary"
-                                    text="Continue"
-                                    clickHandler={this.clickHandler}
-                                    style={{
-                                        marginTop: '5px'
-                                    }}
-                                />
-                            </div>
-                            <p>Already have account?
-                                <Link to="/sign-in">Sign in now</Link>
-                            </p>
-                        </div>
-                    </List>
-                    <List header="2) Shipping">
-                        <div className="checkout-step-body">
-                            <div>
-                                <div className="row">
-                                    <div className="width-60">
-                                        <BlockInput
-                                            type="text"
-                                            name="first_name"
-                                            placeholder="First Name"
-                                            className="width-100"
-                                            field={first_name}
-                                            inputHandler={this.inputHandler}
-                                        />
-                                    </div>
-                                    <div className="width-60">
-                                        <BlockInput
-                                            type="text"
-                                            name="last_name"
-                                            placeholder="Last Name"
-                                            className="width-100"
-                                            field={last_name}
-                                            inputHandler={this.inputHandler}
-                                        />
-                                    </div>
-                                </div>
-                                <BlockInput
-                                    type="text"
-                                    name="address_one"
-                                    placeholder="Address Line 1"
-                                    className="width-100"
-                                    field={address_one}
-                                    inputHandler={this.inputHandler}
-                                />
-                                <BlockInput
-                                    type="text"
-                                    name="address_two"
-                                    placeholder="Address Line 2"
-                                    className="width-100"
-                                    field={address_two}
-                                    inputHandler={this.inputHandler}
-                                />
-                                <div className="row">
-                                    <div className="width-40">
-                                        <BlockInput
-                                            type="text"
-                                            name="postal_code"
-                                            placeholder="Postal Code"
-                                            className="width-100"
-                                            field={postal_code}
-                                            inputHandler={this.inputHandler}
-                                        />
-                                    </div>
-                                    <div className="width-70">
-                                        <BlockInput
-                                            type="text"
-                                            name="city"
-                                            placeholder="City"
-                                            className="width-100"
-                                            field={city}
-                                            inputHandler={this.inputHandler}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="width-50">
-                                        <Select
-                                            name="country"
-                                            onChange={this.changeHandler}
-                                            styles={selectStyle}
-                                        />
-                                    </div>
-                                    <div className="width-50">
-                                        <BlockInput
-                                            type="text"
-                                            name="phone_number"
-                                            placeholder="Phone Number"
-                                            className="width-100"
-                                            field={phone_number}
-                                            inputHandler={this.inputHandler}
-                                            style={{ marginLeft: '5px' }}
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <Button
-                                        className="pure-button-primary"
-                                        text="Continue"
-                                        clickHandler={this.clickHandler}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </List>
-                    <List header="3) Payment">
+                    <List header="Payment">
                         <div className="checkout-step-body">
                             <Label htmlFor="card-number" text="Card Number" />
                             <BlockInput
@@ -209,22 +102,25 @@ class Cart extends React.Component {
                                 field={credit_card}
                                 inputHandler={this.inputHandler}
                             />
+
                             <div className="row">
-                                <div className="width-70">
+                                <div className="width-80">
                                     <Label htmlFor="country" text="Expiry Date" />
                                     <div className="row">
                                         <div className="width-60">
                                             <Select
+                                                options={months}
                                                 onChange={this.changeHandler}
                                                 styles={selectStyle}
+                                                placeholder={<small>Expiry month</small>}
                                             />
                                         </div>
-                                        <Input
-                                            className="width-40"
+                                        <BlockInput
+                                            className="width-90"
                                             type="text"
                                             name="expiry_year"
                                             field={expiry_year}
-                                            placeholder="Eg: 2022"
+                                            placeholder="Expiry year"
                                             inputHandler={this.inputHandler}
                                             style={{
                                                 margin: '0 5px'
@@ -243,6 +139,7 @@ class Cart extends React.Component {
                                     />
                                 </div>
                             </div>
+
                             <div style={{ marginTop: '10px' }}>
                                 <Label htmlFor="country" text="Country" />
                                 <Select
@@ -251,6 +148,7 @@ class Cart extends React.Component {
                                     styles={selectStyle}
                                 />
                             </div>
+
                             <div>
                                 <Button
                                     text="Pay Now"

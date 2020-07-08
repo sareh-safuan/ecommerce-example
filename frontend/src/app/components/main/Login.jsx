@@ -1,10 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import validate from 'validate.js'
-import {
-    Card, CardBody, Label, BlockInput, CardTitle, Button
-} from '../../Core.jsx'
+import axios from 'axios'
 import constraint from '../../controllers/constraint.js'
+import {
+    Card, CardBody, Label, BlockInput, CardTitle, Button, Alert
+} from '../../Core.jsx'
 
 class Login extends React.Component {
     constructor() {
@@ -12,6 +13,8 @@ class Login extends React.Component {
         this.state = {
             email: { value: '', error: '' },
             password: { value: '', error: '' },
+            alertType: false,
+            alertText: '',
             isLoading: false
         }
 
@@ -26,7 +29,42 @@ class Login extends React.Component {
 
         if (!isPass) return
 
-        console.log('pass to backend for login')
+        const {
+            email: { value: email },
+            password: { value: password }
+        } = this.state
+
+        axios({
+            method: 'POST',
+            url: '/user/login',
+            data: {
+                email,
+                password
+            }
+        })
+            .then((res) => {
+                if (!res.data.success) {
+                    throw new Error('Login failed.')
+                }
+                console.log(res.data.success)
+
+                this.setState({
+                    email: { value: '', error: '' },
+                    password: { value: '', error: '' },
+                    alertType: 'alert-success',
+                    alertText: 'Login success. Redirecting...',
+                    isLoading: false
+                })
+            })
+            .catch(err => {
+                console.log(err.response)
+                this.setState({
+                    alertType: 'alert-danger',
+                    alertText: 'Login failed.',
+                    password: { value: '', error: '' },
+                    isLoading: false
+                })
+            })
     }
 
     inputHandler(e) {
@@ -68,7 +106,10 @@ class Login extends React.Component {
     }
 
     render() {
-        const { email, password, isLoading } = this.state
+        const {
+            email, password, isLoading,
+            alertType, alertText
+        } = this.state
 
         return (
             <div className="width-40">
@@ -76,6 +117,12 @@ class Login extends React.Component {
                     padding: '20px 20px 30px'
                 }}>
                     <CardBody>
+                        <Alert
+                            className={alertType}
+                            clickHandler={null}
+                        >
+                            { alertText }
+                        </Alert>
                         <CardTitle>
                             Sign In Form
                         </CardTitle>
