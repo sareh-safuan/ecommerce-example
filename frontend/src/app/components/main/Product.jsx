@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 import { connect } from 'react-redux'
 import { addToCart } from '../../controllers/redux/action'
 import { Card, CardImage, Image, CardBody, Button, Input } from '../../Core'
@@ -9,7 +10,7 @@ class Product extends React.Component {
         super()
         this.state = {
             fruit: {},
-            variation: [],
+            variations: [],
             quantity: 1,
             payingPrice: 0
         }
@@ -20,26 +21,34 @@ class Product extends React.Component {
     }
 
     componentDidMount() {
-        const { name } = this.props.match.params
-        const fruit = this.props.fruits.find(f => f.name === name)
-        setTimeout(() => {
-            this.setState({
-                fruit,
-                payingPrice: fruit.price,
-                variation: [
-                    fruit.price,
-                    fruit.price * 1.4,
-                    fruit.price * 1.9
-                ]
+        const { id } = this.props.match.params
+        axios({
+            url: `/product/${id}`
+        })
+            .then(res => {
+                const fruit = res.data.data
+                const payingPrice = fruit.variations[0].price
+                const variations = fruit.variations.map(f => {
+                    const label = fruit.product_name + ' pack ' 
+                        + f.variation_description + ' - RM' + f.price.toFixed(2)
+                    return {
+                        value: f.id,
+                        label
+                    }
+                })
+
+                this.setState({ fruit, payingPrice, variations })
             })
-        }, 500)
+            .catch(err => {
+                throw err
+            })
     }
 
     changeHandler(e) {
-        const { variation } = this.state
-        this.setState({
-            payingPrice: variation[e.value]
-        })
+        const { variations } = this.state.fruit
+        const selected = variations.find(v => v.id === e.value)
+        const payingPrice = selected.price
+        this.setState({ payingPrice })
     }
 
     clickHandler(e) {
@@ -64,8 +73,7 @@ class Product extends React.Component {
                 quantity,
                 payingPrice
             }
-            this.props.addToCart(cart)
-            
+            this.props.addToCart(cart)      
         }
     }
 
@@ -74,48 +82,33 @@ class Product extends React.Component {
     }
 
     render() {
-        const { quantity, fruit, payingPrice } = this.state
+        const { quantity, fruit, payingPrice, variations } = this.state
 
         if (!fruit) {
             return <h4>error 404</h4>
         }
 
         if (!fruit.hasOwnProperty('image')) {
-            return <p>Loading...</p>
+            return <div>Loading...</div>
         }
-
-        const options = [
-            {
-                value: 0,
-                label: `RM ${(fruit.price).toFixed(2)} - Small`
-            },
-            {
-                value: 1,
-                label: `RM ${(fruit.price * 1.4).toFixed(2)} - Medium`
-            },
-            {
-                value: 2,
-                label: `RM ${(fruit.price * 1.9).toFixed(2)} - Large`
-            }
-        ]
 
         return (
             <Wrapper>
-                <Card css="width-40">
+                <Card className="width-40">
                     <CardImage>
-                        <Image src={fruit.image} />
+                        <Image src={`http://localhost:4000/${fruit.image}`} />
                     </CardImage>
                 </Card>
-                <Card css="width-60">
+                <Card className="width-60">
                     <CardBody>
-                        <h2>{fruit.name}</h2>
+                        <h2>{fruit.product_name}</h2>
                         <p>{fruit.description}</p>
                         <br />
                         <h4>RM {(payingPrice * quantity).toFixed(2)}</h4>
                         <div className="width-70">
                             <Select
-                                options={options}
-                                defaultValue={options[0]}
+                                options={variations}
+                                defaultValue={variations[0]}
                                 onChange={this.changeHandler} />
                         </div>
                         <div style={{
@@ -131,7 +124,7 @@ class Product extends React.Component {
                                 type="text"
                                 name="quantity"
                                 value={quantity}
-                                changeHandler={this.changeHandler}
+                                inputHandler={this.changeHandler}
                                 style={{
                                     marginLeft: '5px',
                                     marginRight: '5px'
@@ -144,7 +137,7 @@ class Product extends React.Component {
                             />
                         </div>
                         <Button
-                            css="pure-button-primary"
+                            className="pure-button-primary"
                             text="Add To Cart"
                             clickHandler={this.clickHandler}
                             id="add-to-cart"
@@ -173,8 +166,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-const mapStateToProps = (state) => {
-    return { fruits: state.fruits.fruits }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Product)
+export default connect(null, mapDispatchToProps)(Product)

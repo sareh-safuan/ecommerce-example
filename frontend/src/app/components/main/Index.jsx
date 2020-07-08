@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import axios from 'axios'
 import {
     Card, CardImage, Image, CardBody, CardTitle, CardFooter, Button
 } from '../../Core.jsx'
@@ -7,7 +7,23 @@ import {
 class Index extends React.Component {
     constructor() {
         super()
+        this.state = {
+            fruits: []
+        }
         this.clickHandler = this.clickHandler.bind(this)
+    }
+
+    componentDidMount() {
+        axios({
+            url: '/product'
+        })
+            .then(res => {
+                const { data: fruits } = res.data
+                this.setState({ fruits })
+            })
+            .catch(err => {
+                throw err
+            })
     }
 
     clickHandler(e) {
@@ -18,7 +34,11 @@ class Index extends React.Component {
     }
 
     render() {
-        const { fruits } = this.props
+        const { fruits } = this.state
+        
+        if (!fruits.length) {
+            return <div>Loading...</div>
+        }
 
         return (
             <div className="container" onClick={this.clickHandler}>
@@ -39,22 +59,21 @@ class Index extends React.Component {
 const FruitList = ({ fruits }) => {
     return fruits.map((fruit, i) => {
         return (
-            <Card css="card-shadow width-20" key={i}>
+            <Card className="card-shadow width-20" key={i}>
                 <CardImage>
-                    <Image src={fruit.image} alt="temporary" />
+                    <Image src={`http://localhost:4000/${fruit.image}`} alt="temporary" />
                 </CardImage>
-                <CardBody css="product-card-height">
-                    <CardTitle>{fruit.name}</CardTitle>
+                <CardBody className="product-card-height">
+                    <CardTitle>{fruit.product_name}</CardTitle>
                     <div className="card-text">
-                        <p className="product-price">RM {fruit.price}</p>
-                        {fruit.description}
+                        {fruit.description.slice(0, 70)}
                     </div>
                     <CardFooter>
                         <Button
-                            css="pure-button-primary"
-                            text="Add To Basket"
+                            className="pure-button-primary"
+                            text={`Buy Now - RM${fruit.price.toFixed(2)}`}
                             clickHandler={null}
-                            id={fruit.name}
+                            id={`${fruit.id}/${fruit.slug}`}
                         />
                     </CardFooter>
                 </CardBody>
@@ -63,8 +82,4 @@ const FruitList = ({ fruits }) => {
     })
 }
 
-const mapStateToProps = (state) => {
-    return { fruits: state.fruits.fruits }
-} 
-
-export default connect(mapStateToProps)(Index)
+export default Index
