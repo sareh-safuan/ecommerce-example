@@ -43,6 +43,62 @@ const password_confirmation = {
     equality: 'password'
 }
 
+const address_one = {
+    presence,
+    length: {
+        maximum: 250
+    }
+}
+
+const address_two = {
+    length: {
+        maximum: 250
+    }
+}
+
+const postal_code = {
+    presence,
+    length: {
+        maximum: 15
+    }
+}
+
+const city = {
+    presence,
+    length: {
+        maximum: 50
+    }
+}
+
+const credit_card = {
+    presence,
+    format: {
+        pattern: /^(?:4[0-9]{12}(?:[0-9]{3})?)$/
+    }
+}
+
+const expiry_year = {
+    presence,
+    length: {
+        minimum: 4,
+        maximum: 4
+    },
+    numericality: {
+        onlyInteger: true
+    }
+}
+
+const cvv = {
+    presence,
+    length: {
+        minimum: 3,
+        maximum: 3
+    },
+    numericality: {
+        onlyInteger: true
+    }
+}
+
 export default function (keys) {
     const obj = {}
 
@@ -65,6 +121,27 @@ export default function (keys) {
                 break
             case 'password_confirmation':
                 obj[key] = password_confirmation
+                break
+            case 'address_one':
+                obj[key] = address_one
+                break
+            case 'address_two':
+                obj[key] = address_two
+                break
+            case 'postal_code':
+                obj[key] = postal_code
+                break
+            case 'city':
+                obj[key] = city
+                break
+            case 'credit_card':
+                obj[key] = credit_card
+                break
+            case 'expiry_year':
+                obj[key] = expiry_year
+                break
+            case 'cvv':
+                obj[key] = cvv
                 break
             default:
                 break

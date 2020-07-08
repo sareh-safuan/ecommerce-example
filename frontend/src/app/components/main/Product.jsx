@@ -67,9 +67,10 @@ class Product extends React.Component {
 
         } else if (id === "add-to-cart") {
 
-            const { fruit, quantity, payingPrice } = this.state
+            const { fruit: { product_name, image }, quantity, payingPrice } = this.state
             const cart = {
-                ...fruit,
+                product_name,
+                image,
                 quantity,
                 payingPrice
             }

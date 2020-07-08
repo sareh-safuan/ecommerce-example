@@ -15,7 +15,14 @@ import pineapple from '../../../images/pineapple.jpg'
 import strawberry from '../../../images/strawberry.jpg'
 
 const cartState = {
-    cart: []
+    cart: [
+        {
+            product_name: 'Apple',
+            image: 'apple.jpg',
+            payingPrice: 23.01,
+            quantity: 1
+        }
+    ]
 }
 
 function cartReducer(state = cartState, action) {

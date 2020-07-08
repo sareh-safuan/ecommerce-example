@@ -1,10 +1,10 @@
 import React from 'react'
 import axios from 'axios'
 import validate from 'validate.js'
+import constraint from '../../controllers/constraint.js'
 import {
     Card, CardBody, Label, BlockInput, CardTitle, Button, Alert
 } from '../../Core.jsx'
-import constraint from '../../controllers/constraint.js'
 
 
 class Register extends React.Component {
