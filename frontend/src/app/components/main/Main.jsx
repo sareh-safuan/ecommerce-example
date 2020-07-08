@@ -2,7 +2,7 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 // import Index from './Index.jsx'
 import Register from './Register.jsx'
-// import Login from './Login.jsx'
+import Login from './Login.jsx'
 // import User from './User.jsx'
 // import Cart from './Cart.jsx'
 // import Product from './Product'
@@ -17,7 +17,7 @@ class Main extends React.Component {
                     {/* <Route exact path="/" component={Index} /> */}
                     {/* <Route path="/product/:name" component={Product} /> */}
                     {/* <Route path="/cart" component={Cart} />         */}
-                    {/* <Route path="/sign-in" component={Login} /> */}
+                    <Route path="/sign-in" component={Login} />
                     <Route path="/register" component={Register} />
                     {/* <Route path="/user" component={User} /> */}
                 </Switch>

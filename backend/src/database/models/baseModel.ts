@@ -31,6 +31,10 @@ class BaseModel {
             .where(condition)
             .update(data)
     }
+
+    query() {
+        return connection(this._table)
+    }
 }
 
 export default BaseModel

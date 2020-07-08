@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
     "@types/express": "^4.17.6",
+    "@types/express-session": "^1.17.0",
     "@types/morgan": "^1.9.1",
     "@types/node": "^14.0.13",
     "chai": "^4.2.0",
@@ -28,10 +29,13 @@
   "dependencies": {
     "bcrypt": "^5.0.0",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
     "express-validator": "^6.5.0",
+    "formidable": "^1.2.2",
     "knex": "^0.21.1",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
+    "slugify": "^1.4.4",
     "winston": "^3.2.1"
   }
 }

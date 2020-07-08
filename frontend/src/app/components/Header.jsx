@@ -30,7 +30,7 @@ class TheHeader extends React.Component {
                             <Link to="/cart">{`Cart(${quantity})`}</Link>
                         </Li>
                         <Li className="nav-link-item">
-                            <Link to="/register">Account</Link>
+                            <Link to="/sign-in">Account</Link>
                         </Li>
                     </Ul>
                 </NavLinkHorizontal>

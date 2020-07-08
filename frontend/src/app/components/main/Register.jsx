@@ -132,7 +132,7 @@ class Register extends React.Component {
             'password',
             'password_confirmation'
         ])
-
+        // TODO: change errors to result
         const errors = validate({
             first_name: first_name.value,
             last_name: last_name.value,

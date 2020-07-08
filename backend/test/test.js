@@ -1,9 +1,11 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const faker = require('faker')
+const fs = require('fs')
+const path = require('path')
 
 const expect = chai.expect
-const baseUrl = 'http://localhost:3000'
+const baseUrl = 'http://localhost:4000'
 chai.use(chaiHttp)
 
 const user = function () {
@@ -50,7 +52,7 @@ const user = function () {
     }
 }
 
-describe('Route /user/register: Method POST', function () {
+describe.skip('Route /user/register: Method POST', function () {
     const route = '/user/register'
 
     it('Missing all or some required fields', function (done) {
@@ -129,14 +131,8 @@ describe('Route /user/register: Method POST', function () {
     })
 })
 
-describe('Route /user/login: Method POST', function () {
+describe.skip('Route /user/login: Method POST', function () {
     const route = '/user/login'
-    /**
-     * 1) Missing email or password or both
-     * 2) Unregister email
-     * 3) Wrong password
-     * 4) Success login
-     */
 
     it('Missing email or password or both', function (done) {
         const email = 'ali@email.com'
@@ -147,7 +143,7 @@ describe('Route /user/login: Method POST', function () {
         const random = Math.floor(Math.random() * 3)
         let data
 
-        switch(random) {
+        switch (random) {
             case 1:
                 data = firstData
                 break
@@ -163,8 +159,176 @@ describe('Route /user/login: Method POST', function () {
             .request(baseUrl)
             .post(route)
             .send(data)
-            .then(function () {})
+            .then(function (res) {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
             .catch(function (err) {
+                throw err
+            })
+    })
+
+    it('Unregistered email', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({
+                email: 'unregistered@email.com',
+                password: 'mysecretpassword'
+            })
+            .then(function (res) {
+                expect(res).to.be.json
+                expect(res).to.have.status(404)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Email not found.')
+                done()
+            })
+            .catch(function (err) {
+                throw err
+            })
+    })
+
+    it('Wrong password', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({
+                email: 'ali@email.com',
+                password: 'thewrongpassword'
+            })
+            .then(function (res) {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Wrong password.')
+                done()
+            })
+            .catch(function (err) {
+                throw err
+            })
+    })
+
+    it('Success login', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({
+                email: 'ali@email.com',
+                password: 'secret123'
+            })
+            .then(function (res) {
+                expect(res).to.be.json
+                expect(res).to.have.status(200)
+                expect(res).to.have.cookie('premium-fruit')
+                expect(res.body['success']).to.equal(1)
+                expect(res.body['msg']).to.equal('Login success.')
+                done()
+            })
+    })
+})
+
+describe.skip('Route /product/create: Method POST', function () {
+    const route = '/product/create'
+
+    /**
+     * 1) image is not uploaded
+     * 2) missing all product informations
+     * 3) missing partial product informations - KIV
+     * 4) success product creation
+     */
+
+    it('Missing product image', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .type('form')
+            .field('product_name', 'Apple')
+            .field('description', faker.hacker.phrase())
+            .then((res) => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Please upload product image.')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Missing product information', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .type('form')
+            .attach(
+                'image',
+                fs.readFileSync(path.join(__dirname, '1.jpeg')),
+                '1.jpeg'
+            )
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+    })
+})
+
+describe('Route /product/create-variation: Method POST', function () {
+    const route = '/product/create-variation'
+
+    /**
+     * 1) Missing all required field
+     * 2) Missing some required field
+     * 3) Some required field not meet requirement - KIV
+     * 4) Success create
+     */
+
+    it.skip('Missing all required fields', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({})
+            .then((res) => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it.skip('Missing some required fields', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({
+                product_variation: [
+                    {
+                        product_id: 10,
+                        variation_description: 'lorem...5',
+                        price: 30,
+                        quantity: 100
+                    },
+                    {
+                        product_id: 10,
+                        variation_description: 'lorem...5',
+                        quantity: 100
+                    }
+                ]
+            })
+            .then((res) => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
                 throw err
             })
     })
