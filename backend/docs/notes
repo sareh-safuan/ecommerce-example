@@ -24,9 +24,9 @@ UserDB
 UserAddressDB
     - id
     - user_id
+    - tag
     - address_one
     - address_two
-    - type
     - city
     - postcode
     - state

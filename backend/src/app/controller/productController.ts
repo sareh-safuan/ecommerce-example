@@ -55,7 +55,7 @@ router.post(
 
             res.status(201).json({
                 success: 1,
-                msg: 'Product variation added.'
+                msg: 'Product variations added.'
             })
 
         } catch (err) {
@@ -78,6 +78,7 @@ router.get(
                 )
                 .min('productvariations.price as price')
                 .groupBy('products.id')
+                .limit(12)
 
             res.status(200).json({
                 success: 1,
@@ -116,7 +117,7 @@ router.get(
             })
 
             res.status(200).json({
-                success: 0,
+                success: 1,
                 data: {
                     product_name,
                     image,

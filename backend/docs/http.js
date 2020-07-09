@@ -181,6 +181,13 @@ const ProductController = [
                     }
                 ]
             }
+        },
+        response: {
+            code: 201,
+            data: {
+                success: 1,
+                msg: 'Product variations added'
+            }
         }
     },
     {
@@ -196,15 +203,17 @@ const ProductController = [
                         id: 1,
                         product_name: 'Apple',
                         slug: 'the-best-apple',
-                        price: 30,
-                        image: 'apple.jpg'
+                        image: 'apple.jpg',
+                        description: 'lorem...15',
+                        price: 30
                     },
                     {
                         id: 2,
                         product_name: 'Apricot',
                         slug: 'the-apricot',
-                        price: 50,
-                        image: 'apricot.jpg'
+                        image: 'apricot.jpg',
+                        description: 'lorem...15',
+                        price: 50
                     },
                     {
                         // Many more...
@@ -226,11 +235,20 @@ const ProductController = [
             data: {
                 success: 1,
                 data: {
-                    id: 1,
                     product_name: 'Apple',
-                    slug: 'the-best-apple',
-                    price: 30,
-                    image: 'apple.jpg'
+                    image: 'apple.jpg',
+                    description: 'lorem...15',
+                    variations: [
+                        {
+                            id: 10,
+                            price: 5.00,
+                            variation_description: 'lorem...5',
+                            quantity: 100
+                        },
+                        {
+                            // more...
+                        }
+                    ]
                 }
             }
         }
@@ -303,13 +321,68 @@ const ProductController = [
         }
     },
     {
-        route: ['@delete-variation/:id', 'delete'],
+        route: ['@delete-variation/:product-id', 'delete'],
         fn: 'deleteVariation',
         request: { param: {}, body: {} },
         response: {
             code: 200,
             data: {
                 success: 1
+            }
+        }
+    }
+]
+
+const AddressController = [
+    {
+        route: ['@/create', 'POST'],
+        fn: 'create',
+        request: {
+            body: {
+                user_id: 10,
+                tag: 'Home Address',
+                address_one: 'No 101, Taman...',
+                address_two: 'Optional field',
+                city: 'Kuala Lumpur',
+                postcode: '55000'
+            }
+        },
+        response: {
+            code: 201,
+            data: {
+                success: 1,
+                msg: 'Address added.'
+            }
+        }
+    },
+    {
+        route: ['@/:userId', 'GET'],
+        fn: 'fetch',
+        request: {
+            param: {
+                userId: 10
+            }
+        },
+        response: {
+            code: 200,
+            data: {
+                success: 1,
+                data: [
+                    {
+                        id: 20,
+                        tag: 'Home Address',
+                        address_one: 'No 444, ...',
+                        address_two: 'Optional field',
+                        city: 'Kuantan',
+                        postcode: 71000,
+                        state: 'Pahang'
+                    },
+                    {
+                        id: 21,
+                        tag: 'Office Address',
+                        address_one: '... continue more'
+                    }
+                ]
             }
         }
     }

@@ -5,6 +5,7 @@ import path from 'path'
 import sessionSetting from '../utils/sessionSetting'
 import userController from './controller/userController'
 import productController from './controller/productController'
+import addressController from './controller/addressController'
 
 const app = express()
 
@@ -15,5 +16,6 @@ app.use(session(sessionSetting()))
 
 app.use('/user', userController)
 app.use('/product', productController)
+app.use('/address', addressController)
 
 export default app

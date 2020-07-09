@@ -233,10 +233,10 @@ describe.skip('Route /product/create: Method POST', function () {
     const route = '/product/create'
 
     /**
-     * 1) image is not uploaded
-     * 2) missing all product informations
+     * 1) image is not uploaded -DONE
+     * 2) missing all product informations -DONE
      * 3) missing partial product informations - KIV
-     * 4) success product creation
+     * 4) success product creation -DONE
      */
 
     it('Missing product image', function (done) {
@@ -274,10 +274,37 @@ describe.skip('Route /product/create: Method POST', function () {
                 expect(res.body['success']).to.equal(0)
                 done()
             })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Success product creation', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .type('form')
+            .field('product_name', faker.commerce.color())
+            .field('description', faker.hacker.phrase())
+            .attach(
+                'image',
+                fs.readFileSync(path.join(__dirname, '1.jpeg')),
+                '1.jpeg'
+            )
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(201)
+                expect(res.body['success']).to.equal(1)
+                expect(res.body['msg']).to.equal('Product created.')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
     })
 })
 
-describe('Route /product/create-variation: Method POST', function () {
+describe.skip('Route /product/create-variation: Method POST', function () {
     const route = '/product/create-variation'
 
     /**
@@ -287,7 +314,7 @@ describe('Route /product/create-variation: Method POST', function () {
      * 4) Success create
      */
 
-    it.skip('Missing all required fields', function (done) {
+    it('Missing all required fields', function (done) {
         chai
             .request(baseUrl)
             .post(route)
@@ -303,7 +330,7 @@ describe('Route /product/create-variation: Method POST', function () {
             })
     })
 
-    it.skip('Missing some required fields', function (done) {
+    it('Missing some required fields', function (done) {
         chai
             .request(baseUrl)
             .post(route)
@@ -332,4 +359,120 @@ describe('Route /product/create-variation: Method POST', function () {
                 throw err
             })
     })
+
+    it('Success product variations creation', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({
+                product_variation: [
+                    {
+                        product_id: 15,
+                        variation_description: faker.commerce.color(),
+                        price: 30,
+                        quantity: 100,
+                    },
+                    {
+                        product_id: 15,
+                        variation_description: faker.commerce.color(),
+                        price: 40,
+                        quantity: 120,
+                    },
+                    {
+                        product_id: 15,
+                        variation_description: faker.commerce.color(),
+                        price: 40,
+                        quantity: 80,
+                    }
+                ]
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(201)
+                expect(res.body['success']).to.equal(1)
+                expect(res.body['msg']).to.equal('Product variations added.')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+})
+
+describe.skip('Route /product: Method GET', function () {
+    const route = '/product'
+
+    it('Sucess request', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(200)
+                expect(res.body['success']).to.equal(1)
+                expect(res.body['data']).to.be.an('array')
+                expect(res.body['data']).not.to.be.empty
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+})
+
+describe.skip('Route /product/:id: Method GET', function () {
+    const route = '/product/1'
+
+    it('Success request', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(200)
+                expect(res.body['success']).to.equal(1)
+                expect(res.body['data']).to.have.all.keys([
+                    'product_name', 'image', 'description', 'variations'
+                ])
+                expect(res.body['data']['variations']).to.be.an('array')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+})
+
+describe('Route /address/create: Method POST', function () {
+    const route = '/address/create'
+
+    /**
+     * 1) Missing all required fields
+     * 2) Missing some of required fields -KIV
+     * 3) Success address added
+     * 4) Success address added - address_two included
+     */
+
+     it('Missing all required', function (done) {
+         chai
+            .request(baseUrl)
+            .post(route)
+            .send({
+                user_id: 1,
+                tag: 'Home Address #1',
+                address_one: faker.address.streetAddress(),
+                address_two: '',
+                city: faker.address.city(),
+                postcode: faker.address.zipCode()
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+     })
 })
