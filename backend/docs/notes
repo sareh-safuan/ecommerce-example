@@ -30,7 +30,7 @@ UserAddressDB
     - city
     - postcode
     - state
-    - country
+    - country *drop
     - created_at
     - updated_at
 ___________________________________________________________________________________________________

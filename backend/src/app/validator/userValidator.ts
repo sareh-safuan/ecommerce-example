@@ -22,7 +22,7 @@ export const registerUser = (req: Request, res: Response, next: NextFunction) =>
             .isEmail().withMessage('Invalid email format.')
             .bail()
             .custom(value => {
-                return new UserModel().findOne('email', value)
+                return new UserModel().findBy('email', value)
                     .then(user => {
                         if (user.length) {
                             return Promise.reject('Email already registered.')

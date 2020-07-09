@@ -11,7 +11,7 @@ router.get('/', async (req: any, res: any) => {
 
     try {
 
-        // const user = await User.findOne('id', 11)
+        // const user = await User.findBy('id', 11)
         console.log(req.session.user)
         res.send("user")
 
@@ -66,7 +66,7 @@ router.post(
 
         try {
 
-            const user = await User.findOne('email', email)
+            const user = await User.findBy('email', email)
             if (!user.length) {
                 return res.status(404).json({
                     success: 0,

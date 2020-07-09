@@ -443,28 +443,21 @@ describe.skip('Route /product/:id: Method GET', function () {
     })
 })
 
-describe('Route /address/create: Method POST', function () {
+describe.skip('Route /address/create: Method POST', function () {
     const route = '/address/create'
 
     /**
      * 1) Missing all required fields
      * 2) Missing some of required fields -KIV
-     * 3) Success address added
+     * 3) Success address added - address_two empty string 
      * 4) Success address added - address_two included
      */
 
-     it('Missing all required', function (done) {
-         chai
+    it('Missing all required', function (done) {
+        chai
             .request(baseUrl)
             .post(route)
-            .send({
-                user_id: 1,
-                tag: 'Home Address #1',
-                address_one: faker.address.streetAddress(),
-                address_two: '',
-                city: faker.address.city(),
-                postcode: faker.address.zipCode()
-            })
+            .send({})
             .then(res => {
                 expect(res).to.be.json
                 expect(res).to.have.status(400)
@@ -474,5 +467,75 @@ describe('Route /address/create: Method POST', function () {
             .catch(err => {
                 throw err
             })
-     })
+    })
+
+    it('Success address added - address_two empty string', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({
+                user_id: 1,
+                tag: 'Home Address #1',
+                address_one: faker.fake('{{address.streetName}}, {{address.streetAddress}}'),
+                address_two: '',
+                city: faker.address.city(),
+                postcode: faker.address.zipCode('#####'),
+                state: faker.address.state()
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(201)
+                expect(res.body['success']).to.equal(1)
+                expect(res.body['msg']).to.equal('Address added.')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Success address added - address_two included', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({
+                user_id: 1,
+                tag: 'Home Address #2',
+                address_one: faker.fake('{{address.streetName}}, {{address.streetAddress}}'),
+                address_two: faker.address.secondaryAddress,
+                city: faker.address.city(),
+                postcode: faker.address.zipCode('#####'),
+                state: faker.address.state()
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(201)
+                expect(res.body['success']).to.equal(1)
+                expect(res.body['msg']).to.equal('Address added.')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+})
+
+describe('Route /address/:userId: Method GET', function () {
+    const route = '/address/1'
+
+    it('Success request', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(200)
+                expect(res.body['success']).to.equal(1)
+                expect(res.body['data']).to.be.an('array')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
 })

@@ -8,7 +8,7 @@ class BaseModel {
         this._table = table
     }
 
-    findOne(column: string, value: string | number) {
+    findBy(column: string, value: string | number) {
         return connection
             .select()
             .table(this._table)
