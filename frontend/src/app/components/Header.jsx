@@ -7,12 +7,16 @@ import logo from '../../images/logo.png'
 class TheHeader extends React.Component {
 
     render() {
-        const { cart } = this.props.cart
+        const { cart: { cart }, auth: { isUserLogin } } = this.props
         let quantity = 0
 
         for (let i of cart) {
             quantity += i.quantity
         }
+
+        const account = isUserLogin ?
+            (<Link to="/user">Account</Link>) :
+            (<Link to="/sign-in">Account</Link>)
 
         return (
             <HeaderWrapper>
@@ -30,7 +34,7 @@ class TheHeader extends React.Component {
                             <Link to="/cart">{`Cart(${quantity})`}</Link>
                         </Li>
                         <Li className="nav-link-item">
-                            <Link to="/sign-in">Account</Link>
+                            {account}
                         </Li>
                     </Ul>
                 </NavLinkHorizontal>
@@ -62,7 +66,10 @@ const NavLinkHorizontal = ({ children }) => (
 )
 
 const mapStateToProps = (state) => {
-    return { cart: state.cart }
+    return {
+        cart: state.cart,
+        auth: state.auth
+    }
 }
 
 const Header = connect(mapStateToProps)(TheHeader)

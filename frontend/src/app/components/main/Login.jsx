@@ -1,11 +1,15 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import validate from 'validate.js'
+import { connect } from 'react-redux'
 import axios from 'axios'
+import queryString from 'query-string'
 import constraint from '../../controllers/constraint.js'
+import { successLogin } from '../../controllers/redux/action.js'
 import {
     Card, CardBody, Label, BlockInput, CardTitle, Button, Alert
 } from '../../Core.jsx'
+
 
 class Login extends React.Component {
     constructor() {
@@ -46,15 +50,12 @@ class Login extends React.Component {
                 if (!res.data.success) {
                     throw new Error('Login failed.')
                 }
-                console.log(res.data.success)
 
-                this.setState({
-                    email: { value: '', error: '' },
-                    password: { value: '', error: '' },
-                    alertType: 'alert-success',
-                    alertText: 'Login success. Redirecting...',
-                    isLoading: false
-                })
+                const qs = this.props.location.search
+                const { reff } = qs ? queryString.parse(qs) : { reff: 'user' }
+
+                this.props.successLogin(true)
+                this.props.history.push('/' + (reff || ''))
             })
             .catch(err => {
                 console.log(err.response)
@@ -121,7 +122,7 @@ class Login extends React.Component {
                             className={alertType}
                             clickHandler={null}
                         >
-                            { alertText }
+                            {alertText}
                         </Alert>
                         <CardTitle>
                             Sign In Form
@@ -167,4 +168,10 @@ const RegisterLink = () => {
     )
 }
 
-export default Login
+const mapDispatchToProps = (dispatch) => {
+    return {
+        successLogin: auth => dispatch(successLogin(auth))
+    }
+}
+
+export default connect(null, mapDispatchToProps)(Login)
