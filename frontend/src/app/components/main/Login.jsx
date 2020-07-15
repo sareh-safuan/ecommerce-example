@@ -53,7 +53,9 @@ class Login extends React.Component {
 
                 const qs = this.props.location.search
                 const { reff } = qs ? queryString.parse(qs) : { reff: 'user' }
+                const { id } = res.data.data
 
+                // localStorage.setItem('userId', id)
                 this.props.successLogin(true)
                 this.props.history.push('/' + (reff || ''))
             })

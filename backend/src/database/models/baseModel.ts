@@ -35,6 +35,10 @@ class BaseModel {
     query() {
         return connection(this._table)
     }
+
+    transaction(cb: any) {
+        return connection.transaction(cb)
+    }
 }
 
 export default BaseModel

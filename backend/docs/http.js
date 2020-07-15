@@ -387,3 +387,35 @@ const AddressController = [
         }
     }
 ]
+
+const OrderController = [
+    {
+        route: ['@/create', 'POST'],
+        fn: 'create',
+        request: {
+            body: {
+                user_id: 10,
+                address_id: 10,
+                total_price_paid: 55.00,
+                orders: [
+                    {
+                        product_id: 11,
+                        product_variation_id: 22,
+                        paying_price: 14.10,
+                        quantity: 2
+                    },
+                    {
+                        // more orders...
+                    }
+                ]
+            }
+        },
+        response: {
+            code: 201,
+            data: {
+                success: 1,
+                msg: 'Order is placed.'
+            }
+        }
+    }
+]

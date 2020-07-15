@@ -86,7 +86,8 @@ router.post(
             req.session.user = { id, usergroup_id }
             res.status(200).json({
                 success: 1,
-                msg: 'Login success.'
+                msg: 'Login success.',
+                data: { id }
             })
 
         } catch (err) {

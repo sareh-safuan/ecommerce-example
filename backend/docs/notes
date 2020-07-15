@@ -73,6 +73,7 @@ OrderController
 OrderDB
     - id
     - user_id
+    - address_id
     - total_price_paid
     - created_at
     - updated_at
@@ -81,8 +82,9 @@ OrderDetailDB
     - id
     - order_id
     - product_id
-    - quantity
     - product_variation_id
+    - paying_price
+    - quantity
     - status_id
     - created_at
     - updated_at

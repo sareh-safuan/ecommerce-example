@@ -82,7 +82,7 @@ export const addProductVariation = (req: any, res: any, next: any) => {
             next()
         })
         .catch(err => {
-            throw err
+            errorHandler(req, res, err.message)
         })
 }
 

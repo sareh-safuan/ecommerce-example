@@ -58,7 +58,7 @@ router.get(
     async (req: any, res: any) => {
 
         try {
-            
+        
             const { id } = req.params
             const Address = new AddressModel()
             const addresses = await Address.findBy('user_id', id)

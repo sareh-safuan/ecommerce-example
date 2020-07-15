@@ -224,6 +224,7 @@ describe.skip('Route /user/login: Method POST', function () {
                 expect(res).to.have.cookie('premium-fruit')
                 expect(res.body['success']).to.equal(1)
                 expect(res.body['msg']).to.equal('Login success.')
+                expect(res.body['data']).to.have.own.property('id')
                 done()
             })
     })
@@ -520,7 +521,7 @@ describe.skip('Route /address/create: Method POST', function () {
     })
 })
 
-describe('Route /address/:userId: Method GET', function () {
+describe.skip('Route /address/:userId: Method GET', function () {
     const route = '/address/1'
 
     it('Success request', function (done) {
@@ -532,6 +533,86 @@ describe('Route /address/:userId: Method GET', function () {
                 expect(res).to.have.status(200)
                 expect(res.body['success']).to.equal(1)
                 expect(res.body['data']).to.be.an('array')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+})
+
+describe('Route /order/create: Method POST', function () {
+    const route = '/order/create'
+
+    /**
+     * 1) Missing all required fields
+     * 2) Incomplete/requirements failed required fields - KIV
+     * 3) Success order
+     */
+
+    it('Missing all required fields', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({})
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Incomplete/requirements failed for required field', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({
+                user_id: 1,
+                address_id: 1
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Success order', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({
+                user_id: 1,
+                address_id: 1,
+                total_price_paid: 94.98,
+                orders: [
+                    {
+                        product_id: 1,
+                        product_variation_id: 41,
+                        paying_price: 25.41,
+                        quantity: 2
+                    },
+                    {
+                        product_id: 2,
+                        product_variation_id: 45,
+                        paying_price: 44.16,
+                        quantity: 1
+                    }
+                ]
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(201)
+                expect(res.body['success']).to.equal(1)
+                expect(res.body['msg']).to.equal('Order is placed.')
                 done()
             })
             .catch(err => {

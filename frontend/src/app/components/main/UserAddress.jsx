@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 import { Card, CardBody, CardTitle, Li, Button } from '../../Core.jsx'
 
 const add = [
@@ -21,6 +22,21 @@ const add = [
 ]
 
 class Address extends React.Component {
+
+    componentDidMount() {
+        const userId = localStorage.getItem('userId')
+        axios({
+            method: 'GET',
+            url: '/address/' + userId
+        })
+            .then(res => {
+                console.log(res)
+                // console.log()
+            })
+            .catch(err => {
+                throw err
+            })
+    }
 
     render() {
         return (
