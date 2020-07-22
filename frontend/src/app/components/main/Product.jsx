@@ -12,7 +12,8 @@ class Product extends React.Component {
             fruit: {},
             variations: [],
             quantity: 1,
-            payingPrice: 0
+            paying_price: 0,
+            product_variation_id: 0
         }
 
         this.changeHandler = this.changeHandler.bind(this)
@@ -27,9 +28,10 @@ class Product extends React.Component {
         })
             .then(res => {
                 const fruit = res.data.data
-                const payingPrice = fruit.variations[0].price
+                const product_variation_id = fruit.variations[0].id
+                const paying_price = fruit.variations[0].price
                 const variations = fruit.variations.map(f => {
-                    const label = fruit.product_name + ' pack ' 
+                    const label = fruit.product_name + ' pack '
                         + f.variation_description + ' - RM' + f.price.toFixed(2)
                     return {
                         value: f.id,
@@ -37,7 +39,12 @@ class Product extends React.Component {
                     }
                 })
 
-                this.setState({ fruit, payingPrice, variations })
+                this.setState({
+                    fruit,
+                    product_variation_id,
+                    paying_price,
+                    variations
+                })
             })
             .catch(err => {
                 throw err
@@ -47,8 +54,11 @@ class Product extends React.Component {
     changeHandler(e) {
         const { variations } = this.state.fruit
         const selected = variations.find(v => v.id === e.value)
-        const payingPrice = selected.price
-        this.setState({ payingPrice })
+
+        this.setState({
+            product_variation_id: selected.id,
+            paying_price: selected.price
+        })
     }
 
     clickHandler(e) {
@@ -67,14 +77,23 @@ class Product extends React.Component {
 
         } else if (id === "add-to-cart") {
 
-            const { fruit: { product_name, image }, quantity, payingPrice } = this.state
+            const {
+                fruit: { product_name, image },
+                product_variation_id,
+                paying_price,
+                quantity
+            } = this.state
+            const product_id = +this.props.match.params.id
+
             const cart = {
                 product_name,
                 image,
-                quantity,
-                payingPrice
+                product_id,
+                product_variation_id,
+                paying_price,
+                quantity
             }
-            this.props.addToCart(cart)      
+            this.props.addToCart(cart)
         }
     }
 
@@ -83,7 +102,7 @@ class Product extends React.Component {
     }
 
     render() {
-        const { quantity, fruit, payingPrice, variations } = this.state
+        const { quantity, fruit, paying_price, variations } = this.state
 
         if (!fruit) {
             return <h4>error 404</h4>
@@ -105,7 +124,7 @@ class Product extends React.Component {
                         <h2>{fruit.product_name}</h2>
                         <p>{fruit.description}</p>
                         <br />
-                        <h4>RM {(payingPrice * quantity).toFixed(2)}</h4>
+                        <h4>RM {(paying_price * quantity).toFixed(2)}</h4>
                         <div className="width-70">
                             <Select
                                 options={variations}

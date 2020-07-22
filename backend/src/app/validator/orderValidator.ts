@@ -63,8 +63,3 @@ export const createOrder = (req: any, res: any, next: any) => {
             errorHandler(req, res, err.message)
         })
 }
-
-// user_id: 1,
-//     address_id: 1,
-//         total_price_paid: 94.98,
-//             orders: [

@@ -29,7 +29,7 @@ router.get('/', async (req: any, res: any) => {
 router.post(
     '/create',
     [createOrder],
-    async (req: any, res: any, next: any) => {
+    async (req: any, res: any) => {
 
         try {
 

@@ -6,7 +6,9 @@ const cartState = {
         {
             product_name: 'Apple',
             image: 'apple.jpg',
-            payingPrice: 23.01,
+            product_id: 1,
+            product_variation_id: 41,
+            paying_price: 18.40,
             quantity: 1
         }
     ]
@@ -28,7 +30,7 @@ function cartReducer(state = cartState, action) {
 }
 
 const authState = {
-    isUserLogin: false
+    isUserLogin: true
 }
 
 function authReducer(state = authState, action) {

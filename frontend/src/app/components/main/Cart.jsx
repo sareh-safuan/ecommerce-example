@@ -1,10 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
-// import { Link } from 'react-router-dom'
+import axios from 'axios'
+import { Link } from 'react-router-dom'
 import Select from 'react-select'
 import validate from 'validate.js'
 import constraint from '../../controllers/constraint.js'
-import { BlockInput, Label, Button } from '../../Core.jsx'
+import { BlockInput, Label, Button, Ul, Li } from '../../Core.jsx'
 
 /**
  * TODO:
@@ -18,14 +19,48 @@ class Cart extends React.Component {
     constructor() {
         super()
         this.state = {
-            credit_card: { value: '', error: '' },
-            expiry_year: { value: '', error: '' },
-            cvv: { value: '', error: '' }
+            credit_card: { value: '4111111111111111', error: '' },
+            expiry_year: { value: '2022', error: '' },
+            cvv: { value: '101', error: '' },
+            addressses: [],
+            address_id: 0,
+            total_price_paid: 0,
+            shipping_fee: 5
         }
 
         this.inputHandler = this.inputHandler.bind(this)
         this.clickHandler = this.clickHandler.bind(this)
-        this.changeHandler = this.changeHandler.bind(this)
+        this.radioHandler = this.radioHandler.bind(this)
+    }
+
+    componentDidMount() {
+        const userId = localStorage.getItem('userId')
+        const { isUserLogin, cart } = this.props
+        const { shipping_fee } = this.state
+        const reducer = (acc, cur) => acc + cur
+        const total_price_paid = cart
+            .map(c => c.paying_price * c.quantity )
+            .reduce(reducer, shipping_fee)
+
+        if (isUserLogin && userId) {
+            axios({
+                method: 'GET',
+                url: '/address/' + userId
+            })
+                .then(res => {
+                    if (!res.data.success) {
+                        throw new Error()
+                    }
+
+                    this.setState({
+                        total_price_paid,
+                        addressses: res.data.data
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
     }
 
     inputHandler(e) {
@@ -42,15 +77,52 @@ class Cart extends React.Component {
             }
         })
     }
-    clickHandler() { }
-    changeHandler() { }
 
+    clickHandler() {
+        const user_id = localStorage.getItem('userId')
+        const { address_id, total_price_paid } = this.state
+        const orders = this.props.cart.map(_ => ({
+            product_id: _.product_id,
+            product_variation_id: _.product_variation_id,
+            paying_price: _.paying_price,
+            quantity: _.quantity
+        }))
+
+        // TODO: validation before POST 
+
+        axios({
+            method: 'POST',
+            url: '/order/create',
+            data: {
+                user_id,
+                address_id,
+                total_price_paid,
+                orders
+            }
+        })
+        .then(res => {
+            console.log(res)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }
+
+    radioHandler(e) {
+        if(e.target.tagName == 'INPUT') {
+            this.setState({
+                address_id: +e.target.value
+            })
+        }
+    }
 
     render() {
-        const { cart } = this.props
+        const { cart, isUserLogin } = this.props
         const {
-            credit_card, expiry_year, cvv
+            credit_card, expiry_year, cvv, addressses,
+            total_price_paid, shipping_fee            
         } = this.state
+
         const selectStyle = {
             control: base => ({
                 ...base,
@@ -88,9 +160,51 @@ class Cart extends React.Component {
             return <h4>Your cart is empty</h4>
         }
 
+        if (!isUserLogin) {
+            return (
+                <Link to="/sign-in?reff=cart">Please sign in before continue</Link>
+            )
+        }
+
+        if (!addressses.length) {
+            return (
+                <div>Loading...</div>
+            )
+        }
+
         return (
             <Wrapper>
                 <Checkout>
+                    <List header="Shipping Address">
+                        <div className="checkout-step-body" onClick={this.radioHandler}>
+                            <Ul>
+                                {
+                                    addressses.map((addr, i) => {
+                                        return (
+                                            <Li key={i}>
+                                                <label>
+                                                    <div className="row">
+                                                        <input
+                                                            type="radio"
+                                                            name="address_id"
+                                                            value={addr.id}
+                                                        />
+                                                        <div style={{ marginBottom: '10px' }}>
+                                                            <div><strong>{addr.tag}</strong></div>
+                                                            <div>{addr.address_one}</div>
+                                                            <div>{addr.address_two}</div>
+                                                            <div>{addr.postcode}, {addr.city}</div>
+                                                            <div>{addr.state}</div>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </Li>
+                                        )
+                                    })
+                                }
+                            </Ul>
+                        </div>
+                    </List>
                     <List header="Payment">
                         <div className="checkout-step-body">
                             <Label htmlFor="card-number" text="Card Number" />
@@ -143,6 +257,7 @@ class Cart extends React.Component {
                             <div style={{ marginTop: '10px' }}>
                                 <Label htmlFor="country" text="Country" />
                                 <Select
+                                    options={[{ value: 1, label: 'Malaysia' }]}
                                     className="width-100"
                                     onChange={this.changeHandler}
                                     styles={selectStyle}
@@ -162,7 +277,7 @@ class Cart extends React.Component {
                         </div>
                     </List>
                 </Checkout>
-                <Summary cart={cart} />
+                <Summary cart={cart} total={total_price_paid} shipping={shipping_fee} />
             </Wrapper>
         )
     }
@@ -203,9 +318,7 @@ const List = ({ header, children }) => {
     )
 }
 
-const Summary = ({ cart }) => {
-    let total = 0
-    let shipping = 4.00
+const Summary = ({ cart, total, shipping }) => {
     return (
         <div className="card width-50">
             <div className="card">
@@ -215,7 +328,6 @@ const Summary = ({ cart }) => {
                     </div>
                     {
                         cart.map((c, i) => {
-                            total += (c.quantity * c.payingPrice)
                             return (
                                 <div className="row" key={i}>
                                     <div className="width-20">
@@ -223,10 +335,10 @@ const Summary = ({ cart }) => {
                                     </div>
                                     <div className="width-50">
                                         <p>{c.product_name}</p>
-                                        {`${c.quantity} x RM ${(c.payingPrice).toFixed(2)}`}
+                                        {`${c.quantity} x RM ${(c.paying_price).toFixed(2)}`}
                                     </div>
                                     <div className="width-30">
-                                        RM {(c.quantity * c.payingPrice).toFixed(2)}
+                                        RM {(c.quantity * c.paying_price).toFixed(2)}
                                     </div>
                                 </div>
                             )
@@ -247,7 +359,7 @@ const Summary = ({ cart }) => {
                             <h4>Total</h4>
                         </div>
                         <div className="width-30">
-                            <h4>RM {(+total + +shipping).toFixed(2)}</h4>
+                            <h4>RM {(+total).toFixed(2)}</h4>
                         </div>
                     </div>
                 </div>
@@ -256,6 +368,9 @@ const Summary = ({ cart }) => {
     )
 }
 
-const mapStateToProps = state => ({ cart: state.cart.cart })
+const mapStateToProps = state => ({
+    cart: state.cart.cart,
+    isUserLogin: state.auth.isUserLogin
+})
 
 export default connect(mapStateToProps)(Cart)

@@ -541,7 +541,7 @@ describe.skip('Route /address/:userId: Method GET', function () {
     })
 })
 
-describe('Route /order/create: Method POST', function () {
+describe.skip('Route /order/create: Method POST', function () {
     const route = '/order/create'
 
     /**
