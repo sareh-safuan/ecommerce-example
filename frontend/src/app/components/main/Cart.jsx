@@ -109,7 +109,7 @@ class Cart extends React.Component {
     }
 
     radioHandler(e) {
-        if(e.target.tagName == 'INPUT') {
+        if(e.target.tagName === 'INPUT') {
             this.setState({
                 address_id: +e.target.value
             })

@@ -2,26 +2,13 @@ import React from 'react'
 import axios from 'axios'
 import { Card, CardBody, CardTitle, Li, Button } from '../../Core.jsx'
 
-const add = [
-    {
-        tag: 'Home Address',
-        firstAddressLine: 'Lot 89 Jalan Enggang Ampang/Ulu Industrial Estate',
-        secondAddressLine: '',
-        city: 'Klang',
-        postcode: '54200',
-        state: 'Selangor Darul Ehsan'
-    },
-    {
-        tag: 'Office Address',
-        firstAddressLine: 'Suite 12A-2-1 Menara Pan Global 8 Lorong P Ramlee',
-        secondAddressLine: 'Jalan Stesen Utama',
-        city: 'Setapak, Kuala Lumpur',
-        postcode: '50250',
-        state: 'Wilayah Persekutuan'
-    }
-]
-
 class Address extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            addresses: []
+        }
+    }
 
     componentDidMount() {
         const userId = localStorage.getItem('userId')
@@ -30,8 +17,11 @@ class Address extends React.Component {
             url: '/address/' + userId
         })
             .then(res => {
-                console.log(res)
-                // console.log()
+                if (!res.data.success) {
+                    throw new Error()
+                }
+
+                this.setState({ addresses: res.data.data })
             })
             .catch(err => {
                 throw err
@@ -39,29 +29,32 @@ class Address extends React.Component {
     }
 
     render() {
+        const { addresses } = this.state
+
         return (
             <Wrapper>
                 {
-                    add.map((a, i) => (
+                    addresses.map((addr, i) => (
                         <Li key={i}>
-                            <Card css="card-shadow">
+                            <Card className="card-shadow">
                                 <CardBody>
                                     <CardTitle>
-                                        <h4>{a.tag}</h4>
+                                        <h4>{addr.tag}</h4>
                                     </CardTitle>
                                     <div>
-                                        <p>{a.firstAddressLine}</p>
-                                        <p>{a.secondAddressLine}</p>
-                                        <p>{a.city}</p>
-                                        <p>{a.postcode}</p>
-                                        <p>{a.state}</p>
+                                        <p>{addr.address_one}</p>
+                                        <p>{addr.address_two}</p>
+                                        <p>{addr.city}</p>
+                                        <p>{addr.postcode}</p>
+                                        <div className="row-space-between">
+                                            <p>{addr.state}</p>
+                                            <Button
+                                                text="Edit"
+                                                onClick={null}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="row-end">
-                                        <Button
-                                            text="Edit"
-                                            onClick={null}
-                                        />
-                                    </div>
+
                                 </CardBody>
                             </Card>
                         </Li>

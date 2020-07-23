@@ -417,5 +417,35 @@ const OrderController = [
                 msg: 'Order is placed.'
             }
         }
+    },
+    {
+        route: ['@/:id', 'GET'],
+        fn: 'fetch',
+        request: {
+            param: {
+                id: 10
+            }
+        },
+        response: {
+            code: 200,
+            data: {
+                success: 1,
+                data: {
+                    id: 34,
+                    created_at: new Date(),
+                    products: [
+                        {
+                            img: 'Apple.jpg',
+                            name: 'Apple (S)',
+                            quantity: 4,
+                            price: 17.10 
+                        },
+                        {
+                            // more products if available
+                        }
+                    ]
+                }
+            }
+        }
     }
 ]

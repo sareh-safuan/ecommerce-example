@@ -1,66 +1,61 @@
 import React from 'react'
+import axios from 'axios'
 import { Li, Card, CardTitle, CardBody } from '../../Core.jsx'
 
-const orders = [
-    {
-        id: '#S0YP76PGHYPZEQL2ZNVZ',
-        created_at: '2020-05-15 17:20',
-        total: 141.00,
-        status: 'Delivered',
-        fruits: [
-            {
-                img: 'https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg',
-                name: 'Apple (L)',
-                quantity: 2,
-                price: 30.00
-            },
-            {
-                img: 'https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg',
-                name: 'Honey Dew (L)',
-                quantity: 1,
-                price: 81.00
-            }
-        ]
-    },
-    {
-        id: '#S0YP76PGHYPZEQL2ZNVZ',
-        created_at: '2020-05-15 17:20',
-        total: 90.00,
-        status: 'Delivered',
-        fruits: [
-            {
-                img: 'https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg',
-                name: 'Banana (S)',
-                quantity: 5,
-                price: 18.00
-            }
-        ]
-    }
-]
-
 class Order extends React.Component {
+    constructor() {
+        super()
+        this.state = { orders: [] }
+    }
+
+    componentDidMount() {
+        const userId = localStorage.getItem('userId')
+
+        axios({
+            url: '/order/' + userId
+        })
+            .then(res => {
+                if(!res.data.success) {
+                    throw new Error()
+                }
+
+                this.setState({ orders: res.data.data })
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
     render() {
+        const { orders } = this.state
+
+        if(!orders.length) {
+            return <div>Loading...</div>
+        }
+
         return (
             <Wrapper>
                 {
                     orders.map((order, i) => (
                         <Li key={i}>
-                            <Card css="card-shadow">
+                            <Card className="card-shadow">
                                 <CardBody>
                                     <CardTitle>
                                         <h5>{order.id}</h5>
                                         <small>Order On: {order.created_at}</small>
                                     </CardTitle>
                                     {
-                                        order.fruits.map((fruit, j) => (
+                                        order.products.map((product, j) => (
                                             <div className="row" key={j}>
                                                 <div className="width-10">
-                                                    <img src={fruit.img} alt="Not Found" className="img-responsive" />
+                                                    <img alt="Not Found" className="img-responsive"
+                                                        src={'http://localhost:4000/' + product.image}
+                                                    />
                                                 </div>
                                                 <div className="width-90">
                                                     <div style={{ paddingLeft: '10px' }}>
-                                                        <div>{`${fruit.name} x ${fruit.quantity}`}</div>
-                                                        <div>RM {(fruit.price).toFixed(2)}</div>
+                                                        <div>{`${product.product_name} (${product.variation_description}) x ${product.quantity}`}</div>
+                                                        <div>RM {(product.paying_price).toFixed(2)}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -68,7 +63,7 @@ class Order extends React.Component {
                                     }
                                     <div className="row-end">
                                         <div>
-                                            <div>Total: RM {(order.total).toFixed(2)}</div>
+                                            <div>Total: RM {(order.total_price_paid).toFixed(2)}</div>
                                             <div>{order.status}</div>
                                         </div>
                                     </div>
@@ -91,7 +86,5 @@ const Wrapper = ({ children }) => (
         </div>
     </div>
 )
-
-// const Fruit = ({ fruit })
 
 export default Order

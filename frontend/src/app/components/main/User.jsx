@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, Route } from 'react-router-dom'
 import Profile from './UserProfile.jsx'
 import Address from './UserAddress.jsx'
-// import Order from './UserOrder.jsx'
+import Order from './UserOrder.jsx'
 // import Security from './UserSecurity.jsx'
 
 const User = (props) => {
@@ -11,8 +11,8 @@ const User = (props) => {
                 <SideMenu />
                 <Route exact path="/user" component={Profile} />
                 <Route path="/user/address" component={Address} />
-                {/* <Route path="/user/orders" component={Order} />
-                <Route path="/user/change-password" component={Security} /> */}
+                <Route path="/user/orders" component={Order} />
+                {/* <Route path="/user/change-password" component={Security} /> */}
             </Wrapper>
         )
 }

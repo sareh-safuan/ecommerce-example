@@ -620,3 +620,22 @@ describe.skip('Route /order/create: Method POST', function () {
             })
     })
 })
+
+describe('Route /order/:id: Method GET', function () {
+    const route = '/order/1'
+
+    it('Success fetch orders', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(200)
+                expect(res.body['success']).to.equal(1)
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+})
