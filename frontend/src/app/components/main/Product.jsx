@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
 import { addToCart } from '../../controllers/redux/action'
-import { Card, CardImage, Image, CardBody, Button, Input } from '../../Core'
+import { Card, CardImage, Image, CardBody, Button, Input, Alert } from '../../Core'
 import Select from 'react-select'
 
 class Product extends React.Component {
@@ -13,12 +13,15 @@ class Product extends React.Component {
             variations: [],
             quantity: 1,
             paying_price: 0,
-            product_variation_id: 0
+            product_variation_id: 0,
+            alertType: '',
+            alertText: ''
         }
 
         this.changeHandler = this.changeHandler.bind(this)
         this.clickHandler = this.clickHandler.bind(this)
         this.inputHandler = this.inputHandler.bind(this)
+        this.closeModal = this.closeModal.bind(this)
     }
 
     componentDidMount() {
@@ -27,7 +30,11 @@ class Product extends React.Component {
             url: `/product/${id}`
         })
             .then(res => {
-                const fruit = res.data.data
+                if (!res.data.success) {
+                    throw new Error()
+                }
+
+                    const fruit = res.data.data
                 const product_variation_id = fruit.variations[0].id
                 const paying_price = fruit.variations[0].price
                 const variations = fruit.variations.map(f => {
@@ -47,7 +54,10 @@ class Product extends React.Component {
                 })
             })
             .catch(err => {
-                throw err
+                this.setState({
+                    alertType: 'alert-danger',
+                    alertText: 'Error fetching product. Please try again.'
+                })
             })
     }
 
@@ -94,6 +104,10 @@ class Product extends React.Component {
                 quantity
             }
             this.props.addToCart(cart)
+            this.setState({
+                alertType: 'alert-success',
+                alertText: 'Product added to cart.'
+            })
         }
     }
 
@@ -101,11 +115,28 @@ class Product extends React.Component {
         // TODO: add logic same as inc & dec click handler
     }
 
+    closeModal() {
+        this.setState({
+            alertType: '',
+            alertText: ''
+        })
+    }
+
     render() {
-        const { quantity, fruit, paying_price, variations } = this.state
+        const {
+            quantity, fruit, paying_price, variations, alertType, alertText
+        } = this.state
 
         if (!fruit) {
             return <h4>error 404</h4>
+        }
+
+        if (!fruit.hasOwnProperty('image') && alertType === 'alert-danger') {
+            return (
+                <Alert className={alertType}>
+                    {alertText}
+                </Alert>
+            )
         }
 
         if (!fruit.hasOwnProperty('image')) {
@@ -120,6 +151,12 @@ class Product extends React.Component {
                     </CardImage>
                 </Card>
                 <Card className="width-60">
+                    <Alert
+                        className={alertType}
+                        clickHandler={this.closeModal}
+                    >
+                        {alertText}
+                    </Alert>
                     <CardBody>
                         <h2>{fruit.product_name}</h2>
                         <p>{fruit.description}</p>

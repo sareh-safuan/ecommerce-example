@@ -2,14 +2,17 @@ import React from 'react'
 import axios from 'axios'
 // import { Link } from 'react-router-dom'
 import {
-    Card, CardImage, Image, CardBody, CardTitle, CardFooter, Button
+    Card, CardImage, Image, CardBody, CardTitle,
+    CardFooter, Button, Alert
 } from '../../Core.jsx'
 
 class Index extends React.Component {
     constructor() {
         super()
         this.state = {
-            fruits: []
+            fruits: [],
+            alertType: '',
+            alertText: ''
         }
         this.clickHandler = this.clickHandler.bind(this)
     }
@@ -23,7 +26,10 @@ class Index extends React.Component {
                 this.setState({ fruits })
             })
             .catch(err => {
-                throw err
+                this.setState({
+                    alertType: 'alert-danger',
+                    alertText: 'Unxpected error. Please refresh.'
+                })
             })
     }
 
@@ -35,8 +41,16 @@ class Index extends React.Component {
     }
 
     render() {
-        const { fruits } = this.state
-        
+        const { fruits, alertType, alertText } = this.state
+
+        if (alertType === 'alert-danger') {
+            return (
+                <Alert className={alertType}>
+                    {alertText}
+                </Alert>
+            )
+        }
+
         if (!fruits.length) {
             return <div>Loading...</div>
         }

@@ -30,7 +30,7 @@ export const Button = (props) => {
         return (
             <button
                 className={className}
-                style=    {props.style}
+                style={props.style}
                 disabled
             >
                 Loading...
@@ -41,9 +41,9 @@ export const Button = (props) => {
     return (
         <button
             className={className}
-            onClick=  {props.clickHandler}
-            style=    {props.style}
-            id=       {props.id}
+            onClick={props.clickHandler}
+            style={props.style}
+            id={props.id}
         >
             {props.text}
         </button>
@@ -57,8 +57,8 @@ export const Image = (props) => {
     return (
         <img
             className={className}
-            src=      {props.src}
-            alt=      {props.alt}
+            src={props.src}
+            alt={props.alt}
         />
     )
 }
@@ -68,9 +68,9 @@ export const Label = (props) => {
         "label-block " + props.className : "label-block"
 
     return (
-        <label 
+        <label
             className={className}
-            htmlFor=  {props.htmlFor}>
+            htmlFor={props.htmlFor}>
             {props.text}
         </label>
     )
@@ -82,13 +82,13 @@ export const Input = (props) => {
 
     return (
         <input
-            className=  {className}
-            type=       {props.type}
-            name=       {props.name}
-            value=      {props.value}
-            style=      {props.style}
+            className={className}
+            type={props.type}
+            name={props.name}
+            value={props.value}
+            style={props.style}
             placeholder={props.placeholder}
-            onChange=   {props.inputHandler}
+            onChange={props.inputHandler}
         />
     )
 }
@@ -106,15 +106,15 @@ export const BlockInput = (props) => {
     return (
         <div style={{ position: 'relative' }} >
             <input
-                className=  {className}
-                type=       {props.type}
-                name=       {props.name}
-                value=      {props.field.value}
-                style=      {props.style}
+                className={className}
+                type={props.type}
+                name={props.name}
+                value={props.field.value}
+                style={props.style}
                 placeholder={props.placeholder}
-                onChange=   {props.inputHandler}
+                onChange={props.inputHandler}
             />
-            { tooltip }
+            {tooltip}
         </div>
     )
 }
@@ -124,9 +124,9 @@ export const Card = (props) => {
         "card " + props.className : "card"
 
     return (
-        <div 
+        <div
             className={className}
-            style=    {props.style}
+            style={props.style}
         >
             {props.children}
         </div>
@@ -171,9 +171,9 @@ export const CardFooter = (props) => {
         "card-footer " + props.className : "card-footer"
 
     return (
-        <div 
-            className={className} 
-            style=    {props.style}
+        <div
+            className={className}
+            style={props.style}
         >
             {props.children}
         </div>
@@ -181,21 +181,24 @@ export const CardFooter = (props) => {
 }
 
 export const Alert = (props) => {
-    if(!props.className) return <span></span>
+    if (!props.className) return <span></span>
 
     const className = "alert " + props.className
+    const closeAlert = props.clickHandler ? (
+        <span
+            className="alert-close"
+            onClick={props.clickHandler}
+        >
+            &times;
+        </span>
+    ) : (<span></span>)
 
     return (
         <div
             className={className}
-            style=    {props.style}
+            style={props.style}
         >
-            <span
-                className="alert-close"
-                onClick=  {props.clickHandler}
-            >
-                &times;
-            </span>
+            {closeAlert}
             {props.children}
         </div>
     )

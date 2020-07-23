@@ -1,16 +1,16 @@
-import { ADD_TO_CART, SUCCESS_LOGIN } from './action'
+import { ADD_TO_CART, SUCCESS_LOGIN, EMPTY_THE_CART } from './action'
 import { combineReducers } from 'redux'
 
 const cartState = {
     cart: [
-        {
-            product_name: 'Apple',
-            image: 'apple.jpg',
-            product_id: 1,
-            product_variation_id: 41,
-            paying_price: 18.40,
-            quantity: 1
-        }
+        // {
+        //     product_name: 'Apple',
+        //     image: 'apple.jpg',
+        //     product_id: 1,
+        //     product_variation_id: 41,
+        //     paying_price: 18.40,
+        //     quantity: 1
+        // }
     ]
 }
 
@@ -23,7 +23,12 @@ function cartReducer(state = cartState, action) {
                     action.cart
                 ]
             }
-
+        
+        case EMPTY_THE_CART:
+            return {
+                cart: []
+            }
+            
         default:
             return state
     }

@@ -5,14 +5,14 @@ import { Link } from 'react-router-dom'
 import Select from 'react-select'
 import validate from 'validate.js'
 import constraint from '../../controllers/constraint.js'
-import { BlockInput, Label, Button, Ul, Li } from '../../Core.jsx'
+import { BlockInput, Label, Button, Ul, Li, Alert } from '../../Core.jsx'
+import { emptyTheCart } from '../../controllers/redux/action.js'
 
 /**
  * TODO:
  *  1) year constraint more than current year
  *  2) CC should cover more CC provider: VISA MC AMEX...
- *  3) 
- * 
+ *  3) validation before POST to api endpoint
  */
 
 class Cart extends React.Component {
@@ -23,14 +23,17 @@ class Cart extends React.Component {
             expiry_year: { value: '2022', error: '' },
             cvv: { value: '101', error: '' },
             addressses: [],
-            address_id: 0,
+            address_id: null,
             total_price_paid: 0,
-            shipping_fee: 5
+            shipping_fee: 5,
+            alertType: '',
+            alertText: ''
         }
 
         this.inputHandler = this.inputHandler.bind(this)
         this.clickHandler = this.clickHandler.bind(this)
         this.radioHandler = this.radioHandler.bind(this)
+        this.closeModal = this.closeModal.bind(this)
     }
 
     componentDidMount() {
@@ -39,7 +42,7 @@ class Cart extends React.Component {
         const { shipping_fee } = this.state
         const reducer = (acc, cur) => acc + cur
         const total_price_paid = cart
-            .map(c => c.paying_price * c.quantity )
+            .map(c => c.paying_price * c.quantity)
             .reduce(reducer, shipping_fee)
 
         if (isUserLogin && userId) {
@@ -58,7 +61,10 @@ class Cart extends React.Component {
                     })
                 })
                 .catch(err => {
-                    console.log(err)
+                    this.setState({
+                        alertType: 'alert-danger',
+                        alertText: 'Unexpected error. Please try again.'
+                    })
                 })
         }
     }
@@ -88,7 +94,7 @@ class Cart extends React.Component {
             quantity: _.quantity
         }))
 
-        // TODO: validation before POST 
+        // 3) in todo list
 
         axios({
             method: 'POST',
@@ -100,27 +106,46 @@ class Cart extends React.Component {
                 orders
             }
         })
-        .then(res => {
-            console.log(res)
-        })
-        .catch(err => {
-            console.log(err)
-        })
+            .then(res => {
+                if (!res.data.success) {
+                    throw new Error()
+                }
+
+                this.props.emptyTheCart()
+                this.setState({
+                    alertType: 'alert-success',
+                    alertText: 'Your order has been successfully placed.'
+                })
+            })
+            .catch(err => {
+                console.log(err)
+                this.setState({
+                    alertType: 'alert-danger',
+                    alertText: 'Error when placing the order. Please try again.'
+                })
+            })
     }
 
     radioHandler(e) {
-        if(e.target.tagName === 'INPUT') {
+        if (e.target.tagName === 'INPUT') {
             this.setState({
                 address_id: +e.target.value
             })
         }
     }
 
+    closeModal() {
+        this.setState({
+            alertType: '',
+            alertText: ''
+        })
+    }
+
     render() {
         const { cart, isUserLogin } = this.props
         const {
             credit_card, expiry_year, cvv, addressses,
-            total_price_paid, shipping_fee            
+            total_price_paid, shipping_fee, alertText, alertType
         } = this.state
 
         const selectStyle = {
@@ -156,13 +181,34 @@ class Cart extends React.Component {
             { value: 12, label: 'December' }
         ]
 
+        if (!cart.length && alertType === 'alert-success') {
+            return (
+                <Alert
+                    className={alertType}
+                    clickHandler={this.closeModal}    
+                >
+                    {alertText}
+                </Alert>
+            )
+        }
+
         if (!cart.length) {
             return <h4>Your cart is empty</h4>
         }
 
+        if (cart.length && alertType === 'alert-danger') {
+            return (
+                <Alert className={alertType}>
+                    {alertText}
+                </Alert>
+            )
+        }
+
         if (!isUserLogin) {
             return (
-                <Link to="/sign-in?reff=cart">Please sign in before continue</Link>
+                <Link to="/sign-in?reff=cart">
+                    Please sign in before continue
+                </Link>
             )
         }
 
@@ -175,6 +221,9 @@ class Cart extends React.Component {
         return (
             <Wrapper>
                 <Checkout>
+                    <Alert className={alertType}>
+                        {alertText}
+                    </Alert>
                     <List header="Shipping Address">
                         <div className="checkout-step-body" onClick={this.radioHandler}>
                             <Ul>
@@ -245,7 +294,7 @@ class Cart extends React.Component {
                                 <div className="width-30">
                                     <Label htmlFor="cvv" text="CVV" />
                                     <BlockInput
-                                        type="text"
+                                        type="password"
                                         name="cvv"
                                         className="width-70"
                                         field={cvv}
@@ -373,4 +422,10 @@ const mapStateToProps = state => ({
     isUserLogin: state.auth.isUserLogin
 })
 
-export default connect(mapStateToProps)(Cart)
+const mapDispatchToProps = dispatch => {
+    return {
+        emptyTheCart: () => dispatch(emptyTheCart())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cart)
