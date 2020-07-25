@@ -1,19 +1,22 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
 import { registerUser, loginUser } from '../validator/userValidator'
+import {isLogin} from '../middleware/auth'
 import UserModel from '../../database/models/userModel'
 import errorHandler from '../../utils/errorHandler'
 
 const router = express.Router()
 const User = new UserModel()
 
-router.get('/', async (req: any, res: any) => {
+router.get('/', isLogin, async (req: any, res: any) => {
 
     try {
-
         // const user = await User.findBy('id', 11)
-        console.log(req.session.user)
-        res.send("user")
+        // console.log(req.session.user)
+        res.send({
+            success: 1,
+            data: 'can access'
+        })
 
     } catch (err) {
         errorHandler(req, res, err.message)

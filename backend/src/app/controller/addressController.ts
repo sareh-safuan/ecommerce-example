@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { addAddress } from '../validator/addressValidator'
+import { isLogin, accessControl } from '../middleware/auth'
 import AddressModel from '../../database/models/addressModel'
 import errorHandler from '../../utils/errorHandler'
 
@@ -22,7 +23,7 @@ router.get('/', async (req: any, res: any) => {
 
 router.post(
     '/create',
-    [addAddress],
+    [isLogin, addAddress],
     async (req: any, res: any) => {
 
         const {
@@ -55,6 +56,7 @@ router.post(
 
 router.get(
     '/:id',
+    [isLogin, accessControl],
     async (req: any, res: any) => {
 
         try {

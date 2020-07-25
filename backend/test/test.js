@@ -8,52 +8,52 @@ const expect = chai.expect
 const baseUrl = 'http://localhost:4000'
 chai.use(chaiHttp)
 
-const user = function () {
-    const data = {
-        first_name: faker.name.firstName(),
-        last_name: faker.name.lastName(),
-        email: faker.internet.email(),
-        phone_number: faker.phone.phoneNumber(),
-        password: faker.internet.password(),
-        usergroup_id: 1
-    }
-
-    const missing = function () {
-        for (let key in data) {
-            const i = Math.floor(Math.random() * 2)
-            if (i) {
-                delete data[key]
-            }
-        }
-
-        return data
-    }
-
-    const invalid = function () {
-        for (let key in data) {
-            const i = Math.floor(Math.random() * 2)
-            if (i) {
-                data[key] = ""
-            }
-        }
-
-        return data
-    }
-
-    const ok = function () {
-        data['password_confirmation'] = data.password
-        return data
-    }
-
-    return {
-        missing,
-        invalid,
-        ok
-    }
-}
 
 describe.skip('Route /user/register: Method POST', function () {
     const route = '/user/register'
+    const user = function () {
+        const data = {
+            first_name: faker.name.firstName(),
+            last_name: faker.name.lastName(),
+            email: faker.internet.email(),
+            phone_number: faker.phone.phoneNumber(),
+            password: faker.internet.password(),
+            usergroup_id: 1
+        }
+
+        const missing = function () {
+            for (let key in data) {
+                const i = Math.floor(Math.random() * 2)
+                if (i) {
+                    delete data[key]
+                }
+            }
+
+            return data
+        }
+
+        const invalid = function () {
+            for (let key in data) {
+                const i = Math.floor(Math.random() * 2)
+                if (i) {
+                    data[key] = ""
+                }
+            }
+
+            return data
+        }
+
+        const ok = function () {
+            data['password_confirmation'] = data.password
+            return data
+        }
+
+        return {
+            missing,
+            invalid,
+            ok
+        }
+    }
 
     it('Missing all or some required fields', function (done) {
         const data = user().missing()
@@ -95,7 +95,7 @@ describe.skip('Route /user/register: Method POST', function () {
             .send({
                 first_name: "Carlynne",
                 last_name: "Antonchik",
-                email: "cantonchik0@blogtalkradio.com",
+                email: "ali@email.com",
                 phone_number: "6001730216",
                 password: 'mysecretpassword',
                 password_confirmation: 'mysecretpassword',
@@ -130,6 +130,7 @@ describe.skip('Route /user/register: Method POST', function () {
             })
     })
 })
+
 
 describe.skip('Route /user/login: Method POST', function () {
     const route = '/user/login'
@@ -230,9 +231,9 @@ describe.skip('Route /user/login: Method POST', function () {
     })
 })
 
+
 describe.skip('Route /product/create: Method POST', function () {
     const route = '/product/create'
-
     /**
      * 1) image is not uploaded -DONE
      * 2) missing all product informations -DONE
@@ -305,9 +306,9 @@ describe.skip('Route /product/create: Method POST', function () {
     })
 })
 
+
 describe.skip('Route /product/create-variation: Method POST', function () {
     const route = '/product/create-variation'
-
     /**
      * 1) Missing all required field
      * 2) Missing some required field
@@ -400,6 +401,7 @@ describe.skip('Route /product/create-variation: Method POST', function () {
     })
 })
 
+
 describe.skip('Route /product: Method GET', function () {
     const route = '/product'
 
@@ -420,6 +422,7 @@ describe.skip('Route /product: Method GET', function () {
             })
     })
 })
+
 
 describe.skip('Route /product/:id: Method GET', function () {
     const route = '/product/1'
@@ -444,20 +447,59 @@ describe.skip('Route /product/:id: Method GET', function () {
     })
 })
 
-describe.skip('Route /address/create: Method POST', function () {
-    const route = '/address/create'
 
+describe.skip('Route /address/create: Method POST', function () {
     /**
+     * 0) Not sign in
      * 1) Missing all required fields
      * 2) Missing some of required fields -KIV
      * 3) Success address added - address_two empty string 
      * 4) Success address added - address_two included
      */
 
+    const route = '/address/create'
+    let cookie = ''
+    let user = {}
+
+    before(function (done) {
+        chai
+            .request(baseUrl)
+            .post('/user/login')
+            .send({
+                email: 'ali@email.com',
+                password: 'secret123'
+            })
+            .then(function (res) {
+                cookie = res.header['set-cookie']
+                user = res.body.data
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Not sign in', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({})
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(401)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
     it('Missing all required', function (done) {
         chai
             .request(baseUrl)
             .post(route)
+            .set('cookie', cookie)
             .send({})
             .then(res => {
                 expect(res).to.be.json
@@ -474,8 +516,9 @@ describe.skip('Route /address/create: Method POST', function () {
         chai
             .request(baseUrl)
             .post(route)
+            .set('cookie', cookie)
             .send({
-                user_id: 1,
+                user_id: user.id,
                 tag: 'Home Address #1',
                 address_one: faker.fake('{{address.streetName}}, {{address.streetAddress}}'),
                 address_two: '',
@@ -499,8 +542,9 @@ describe.skip('Route /address/create: Method POST', function () {
         chai
             .request(baseUrl)
             .post(route)
+            .set('cookie', cookie)
             .send({
-                user_id: 1,
+                user_id: user.id,
                 tag: 'Home Address #2',
                 address_one: faker.fake('{{address.streetName}}, {{address.streetAddress}}'),
                 address_two: faker.address.secondaryAddress,
@@ -521,13 +565,68 @@ describe.skip('Route /address/create: Method POST', function () {
     })
 })
 
+
 describe.skip('Route /address/:userId: Method GET', function () {
-    const route = '/address/1'
+    let cookie = ''
+    let user = {}
+    let route = '/address/'
+
+    before(function (done) {
+        chai
+            .request(baseUrl)
+            .post('/user/login')
+            .send({
+                email: 'ali@email.com',
+                password: 'secret123'
+            })
+            .then(function (res) {
+                cookie = res.header['set-cookie']
+                user = res.body.data
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Not sign in', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route + user.id)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(401)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Please login before continue.')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Forbidden: trying access other user address', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route + '1')
+            .set('cookie', cookie)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(403)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Access is forbidden.')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
 
     it('Success request', function (done) {
         chai
             .request(baseUrl)
-            .get(route)
+            .get(route + user.id)
+            .set('cookie', cookie)
             .then(res => {
                 expect(res).to.be.json
                 expect(res).to.have.status(200)
@@ -541,10 +640,12 @@ describe.skip('Route /address/:userId: Method GET', function () {
     })
 })
 
-describe.skip('Route /order/create: Method POST', function () {
+
+describe('Route /order/create: Method POST', function () {
     const route = '/order/create'
 
     /**
+     * 0) Not sign in
      * 1) Missing all required fields
      * 2) Incomplete/requirements failed required fields - KIV
      * 3) Success order
@@ -621,7 +722,8 @@ describe.skip('Route /order/create: Method POST', function () {
     })
 })
 
-describe('Route /order/:id: Method GET', function () {
+
+describe.skip('Route /order/:id: Method GET', function () {
     const route = '/order/1'
 
     it('Success fetch orders', function (done) {

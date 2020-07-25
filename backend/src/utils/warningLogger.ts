@@ -7,7 +7,7 @@ interface ValidationError {
     location: 'string'
 }
 
-const warningLogger = (errors: Array<ValidationError>| any) => {
+const warningLogger = (errors: Array<ValidationError> | any) => {
     let message = ''
     errors.forEach((obj: any) => {
         message += `value=${obj.value},msg=${obj.msg},param=${obj.param},location=${obj.location}|`
