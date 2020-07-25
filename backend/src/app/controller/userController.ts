@@ -98,4 +98,10 @@ router.post(
         }
     })
 
+router.get('/:id', async (req: any, res: any) => {})
+
+router.put('update-profile/:id', async (req: any, res: any) => {})
+
+router.put('change-password/:id', async (req: any, res: any) => {})
+
 export default router

@@ -93,7 +93,7 @@ const UserController = [
         }
     },
     {
-        route: ['@/change-password', 'PUT'],
+        route: ['@/change-password/:id', 'PUT'],
         fn: 'changePassword',
         request: {
             param: {
@@ -385,6 +385,12 @@ const AddressController = [
                 ]
             }
         }
+    },
+    {
+        // update address
+    },
+    {
+        // delete address
     }
 ]
 
@@ -447,5 +453,8 @@ const OrderController = [
                 }
             }
         }
+    },
+    {
+        // cancelled order
     }
 ]

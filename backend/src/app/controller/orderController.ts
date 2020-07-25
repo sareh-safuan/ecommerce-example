@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { createOrder } from '../validator/orderValidator'
+import { isLogin, accessControl } from '../middleware/auth'
 import OrderModel from '../../database/models/orderModel'
 import OrderDetailModel from '../../database/models/orderDetailModel'
 import errorHandler from '../../utils/errorHandler'
@@ -28,7 +29,7 @@ router.get('/', async (req: any, res: any) => {
 
 router.post(
     '/create',
-    [createOrder],
+    [isLogin, createOrder],
     async (req: any, res: any) => {
 
         try {
@@ -56,14 +57,15 @@ router.post(
     })
 
 router.get(
-    '/:userId',
+    '/:id',
+    [isLogin, accessControl],
     async (req: any, res: any) => {
 
         try {
 
-            const { userId } = req.params
+            const { id } = req.params
             const Order = new OrderModel()
-            const orders = await Order.findBy('user_id', userId)
+            const orders = await Order.findBy('user_id', id)
             const orderIds = orders.map(_ => _.id)
             const OrderDetail = new OrderDetailModel()
             const orderDetails = await OrderDetail

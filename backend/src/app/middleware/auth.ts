@@ -15,7 +15,7 @@ export const accessControl = (req: any, res: any, next: any) => {
 
     const { id } = req.session.user
     const { id: param_id } = req.params
-    
+
     if (id !== +param_id) {
         return res.status(403).json({
             success: 0,

@@ -641,9 +641,7 @@ describe.skip('Route /address/:userId: Method GET', function () {
 })
 
 
-describe('Route /order/create: Method POST', function () {
-    const route = '/order/create'
-
+describe.skip('Route /order/create: Method POST', function () {
     /**
      * 0) Not sign in
      * 1) Missing all required fields
@@ -651,10 +649,49 @@ describe('Route /order/create: Method POST', function () {
      * 3) Success order
      */
 
+    let cookie = ''
+    let user = {}
+    const route = '/order/create'
+
+    before(function (done) {
+        chai
+            .request(baseUrl)
+            .post('/user/login')
+            .send({
+                email: 'ali@email.com',
+                password: 'secret123'
+            })
+            .then(function (res) {
+                cookie = res.header['set-cookie']
+                user = res.body.data
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Not sign in', function (done) {
+        chai
+            .request(baseUrl)
+            .post(route)
+            .send({})
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(401)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
     it('Missing all required fields', function (done) {
         chai
             .request(baseUrl)
             .post(route)
+            .set('cookie', cookie)
             .send({})
             .then(res => {
                 expect(res).to.be.json
@@ -671,8 +708,9 @@ describe('Route /order/create: Method POST', function () {
         chai
             .request(baseUrl)
             .post(route)
+            .set('cookie', cookie)
             .send({
-                user_id: 1,
+                user_id: user.id,
                 address_id: 1
             })
             .then(res => {
@@ -690,8 +728,9 @@ describe('Route /order/create: Method POST', function () {
         chai
             .request(baseUrl)
             .post(route)
+            .set('cookie', cookie)
             .send({
-                user_id: 1,
+                user_id: user.id,
                 address_id: 1,
                 total_price_paid: 94.98,
                 orders: [
@@ -723,13 +762,67 @@ describe('Route /order/create: Method POST', function () {
 })
 
 
-describe.skip('Route /order/:id: Method GET', function () {
-    const route = '/order/1'
+describe('Route /order/:id: Method GET', function () {
+
+    let cookie = ''
+    let user = {}
+    let route = '/order/'
+
+    before(function (done) {
+        chai
+            .request(baseUrl)
+            .post('/user/login')
+            .send({
+                email: 'ali@email.com',
+                password: 'secret123'
+            })
+            .then(function (res) {
+                cookie = res.header['set-cookie']
+                user = res.body.data
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Not sign in', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route + user.id)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(401)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
+
+    it('Forbidden: trying access other user order', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route + '1')
+            .set('cookie', cookie)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(403)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Access is forbidden.')
+                done()
+            })
+            .catch(err => {
+                throw err
+            })
+    })
 
     it('Success fetch orders', function (done) {
         chai
             .request(baseUrl)
-            .get(route)
+            .get(route + user.id)
+            .set('cookie', cookie)
             .then(res => {
                 expect(res).to.be.json
                 expect(res).to.have.status(200)

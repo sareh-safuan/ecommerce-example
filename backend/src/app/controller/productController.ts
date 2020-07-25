@@ -140,4 +140,10 @@ router.get(
 
     })
 
+router.put('/update/:id', async (req: any, res: any) => {})
+
+router.put('update-variation/:id', async (req: any, res: any) => {})
+
+
+
 export default router
