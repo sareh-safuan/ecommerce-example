@@ -61,8 +61,7 @@ const UserController = [
                     lastName: 'Doe',
                     email: 'johndoe@dmmy.com',
                     phoneNumber: 11112222333,
-                    avatar: 'myprofileimage.jpg',
-                    usergroup: 'customer'
+                    avatar: 'myprofileimage.jpg'
                 }
             }
         }

@@ -1,17 +1,28 @@
 import React from 'react'
 import axios from 'axios'
-import { Card, CardBody, CardTitle, Li, Button } from '../../Core.jsx'
+import { Card, CardBody, CardTitle, Li, Button, Alert } from '../../Core.jsx'
 
 class Address extends React.Component {
     constructor() {
         super()
         this.state = {
-            addresses: []
+            addresses: [],
+            alertType: '',
+            alertText: ''
         }
     }
 
     componentDidMount() {
         const userId = localStorage.getItem('userId')
+
+        if (!userId) {
+            this.setState({
+                alertType: 'alert-danger',
+                alertText: 'Unexpected error.'
+            })
+            return
+        }
+
         axios({
             method: 'GET',
             url: '/address/' + userId
@@ -24,15 +35,25 @@ class Address extends React.Component {
                 this.setState({ addresses: res.data.data })
             })
             .catch(err => {
-                throw err
+                this.setState({
+                    alertType: 'alert-danger',
+                    alertText: 'Access forbidden.'
+                })
             })
     }
 
     render() {
-        const { addresses } = this.state
+        const { addresses, alertType, alertText } = this.state
+
+        if (!addresses.length && alertType === '') {
+            return <div>Loading...</div>
+        }
 
         return (
             <Wrapper>
+                <Alert className={alertType}>
+                    {alertText}
+                </Alert>
                 {
                     addresses.map((addr, i) => (
                         <Li key={i}>

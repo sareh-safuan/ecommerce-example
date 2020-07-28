@@ -35,7 +35,7 @@ function cartReducer(state = cartState, action) {
 }
 
 const authState = {
-    isUserLogin: true
+    isUserLogin: true   
 }
 
 function authReducer(state = authState, action) {

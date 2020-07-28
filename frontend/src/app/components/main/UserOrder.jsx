@@ -1,40 +1,58 @@
 import React from 'react'
 import axios from 'axios'
-import { Li, Card, CardTitle, CardBody } from '../../Core.jsx'
+import { Li, Card, CardTitle, CardBody, Alert } from '../../Core.jsx'
 
 class Order extends React.Component {
     constructor() {
         super()
-        this.state = { orders: [] }
+        this.state = {
+            orders: [],
+            alertType: '',
+            alertText: ''
+        }
     }
 
     componentDidMount() {
         const userId = localStorage.getItem('userId')
 
+        if (!userId) {
+            this.setState({
+                alertType: 'alert-danger',
+                alertText: 'Unexpected error.'
+            })
+            return
+        }
+
         axios({
             url: '/order/' + userId
         })
             .then(res => {
-                if(!res.data.success) {
+                if (!res.data.success) {
                     throw new Error()
                 }
 
                 this.setState({ orders: res.data.data })
             })
             .catch(err => {
-                console.log(err)
+                this.setState({
+                    alertType: 'alert-danger',
+                    alertText: 'Access forbidden.'
+                })
             })
     }
 
     render() {
-        const { orders } = this.state
+        const { orders, alertType, alertText } = this.state
 
-        if(!orders.length) {
+        if (!orders.length && alertType === '') {
             return <div>Loading...</div>
         }
 
         return (
             <Wrapper>
+                <Alert className={alertType}>
+                    {alertText}
+                </Alert>
                 {
                     orders.map((order, i) => (
                         <Li key={i}>

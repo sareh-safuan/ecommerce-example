@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { body, validationResult } from 'express-validator'
+import bcrypt from 'bcrypt'
 import UserModel from '../../database/models/userModel'
 import errorHandler from '../../utils/errorHandler'
 import warningLogger from '../../utils/warningLogger'
@@ -87,6 +88,68 @@ export const loginUser = (req: Request, res: Response, next: NextFunction) => {
             .isLength({ min: 8 }).withMessage('Password should have more than 8 characters')
             .trim()
             .run(req),
+    ])
+        .then(() => {
+            const errors = validationResult(req)
+
+            if (!errors.isEmpty()) {
+                warningLogger(errors.array())
+
+                return res.status(400).json({
+                    success: 0,
+                    msg: errors.array()
+                })
+            }
+
+            next()
+        })
+        .catch(err => {
+            errorHandler(req, res, err.message)
+        })
+}
+
+export const changePassword = (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id
+    Promise.all([
+        body('currentPassword')
+            .trim()
+            .notEmpty().withMessage('Password is required')
+            .isLength({ min: 8 }).withMessage('Password should have more than 8 characters')
+            .custom((value) => {
+                return new UserModel().findBy('id', id)
+                    .then(user => {
+                        const { hash } = user[0]
+
+                        return bcrypt.compare(value, hash)
+                    })
+                    .then(isMatch => {
+                        if (!isMatch) {
+                            return Promise.reject('Current password is incorrect.')
+                        }
+                    })
+            })
+            .run(req),
+        body('newPassword')
+            .trim()
+            .notEmpty().withMessage('New password is required')
+            .isLength({ min: 8 }).withMessage('Password should have more than 8 characters')
+            .custom((value, { req }) => {
+                if (value === req.body.currentPassword) {
+                    throw new Error('New password cannot same as current password.')
+                }
+
+                return true
+            })
+            .run(req),
+        body('newPasswordConfirmation')
+            .custom((value, { req }) => {
+                if (value !== req.body.newPassword) {
+                    throw new Error('Password confirmation not matched with password.')
+                }
+
+                return true
+            })
+            .run(req)
     ])
         .then(() => {
             const errors = validationResult(req)

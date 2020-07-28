@@ -1,12 +1,11 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
-import { registerUser, loginUser } from '../validator/userValidator'
-import {isLogin} from '../middleware/auth'
+import { registerUser, loginUser, changePassword } from '../validator/userValidator'
+import {isLogin, accessControl} from '../middleware/auth'
 import UserModel from '../../database/models/userModel'
 import errorHandler from '../../utils/errorHandler'
 
 const router = express.Router()
-const User = new UserModel()
 
 router.get('/', isLogin, async (req: any, res: any) => {
 
@@ -39,7 +38,9 @@ router.post(
         const saltRound = process.env.SALT_ROUND as string
 
         try {
+
             const hash = await bcrypt.hash(password, +saltRound)
+            const User = new UserModel()
             await User.save({
                 first_name,
                 last_name,
@@ -69,6 +70,7 @@ router.post(
 
         try {
 
+            const User = new UserModel()
             const user = await User.findBy('email', email)
             if (!user.length) {
                 return res.status(404).json({
@@ -98,10 +100,59 @@ router.post(
         }
     })
 
-router.get('/:id', async (req: any, res: any) => {})
+router.get(
+    '/:id',
+    [isLogin, accessControl],
+    async (req: any, res: any) => {
 
-router.put('update-profile/:id', async (req: any, res: any) => {})
+    try {
+        
+        const { id } = req.params
+        const User = new UserModel()
+        const user = await User.findBy('id', id)
 
-router.put('change-password/:id', async (req: any, res: any) => {})
+        if (!user.length) {
+            throw new Error('User not found.')
+        }
+
+        res.status(200).json({
+            success: 1,
+            data: {
+
+            }
+        })
+
+    } catch (err) {
+        errorHandler(req, res, err.message)
+    }
+})
+
+router.put('/update-profile/:id', async (req: any, res: any) => {})
+
+router.put(
+    '/change-password/:id',
+    [isLogin, accessControl, changePassword],
+    async (req: any, res: any) => {
+        
+        try {
+            
+            const saltRound = process.env.SALT_ROUND as string
+            const password = req.body.newPassword
+            const hash = await bcrypt.hash(password, +saltRound)
+            const User = new UserModel()
+            await User.update(
+                { id: req.params.id },
+                { hash }
+            )
+
+            res.status(200).json({
+                success: 1,
+                msg: 'Password changed.'
+            })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)
+        }
+    })
 
 export default router

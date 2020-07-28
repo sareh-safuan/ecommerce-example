@@ -68,7 +68,7 @@ describe.skip('Route /user/register: Method POST', function () {
                 done()
             })
             .catch(function (err) {
-                throw err
+                console.log(err)
             })
 
     })
@@ -85,7 +85,7 @@ describe.skip('Route /user/register: Method POST', function () {
                 done()
             })
             .catch(function (err) {
-                throw err
+                console.log(err)
             })
     })
 
@@ -108,7 +108,7 @@ describe.skip('Route /user/register: Method POST', function () {
                 done()
             })
             .catch(function (err) {
-                throw err
+                console.log(err)
             })
     })
 
@@ -126,7 +126,7 @@ describe.skip('Route /user/register: Method POST', function () {
                 done()
             })
             .catch(function (err) {
-                throw err
+                console.log(err)
             })
     })
 })
@@ -167,7 +167,7 @@ describe.skip('Route /user/login: Method POST', function () {
                 done()
             })
             .catch(function (err) {
-                throw err
+                console.log(err)
             })
     })
 
@@ -187,7 +187,7 @@ describe.skip('Route /user/login: Method POST', function () {
                 done()
             })
             .catch(function (err) {
-                throw err
+                console.log(err)
             })
     })
 
@@ -207,7 +207,7 @@ describe.skip('Route /user/login: Method POST', function () {
                 done()
             })
             .catch(function (err) {
-                throw err
+                console.log(err)
             })
     })
 
@@ -256,7 +256,7 @@ describe.skip('Route /product/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -277,7 +277,7 @@ describe.skip('Route /product/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -301,7 +301,7 @@ describe.skip('Route /product/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 })
@@ -328,7 +328,7 @@ describe.skip('Route /product/create-variation: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -358,7 +358,7 @@ describe.skip('Route /product/create-variation: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -396,7 +396,7 @@ describe.skip('Route /product/create-variation: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 })
@@ -418,7 +418,7 @@ describe.skip('Route /product: Method GET', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 })
@@ -442,7 +442,7 @@ describe.skip('Route /product/:id: Method GET', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 })
@@ -475,7 +475,7 @@ describe.skip('Route /address/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -491,7 +491,7 @@ describe.skip('Route /address/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -508,7 +508,7 @@ describe.skip('Route /address/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -534,7 +534,7 @@ describe.skip('Route /address/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -560,7 +560,7 @@ describe.skip('Route /address/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 })
@@ -585,7 +585,7 @@ describe.skip('Route /address/:userId: Method GET', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -601,7 +601,7 @@ describe.skip('Route /address/:userId: Method GET', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -618,7 +618,7 @@ describe.skip('Route /address/:userId: Method GET', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -635,7 +635,7 @@ describe.skip('Route /address/:userId: Method GET', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 })
@@ -667,7 +667,7 @@ describe.skip('Route /order/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -683,7 +683,7 @@ describe.skip('Route /order/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -700,7 +700,7 @@ describe.skip('Route /order/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -720,7 +720,7 @@ describe.skip('Route /order/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -756,13 +756,13 @@ describe.skip('Route /order/create: Method POST', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 })
 
 
-describe('Route /order/:id: Method GET', function () {
+describe.skip('Route /order/:id: Method GET', function () {
 
     let cookie = ''
     let user = {}
@@ -782,7 +782,7 @@ describe('Route /order/:id: Method GET', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -797,7 +797,7 @@ describe('Route /order/:id: Method GET', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -814,7 +814,7 @@ describe('Route /order/:id: Method GET', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
             })
     })
 
@@ -830,7 +830,241 @@ describe('Route /order/:id: Method GET', function () {
                 done()
             })
             .catch(err => {
-                throw err
+                console.log(err)
+            })
+    })
+})
+
+
+describe.skip('Route /user/:id: Method GET', function () {
+    let cookie = ''
+    let user = {}
+    let route = '/user/'
+
+    before(function (done) {
+        chai
+            .request(baseUrl)
+            .post('/user/login')
+            .send({
+                email: 'ali@email.com',
+                password: 'secret123'
+            })
+            .then(function (res) {
+                cookie = res.header['set-cookie']
+                user = res.body.data
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Not sign in', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route + user.id)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(401)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Please login before continue.')
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Trying access another user profile', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route + '1')
+            .set('cookie', cookie)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(403)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Access is forbidden.')
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Success request', function (done) {
+        chai
+            .request(baseUrl)
+            .get(route + user.id)
+            .set('cookie', cookie)
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(200)
+                expect(res.body['success']).to.equal(1)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+})
+
+describe('Route /user/change-password/:id: Method PUT', function () {
+    let cookie = ''
+    let user = {}
+    let route = '/user/change-password/'
+
+    before(function (done) {
+        chai
+            .request(baseUrl)
+            .post('/user/login')
+            .send({
+                email: 'ali@email.com',
+                password: 'secret123'
+            })
+            .then(function (res) {
+                cookie = res.header['set-cookie']
+                user = res.body.data
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Not sign in', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .send({})
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(401)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Please login before continue.')
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Trying updating other user password', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + '1')
+            .set('cookie', cookie)
+            .send({})
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(403)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Access is forbidden.')
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Missing all required fields', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .send({})
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Password not meet requirement', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .send({
+                currentPassword: 'secret123',
+                newPassword: 'secret',
+                newPasswordConfirmation: 'secret'
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Current password is incorrect', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .send({
+                currentPassword: 'notmypassword',
+                newPassword: 'secretprolly',
+                newPasswordConfirmation: 'secretprolly'
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('New password same as current password', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .send({
+                currentPassword: 'secret123',
+                newPassword: 'secret123',
+                newPasswordConfirmation: 'secret123'
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Success password change', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .send({
+                currentPassword: 'secret123',
+                newPassword: 'newpassword',
+                newPasswordConfirmation: 'newpassword'
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(200)
+                expect(res.body['success']).to.equal(1)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
             })
     })
 })
