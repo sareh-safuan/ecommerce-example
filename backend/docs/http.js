@@ -57,10 +57,10 @@ const UserController = [
                 success: 1,
                 data: {
                     id: 10,
-                    firstName: 'John',
-                    lastName: 'Doe',
+                    first_name: 'John',
+                    last_name: 'Doe',
                     email: 'johndoe@dmmy.com',
-                    phoneNumber: 11112222333,
+                    phone_number: 11112222333,
                     avatar: 'myprofileimage.jpg'
                 }
             }
@@ -74,17 +74,14 @@ const UserController = [
                 id: 10
             },
             body: {
-                id: 10,
-                firstName: 'John',
-                lastName: 'Doe',
+                first_name: 'John',
+                last_name: 'Doe',
                 email: 'johndoe@dmmy.com',
-                phoneNumber: 111122223333,
-                avatar: 'myprofileimage.jpg',
-                usergroupId: 1
+                phone_number: 111122223333
             }
         },
         response: {
-            code: 201,
+            code: 200,
             data: {
                 success: 1,
                 msg: 'User updated.'
@@ -106,7 +103,7 @@ const UserController = [
             }
         },
         response: {
-            code: 201,
+            code: 200,
             data: {
                 success: 1,
                 msg: 'Password change.'

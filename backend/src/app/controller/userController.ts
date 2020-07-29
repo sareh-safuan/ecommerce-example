@@ -1,6 +1,6 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
-import { registerUser, loginUser, changePassword } from '../validator/userValidator'
+import { registerUser, loginUser, changePassword, updateProfile } from '../validator/userValidator'
 import {isLogin, accessControl} from '../middleware/auth'
 import UserModel from '../../database/models/userModel'
 import errorHandler from '../../utils/errorHandler'
@@ -117,9 +117,7 @@ router.get(
 
         res.status(200).json({
             success: 1,
-            data: {
-
-            }
+            data: user[0]
         })
 
     } catch (err) {
@@ -127,7 +125,27 @@ router.get(
     }
 })
 
-router.put('/update-profile/:id', async (req: any, res: any) => {})
+router.put(
+    '/update-profile/:id',
+    [isLogin, accessControl, updateProfile],
+    async (req: any, res: any) => {
+
+        try {
+
+            const id = req.params.id
+            const data = req.body
+            const User = new UserModel()
+            await User.update({ id }, data)
+            
+            res.status(200).json({
+                success: 1,
+                msg: 'Profile updated.'
+            })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)
+        }
+    })
 
 router.put(
     '/change-password/:id',

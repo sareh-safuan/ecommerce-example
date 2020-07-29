@@ -169,3 +169,62 @@ export const changePassword = (req: Request, res: Response, next: NextFunction) 
             errorHandler(req, res, err.message)
         })
 }
+
+export const updateProfile = (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.id
+
+    Promise
+        .all([
+            body('first_name', 'First name is required.')
+                .notEmpty()
+                .isLength({ max: 20 })
+                .trim()
+                .run(req),
+            body('last_name', 'Last name is required.')
+                .notEmpty()
+                .isLength({ max: 20 })
+                .trim()
+                .run(req),
+            body('email')
+                .notEmpty().withMessage('Email is required.')
+                .isLength({ max: 50 })
+                .isEmail().withMessage('Invalid email format.')
+                .bail()
+                .custom(value => {
+                    return new UserModel().findBy('email', value)
+                        .then(user => {
+                            if (user.length) {
+                                const { id } = user[0]
+
+                                if (id != userId) {
+                                    return Promise.reject('Email already registered.')
+                                }
+                            }
+                        })
+                })
+                .trim()
+                .run(req),
+            body('phone_number', 'Invalid phone number')
+                .notEmpty()
+                .isLength({ max: 20 })
+                .trim()
+                .run(req)
+        ])
+        .then(() => {
+            const errors = validationResult(req)
+
+            if (!errors.isEmpty()) {
+                warningLogger(errors.array())
+
+                return res.status(400).json({
+                    success: 0,
+                    msg: errors.array()
+                })
+            }
+
+            next()
+        })
+        .catch(err => {
+            errorHandler(req, res, err.message)
+        })
+}

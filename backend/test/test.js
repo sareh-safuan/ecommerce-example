@@ -909,7 +909,7 @@ describe.skip('Route /user/:id: Method GET', function () {
     })
 })
 
-describe('Route /user/change-password/:id: Method PUT', function () {
+describe.skip('Route /user/change-password/:id: Method PUT', function () {
     let cookie = ''
     let user = {}
     let route = '/user/change-password/'
@@ -949,7 +949,7 @@ describe('Route /user/change-password/:id: Method PUT', function () {
             })
     })
 
-    it('Trying updating other user password', function (done) {
+    it('Updating other user password', function (done) {
         chai
             .request(baseUrl)
             .put(route + '1')
@@ -1056,6 +1056,177 @@ describe('Route /user/change-password/:id: Method PUT', function () {
                 currentPassword: 'secret123',
                 newPassword: 'newpassword',
                 newPasswordConfirmation: 'newpassword'
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(200)
+                expect(res.body['success']).to.equal(1)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+})
+
+describe('Route /user/update-profile/:id: Method PUT', function () {
+    let cookie = ''
+    let user = {}
+    let route = '/user/update-profile/'
+
+    before(function (done) {
+        chai
+            .request(baseUrl)
+            .post('/user/login')
+            .send({
+                email: 'ali@email.com',
+                password: 'secret123'
+            })
+            .then(function (res) {
+                cookie = res.header['set-cookie']
+                user = res.body.data
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    /*
+       firstName: 'John',
+       lastName: 'Doe',
+       email: 'johndoe@dmmy.com',
+       phoneNumber: 111122223333
+     */
+
+    it('Not sign in', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .send({})
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(401)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Please login before continue.')
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Updating another user profile', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + '1')
+            .set('cookie', cookie)
+            .send({})
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(403)
+                expect(res.body['success']).to.equal(0)
+                expect(res.body['msg']).to.equal('Access is forbidden.')
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Missing all required field', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .send({})
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Some fields failed validation', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .send({
+                first_name: '',
+                last_name: 'Takeuchi',
+                email: 'ali@email.com',
+                phone_number: ''
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Email already registered to another user', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .send({
+                first_name: 'Ali',
+                last_name: 'Baba v2',
+                email: 'cantonchik0@blogtalkradio.com',
+                phone_number: '111122223333'
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(400)
+                expect(res.body['success']).to.equal(0)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Success updating the profile, using old email', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .send({
+                first_name: 'Aliy',
+                last_name: 'Baba v2',
+                email: 'ali@email.com',
+                phone_number: '0111222333'
+            })
+            .then(res => {
+                expect(res).to.be.json
+                expect(res).to.have.status(200)
+                expect(res.body['success']).to.equal(1)
+                done()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    })
+
+    it('Success updating the profile, using new email', function (done) {
+        chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .send({
+                first_name: 'Aliy',
+                last_name: 'Baba',
+                email: 'ali2@email.com',
+                phone_number: '0111222333'
             })
             .then(res => {
                 expect(res).to.be.json
