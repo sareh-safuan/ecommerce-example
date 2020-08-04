@@ -1,7 +1,7 @@
 import { body, validationResult } from 'express-validator'
 import { Request, Response, NextFunction } from 'express'
 import errorHandler from '../../utils/errorHandler'
-import warningLogger from '../../utils/warningLogger'
+import { failedValidationLogger } from '../../utils/logger'
 
 export const vAddProduct = (req: Request, res: Response, next: NextFunction) => {
     Promise
@@ -25,7 +25,7 @@ export const vAddProduct = (req: Request, res: Response, next: NextFunction) => 
             const errors = validationResult(req)
 
             if (!errors.isEmpty()) {
-                warningLogger(errors.array())
+                failedValidationLogger(errors.array())
 
                 return res.status(400).json({
                     success: 0,
@@ -72,7 +72,7 @@ export const vAddProductVariation = (req: Request, res: Response, next: NextFunc
             const errors = validationResult(req)
 
             if (!errors.isEmpty()) {
-                warningLogger(errors.array())
+                failedValidationLogger(errors.array())
 
                 return res.status(400).json({
                     success: 0,

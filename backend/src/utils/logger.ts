@@ -16,3 +16,5 @@ export const failedValidationLogger = (errors: Array<any>) => {
     })
     logger.warn(message)
 }
+
+export const failedRequestLogger = () => {}

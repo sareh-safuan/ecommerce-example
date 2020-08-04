@@ -5,8 +5,6 @@ import UserModel from '../../database/models/userModel'
 import errorHandler from '../../utils/errorHandler'
 import { failedValidationLogger } from '../../utils/logger'
 
-import warningLogger from '../../utils/warningLogger'
-
 export const vUserRegister = (req: Request, res: Response, next: NextFunction) => {
     Promise.all([
         body('first_name', 'First name is required.')
@@ -95,7 +93,7 @@ export const vUserLogin = (req: Request, res: Response, next: NextFunction) => {
             const errors = validationResult(req)
 
             if (!errors.isEmpty()) {
-                warningLogger(errors.array())
+                failedValidationLogger(errors.array())
 
                 return res.status(400).json({
                     success: 0,
@@ -157,7 +155,7 @@ export const vUserChangePassword = (req: Request, res: Response, next: NextFunct
             const errors = validationResult(req)
 
             if (!errors.isEmpty()) {
-                warningLogger(errors.array())
+                failedValidationLogger(errors.array())
 
                 return res.status(400).json({
                     success: 0,
@@ -216,7 +214,7 @@ export const vUserUpdateProfile = (req: Request, res: Response, next: NextFuncti
             const errors = validationResult(req)
 
             if (!errors.isEmpty()) {
-                warningLogger(errors.array())
+                failedValidationLogger(errors.array())
 
                 return res.status(400).json({
                     success: 0,

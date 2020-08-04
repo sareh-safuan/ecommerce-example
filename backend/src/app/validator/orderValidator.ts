@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { body, validationResult } from 'express-validator'
 import errorHandler from '../../utils/errorHandler'
-import warningLogger from '../../utils/warningLogger'
+import { failedValidationLogger } from '../../utils/logger'
 
 export const vCreateOrder = (req: Request, res: Response, next: NextFunction) => {
     Promise
@@ -49,7 +49,7 @@ export const vCreateOrder = (req: Request, res: Response, next: NextFunction) =>
             const errors = validationResult(req)
 
             if (!errors.isEmpty()) {
-                warningLogger(errors.array())
+                failedValidationLogger(errors.array())
 
                 return res.status(400).json({
                     success: 0,

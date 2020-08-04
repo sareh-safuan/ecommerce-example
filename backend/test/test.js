@@ -19,7 +19,7 @@ describe.skip('Route /user => Method POST', function () {
             first_name: faker.name.firstName(),
             last_name: faker.name.lastName(),
             email: faker.internet.email(),
-            phone_number: faker.phone.phoneNumber(),
+            phone_number: faker.phone.phoneNumber('###########'),
             password: faker.internet.password(),
             usergroup_id: 1
         }
@@ -640,7 +640,7 @@ describe.skip('Route /auth/change-password/:id: Method PUT', function () {
  * _________ Product controller __________ (KIV)
  * 
  */
-describe('Route /product => Method POST', function () {
+describe.skip('Route /product => Method POST', function () {
     const route = '/product'
     /**
      * 1) image is not uploaded -DONE
@@ -714,7 +714,7 @@ describe('Route /product => Method POST', function () {
     })
 })
 
-describe('Route /product/variation => Method POST', function () {
+describe.skip('Route /product/variation => Method POST', function () {
     const route = '/product/variation'
     /**
      * 1) Missing all required field

@@ -1,6 +1,6 @@
 import { body, validationResult } from 'express-validator'
-import warningLogger from '../../utils/warningLogger'
 import erroHandler from '../../utils/errorHandler'
+import { failedValidationLogger } from '../../utils/logger'
 
 export const vAddAddress = (req: any, res: any, next: any) => {
     Promise
@@ -49,7 +49,7 @@ export const vAddAddress = (req: any, res: any, next: any) => {
             const errors = validationResult(req)
 
             if (!errors.isEmpty()) {
-                warningLogger(errors.array())
+                failedValidationLogger(errors.array())
 
                 return res.status(400).json({
                     success: 0,
