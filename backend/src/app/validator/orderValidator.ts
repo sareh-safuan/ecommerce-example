@@ -3,7 +3,7 @@ import { body, validationResult } from 'express-validator'
 import errorHandler from '../../utils/errorHandler'
 import warningLogger from '../../utils/warningLogger'
 
-export const createOrder = (req: any, res: any, next: any) => {
+export const vCreateOrder = (req: Request, res: Response, next: NextFunction) => {
     Promise
         .all([
             body('user_id')

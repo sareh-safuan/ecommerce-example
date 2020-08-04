@@ -1,40 +1,60 @@
-import { Router } from 'express'
-import { createOrder } from '../validator/orderValidator'
-import { isLogin, accessControl } from '../middleware/auth'
+import { Request, Response } from 'express'
 import OrderModel from '../../database/models/orderModel'
 import OrderDetailModel from '../../database/models/orderDetailModel'
 import errorHandler from '../../utils/errorHandler'
 
-const router = Router()
+class Order {
+    async list(req: Request, res: Response) {
+        const { userId } = req.params
+        
+        try {        
+            const Order = new OrderModel()
+            const orders = await Order.findBy('user_id', userId)
+            const orderIds = orders.map(_ => _.id)
+            const OrderDetail = new OrderDetailModel()
 
-router.get('/', async (req: any, res: any) => {
+            const orderDetails = await OrderDetail
+                .query()
+                .select(
+                    'orderdetails.order_id', 'orderdetails.paying_price', 'orderdetails.quantity',
+                    'b.image', 'b.product_name',
+                    'c.variation_description',
+                )
+                .leftJoin('products as b', 'b.id', 'orderdetails.product_id')
+                .leftJoin('productvariations as c', 'c.id', 'orderdetails.product_variation_id')
+                .whereIn('orderdetails.order_id', orderIds)
 
-    try {
+            const result = orders.map(o => {
+                let products: any = []
 
-        const Order = new OrderModel()
-        const OrderDetail = new OrderDetailModel()
-        const orders = await Order.findAll()
-        const orderDetails = await OrderDetail.findAll()
+                orderDetails.forEach(od => {
+                    if (o.id === od.order_id) {
+                        products.push(od)
+                    }
+                })
 
-        res.json({
-            orders,
-            orderDetails
-        })
+                return {
+                    id: o.id,
+                    total_price_paid: o.total_price_paid,
+                    created_at: o.created_at,
+                    products
+                }
+            })
 
-    } catch (err) {
-        errorHandler(req, res, err.message)
+            res.status(200).json({
+                success: 1,
+                data: result
+            })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)
+        }
     }
 
-})
-
-router.post(
-    '/create',
-    [isLogin, createOrder],
-    async (req: any, res: any) => {
+    async create(req: Request, res: Response) {
+        const { user_id, address_id, total_price_paid, orders } = req.body
 
         try {
-
-            const { user_id, address_id, total_price_paid, orders } = req.body
             const Order = new OrderModel()
             await Order.transaction(async (trx: any) => {
                 const id = await trx.insert({
@@ -54,54 +74,7 @@ router.post(
         } catch (err) {
             errorHandler(req, res, err.message)
         }
-    })
+    }
+}
 
-router.get(
-    '/:id',
-    [isLogin, accessControl],
-    async (req: any, res: any) => {
-
-        try {
-
-            const { id } = req.params
-            const Order = new OrderModel()
-            const orders = await Order.findBy('user_id', id)
-            const orderIds = orders.map(_ => _.id)
-            const OrderDetail = new OrderDetailModel()
-            const orderDetails = await OrderDetail
-                .query()
-                .select(
-                    'orderdetails.order_id', 'orderdetails.paying_price', 'orderdetails.quantity',
-                    'b.image', 'b.product_name',
-                    'c.variation_description',
-                )
-                .leftJoin('products as b', 'b.id', 'orderdetails.product_id')
-                .leftJoin('productvariations as c', 'c.id', 'orderdetails.product_variation_id')
-                .whereIn('orderdetails.order_id', orderIds)
-
-            const result = orders.map(o => {
-                let products: any = []
-                orderDetails.forEach(od => {
-                    if (o.id === od.order_id) {
-                        products.push(od)
-                    }
-                })
-                return {
-                    id: o.id,
-                    total_price_paid: o.total_price_paid,
-                    created_at: o.created_at,
-                    products
-                }
-            })
-
-            res.status(200).json({
-                success: 1,
-                data: result
-            })
-
-        } catch (err) {
-            errorHandler(req, res, err.message)
-        }
-    })
-
-export default router
+export default new Order

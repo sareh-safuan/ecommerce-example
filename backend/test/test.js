@@ -637,11 +637,11 @@ describe.skip('Route /auth/change-password/:id: Method PUT', function () {
 
 
 /**
- * _________ Product controller __________
+ * _________ Product controller __________ (KIV)
  * 
  */
-describe.skip('Route /product/create: Method POST', function () {
-    const route = '/product/create'
+describe('Route /product => Method POST', function () {
+    const route = '/product'
     /**
      * 1) image is not uploaded -DONE
      * 2) missing all product informations -DONE
@@ -714,8 +714,8 @@ describe.skip('Route /product/create: Method POST', function () {
     })
 })
 
-describe.skip('Route /product/create-variation: Method POST', function () {
-    const route = '/product/create-variation'
+describe('Route /product/variation => Method POST', function () {
+    const route = '/product/variation'
     /**
      * 1) Missing all required field
      * 2) Missing some required field
@@ -808,7 +808,7 @@ describe.skip('Route /product/create-variation: Method POST', function () {
     })
 })
 
-describe.skip('Route /product: Method GET', function () {
+describe.skip('Route /product => Method GET', function () {
     const route = '/product'
 
     it('Sucess request', function (done) {
@@ -829,7 +829,7 @@ describe.skip('Route /product: Method GET', function () {
     })
 })
 
-describe.skip('Route /product/:id: Method GET', function () {
+describe.skip('Route /product/:id => Method GET', function () {
     const route = '/product/1'
 
     it('Success request', function (done) {
@@ -857,7 +857,7 @@ describe.skip('Route /product/:id: Method GET', function () {
  * __________ Adress controller __________
  * 
  */
-describe.skip('Route /address/create: Method POST', function () {
+describe.skip('Route /address: Method POST', function () {
     /**
      * 0) Not sign in
      * 1) Missing all required fields
@@ -866,14 +866,14 @@ describe.skip('Route /address/create: Method POST', function () {
      * 4) Success address added - address_two included
      */
 
-    const route = '/address/create'
+    const route = '/address'
     let cookie = ''
     let user = {}
 
     before(function (done) {
         chai
             .request(baseUrl)
-            .post('/user/login')
+            .post('/auth/login')
             .send({
                 email: 'ali@email.com',
                 password: 'secret123'
@@ -982,7 +982,7 @@ describe.skip('Route /address/:userId: Method GET', function () {
     before(function (done) {
         chai
             .request(baseUrl)
-            .post('/user/login')
+            .post('/auth/login')
             .send({
                 email: 'ali@email.com',
                 password: 'secret123'
@@ -1053,7 +1053,7 @@ describe.skip('Route /address/:userId: Method GET', function () {
  * __________ Order controller __________
  * 
  */
-describe.skip('Route /order/create: Method POST', function () {
+describe.skip('Route /order: Method POST', function () {
     /**
      * 0) Not sign in
      * 1) Missing all required fields
@@ -1063,12 +1063,12 @@ describe.skip('Route /order/create: Method POST', function () {
 
     let cookie = ''
     let user = {}
-    const route = '/order/create'
+    const route = '/order'
 
     before(function (done) {
         chai
             .request(baseUrl)
-            .post('/user/login')
+            .post('/auth/login')
             .send({
                 email: 'ali@email.com',
                 password: 'secret123'
@@ -1182,7 +1182,7 @@ describe.skip('Route /order/:id: Method GET', function () {
     before(function (done) {
         chai
             .request(baseUrl)
-            .post('/user/login')
+            .post('/auth/login')
             .send({
                 email: 'ali@email.com',
                 password: 'secret123'

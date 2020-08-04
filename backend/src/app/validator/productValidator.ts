@@ -1,8 +1,9 @@
 import { body, validationResult } from 'express-validator'
+import { Request, Response, NextFunction } from 'express'
 import errorHandler from '../../utils/errorHandler'
 import warningLogger from '../../utils/warningLogger'
 
-export const addProduct = (req: any, res: any, next: any) => {
+export const vAddProduct = (req: Request, res: Response, next: NextFunction) => {
     Promise
         .all([
             body('product_name')
@@ -39,7 +40,7 @@ export const addProduct = (req: any, res: any, next: any) => {
         })
 }
 
-export const addProductVariation = (req: any, res: any, next: any) => {
+export const vAddProductVariation = (req: Request, res: Response, next: NextFunction) => {
     Promise
         .all([
             body('product_variation')

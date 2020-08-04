@@ -1,9 +1,14 @@
+import { Request, Response, NextFunction } from 'express'
 import path from 'path'
 import errorHandler from '../../utils/errorHandler'
 // @ts-ignore  
 import { IncomingForm } from 'formidable'
 
-const imageHandler = (req: any, res: any, next: any) => {
+/**
+ * Better solution is upload to external services to handle file
+ */
+
+const imageUploader = (req: Request, res: Response, next: NextFunction) => {
     const uploadDir = path.join(__dirname, '../../../../upload')
     const form = new IncomingForm({
         uploadDir,
@@ -35,4 +40,4 @@ const imageHandler = (req: any, res: any, next: any) => {
     })
 }
 
-export default imageHandler
+export default imageUploader

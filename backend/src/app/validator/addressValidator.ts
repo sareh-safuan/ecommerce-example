@@ -2,7 +2,7 @@ import { body, validationResult } from 'express-validator'
 import warningLogger from '../../utils/warningLogger'
 import erroHandler from '../../utils/errorHandler'
 
-export const addAddress = (req: any, res: any, next: any) => {
+export const vAddAddress = (req: any, res: any, next: any) => {
     Promise
         .all([
             body('user_id')
