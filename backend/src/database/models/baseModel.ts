@@ -1,4 +1,4 @@
-import connection from '../connnection'
+import connection from '../../config/connnection'
 
 class BaseModel {
 

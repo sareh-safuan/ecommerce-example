@@ -1,4 +1,4 @@
-import logger from './logger'
+import logger from '../config/logger'
 
 interface ValidationError {
     value: any,

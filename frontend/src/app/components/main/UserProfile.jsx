@@ -15,12 +15,16 @@ class Profile extends React.Component {
         this.inputHandler = this.inputHandler.bind(this)
     }
 
+    componentDidMount() {
+        
+    }
+
     clickHandler() { }
     inputHandler() { }
 
     render() {
         const { first_name, last_name, email, phone_number } = this.state
-        
+
         return (
             <div className="width-80">
                 <div className="my-profile">
@@ -58,10 +62,10 @@ class Profile extends React.Component {
                                 inputHandler={this.inputHandler}
                             />
                             <div style={{ marginTop: '5px' }}>
-                                <Button 
-                                    className="pure-button-primary" 
+                                <Button
+                                    className="pure-button-primary"
                                     text="Update"
-                                    clickHandler={this.clickHandler} 
+                                    clickHandler={this.clickHandler}
                                 />
                             </div>
                         </CardBody>

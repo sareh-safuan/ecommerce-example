@@ -3,9 +3,11 @@ import { body, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
 import UserModel from '../../database/models/userModel'
 import errorHandler from '../../utils/errorHandler'
+import { failedValidationLogger } from '../../utils/logger'
+
 import warningLogger from '../../utils/warningLogger'
 
-export const registerUser = (req: Request, res: Response, next: NextFunction) => {
+export const vUserRegister = (req: Request, res: Response, next: NextFunction) => {
     Promise.all([
         body('first_name', 'First name is required.')
             .notEmpty()
@@ -60,7 +62,7 @@ export const registerUser = (req: Request, res: Response, next: NextFunction) =>
             const errors = validationResult(req)
 
             if (!errors.isEmpty()) {
-                warningLogger(errors.array())
+                failedValidationLogger(errors.array())
 
                 return res.status(400).json({
                     success: 0,
@@ -76,7 +78,7 @@ export const registerUser = (req: Request, res: Response, next: NextFunction) =>
 
 }
 
-export const loginUser = (req: Request, res: Response, next: NextFunction) => {
+export const vUserLogin = (req: Request, res: Response, next: NextFunction) => {
     Promise.all([
         body('email')
             .notEmpty().withMessage('Email is required.')
@@ -108,7 +110,7 @@ export const loginUser = (req: Request, res: Response, next: NextFunction) => {
         })
 }
 
-export const changePassword = (req: Request, res: Response, next: NextFunction) => {
+export const vUserChangePassword = (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
     Promise.all([
         body('currentPassword')
@@ -170,7 +172,7 @@ export const changePassword = (req: Request, res: Response, next: NextFunction) 
         })
 }
 
-export const updateProfile = (req: Request, res: Response, next: NextFunction) => {
+export const vUserUpdateProfile = (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.id
 
     Promise

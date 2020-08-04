@@ -1,27 +1,18 @@
-import winston, { createLogger, format, transports } from 'winston'
+import logger from '../config/logger'
 
-const consoleLog = new transports.Console()
-const options = {
-    format: format.combine(
-        format.timestamp(),
-        format.printf(({ timestamp, level, message }): string => {
-            return `${timestamp} | ${level} | ${message}`
-        })
-    ),
-    transports: [
-        consoleLog
-    ],
-    exceptionHandlers: [
-        consoleLog
-    ],
-    exitOnError: false
+interface ValidationError {
+    value?: any,
+    msg: 'string',
+    param: 'string',
+    location: 'string'
 }
 
-if (process.env.NODE_ENV === "production") {
-    winston.remove(consoleLog)
-    winston.add(new transports.File({ filename: 'error.log' }))
+export const failedValidationLogger = (errors: Array<any>) => {
+    let message = ''
+    
+    errors.forEach((obj: any) => {
+        message += 
+            `value=${obj.value},msg=${obj.msg},param=${obj.param},location=${obj.location}|`
+    })
+    logger.warn(message)
 }
-
-const logger = createLogger(options)
-
-export default logger

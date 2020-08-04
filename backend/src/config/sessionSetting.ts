@@ -5,8 +5,8 @@ const sessionSetting = function () {
     const options = {
         secret,
         resave: false,
-        saveUninitialized: false,
-        name: 'premium-fruit',
+        saveUninitialized: true,
+        name: 'the-premium-fruit',
         cookie: {
             secure: false
         }

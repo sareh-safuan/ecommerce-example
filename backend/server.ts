@@ -1,5 +1,5 @@
 import http from 'http'
-import app from './app/app'
+import app from './src/bootstrap/index'
 
 const server = http.createServer(app)
 const port = process.env.PORT as string
