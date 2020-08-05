@@ -1,7 +1,6 @@
 const UserController = [
     {
-        route: ['@/register', 'POST'],
-        fn: 'register',
+        fn: 'create',
         request: {
             body: {
                 first_name: 'John',
@@ -22,30 +21,7 @@ const UserController = [
         }
     },
     {
-        route: ['@/login', 'POST'],
-        fn: 'login',
-        request: {
-            body: {
-                email: 'johndoe@dmmy.com',
-                password: 'mysecretpassword'
-            }
-        },
-        response: {
-            code: 200,
-            data: {
-                success: 1,
-                msg: 'Login success.',
-                data: {
-                    id: 10,
-                    email: 'johndoe@dmmy.com',
-                    avatar: 'myprofileimage.jpg'
-                }
-            }
-        }
-    },
-    {
-        route: ['@/:id', 'GET'],
-        fn: 'fetch',
+        fn: 'profile',
         request: {
             param: {
                 id: 10
@@ -67,7 +43,6 @@ const UserController = [
         }
     },
     {
-        route: ['@/update-profile/:id', 'PUT'],
         fn: 'update',
         request: {
             param: {
@@ -87,32 +62,9 @@ const UserController = [
                 msg: 'User updated.'
             }
         }
-    },
+    },   
     {
-        route: ['@/change-password/:id', 'PUT'],
-        fn: 'changePassword',
-        request: {
-            param: {
-                id: 10
-            },
-            body: {
-                id: 10,
-                currentPassword: 'mysecretpassword',
-                newPassword: 'mynewsecretpassword',
-                newPasswordConfirmation: 'mynewsecretpassword'
-            }
-        },
-        response: {
-            code: 200,
-            data: {
-                success: 1,
-                msg: 'Password change.'
-            }
-        }
-    },
-    {
-        route: ['@/delete-account/:id', 'DELETE'],
-        fn: 'deleteAccount',
+        fn: 'delete',
         request: {
             param: {
                 id: 10
@@ -132,9 +84,53 @@ const UserController = [
     }
 ]
 
+const AuthController = [
+    {
+        fn: 'login',
+        request: {
+            body: {
+                email: 'johndoe@dmmy.com',
+                password: 'mysecretpassword'
+            }
+        },
+        response: {
+            code: 200,
+            data: {
+                success: 1,
+                msg: 'Login success.',
+                data: {
+                    id: 10,
+                    email: 'johndoe@dmmy.com',
+                    avatar: 'myprofileimage.jpg'
+                }
+            }
+        }
+    },
+    {
+        fn: 'changePassword',
+        request: {
+            param: {
+                id: 10
+            },
+            body: {
+                id: 10,
+                currentPassword: 'mysecretpassword',
+                newPassword: 'mynewsecretpassword',
+                newPasswordConfirmation: 'mynewsecretpassword'
+            }
+        },
+        response: {
+            code: 200,
+            data: {
+                success: 1,
+                msg: 'Password change.'
+            }
+        }
+    }
+]
+
 const ProductController = [
     {
-        route: ['@/create', 'POST'],
         fn: 'create',
         request: {
             body: {
@@ -152,7 +148,6 @@ const ProductController = [
         }
     },
     {
-        route: ['@/create-variation', 'POST'],
         fn: 'createVariation',
         request: {
             body: {
@@ -187,8 +182,7 @@ const ProductController = [
         }
     },
     {
-        route: ['@/', 'GET'],
-        fn: 'fetch',
+        fn: 'list',
         request: {},
         response: {
             code: 201,
@@ -219,8 +213,7 @@ const ProductController = [
         }
     },
     {
-        route: ['@/:id', 'GET'],
-        fn: 'fetchOne',
+        fn: 'detail',
         request: {
             param: {
                 id: 10
@@ -250,7 +243,6 @@ const ProductController = [
         }
     },
     {
-        route: ['@/update/:id', 'PUT'],
         fn: 'update',
         request: {
             param: {
@@ -278,7 +270,6 @@ const ProductController = [
         }
     },
     {
-        route: ['@/update-variation/:id', 'PUT'],
         fn: 'updateVariation',
         request: {
             param: {
@@ -306,7 +297,6 @@ const ProductController = [
         }
     },
     {
-        route: ['@/delete/:id', 'delete'],
         fn: 'delete',
         request: { param: {}, body: {} },
         response: {
@@ -317,7 +307,6 @@ const ProductController = [
         }
     },
     {
-        route: ['@delete-variation/:product-id', 'delete'],
         fn: 'deleteVariation',
         request: { param: {}, body: {} },
         response: {
@@ -331,7 +320,6 @@ const ProductController = [
 
 const AddressController = [
     {
-        route: ['@/create', 'POST'],
         fn: 'create',
         request: {
             body: {
@@ -352,8 +340,7 @@ const AddressController = [
         }
     },
     {
-        route: ['@/:userId', 'GET'],
-        fn: 'fetch',
+        fn: 'list',
         request: {
             param: {
                 userId: 10
@@ -392,7 +379,6 @@ const AddressController = [
 
 const OrderController = [
     {
-        route: ['@/create', 'POST'],
         fn: 'create',
         request: {
             body: {
@@ -421,8 +407,7 @@ const OrderController = [
         }
     },
     {
-        route: ['@/:id', 'GET'],
-        fn: 'fetch',
+        fn: 'list',
         request: {
             param: {
                 id: 10
@@ -440,7 +425,7 @@ const OrderController = [
                             img: 'Apple.jpg',
                             name: 'Apple (S)',
                             quantity: 4,
-                            price: 17.10 
+                            price: 17.10
                         },
                         {
                             // more products if available
@@ -451,6 +436,6 @@ const OrderController = [
         }
     },
     {
-        // cancelled order
+        // update order
     }
 ]
