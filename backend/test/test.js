@@ -8,14 +8,33 @@ const expect = chai.expect
 const baseUrl = 'http://localhost:4000'
 chai.use(chaiHttp)
 
+const login = async function (_email, _password) {
+    const email = _email || 'ali@email.com'
+    const password = _password || 'secret123'
+
+    const res = await chai
+        .request(baseUrl)
+        .post('/auth/login')
+        .type('json')
+        .send({
+            email,
+            password
+        })
+
+    return {
+        cookie: res.header['set-cookie'],
+        user: res.body.data
+    }
+}
+
 /**
  * __________ User controller __________
  * 
  */
 describe.skip('Route /user => Method POST', function () {
     const route = '/user'
-    const user = function () {
-        const data = {
+    const user = function (keys) {
+        let data = {
             first_name: faker.name.firstName(),
             last_name: faker.name.lastName(),
             email: faker.internet.email(),
@@ -23,78 +42,127 @@ describe.skip('Route /user => Method POST', function () {
             password: faker.internet.password(),
             usergroup_id: 1
         }
+        data['password_confirmation'] = data.password
 
-        const missing = function () {
-            for (let key in data) {
-                const i = Math.floor(Math.random() * 2)
-                if (i) {
-                    delete data[key]
-                }
-            }
-
-            return data
+        if (keys) {
+            keys.forEach(function (key) {
+                delete data[key]
+            })
         }
 
-        const invalid = function () {
-            for (let key in data) {
-                const i = Math.floor(Math.random() * 2)
-                if (i) {
-                    data[key] = ""
-                }
-            }
-
-            return data
-        }
-
-        const ok = function () {
-            data['password_confirmation'] = data.password
-            return data
-        }
-
-        return {
-            missing,
-            invalid,
-            ok
-        }
+        return data
     }
 
-    it('Missing all or some required fields', function (done) {
-        const data = user().missing()
-        chai.request(baseUrl)
+    it('Missing all the required field', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Missing first name', async function () {
+        const data = user(['first_name'])
+        const res = await chai
+            .request(baseUrl)
             .post(route)
             .type('json')
             .send(data)
-            .then(function (res) {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(function (err) {
-                console.log(err)
-            })
 
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('All or some required fields not meet requirement', function (done) {
-        const data = user().invalid()
-        chai.request(baseUrl)
+    it('Missing last name', async function () {
+        const data = user(['last_name'])
+        const res = await chai
+            .request(baseUrl)
             .post(route)
+            .type('json')
             .send(data)
-            .then(function (res) {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(function (err) {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Email already registered', function (done) {
-        chai.request(baseUrl)
+    it('Missing password confirmation', async function () {
+        const data = user(['password_confirmation'])
+        const res = await chai
+            .request(baseUrl)
             .post(route)
+            .type('json')
+            .send(data)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    /**
+     *  TODO: missing
+     *  - email
+     *  - phone number
+     *  - password
+     *  - usergroup id
+     */
+
+    it('Invalid email', async function () {
+        let data = user()
+        data.email = 'invalidemail.com'
+
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send(data)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Password less than 8 characters', async function () {
+        let data = user()
+        data.password = 'short'
+        data.password_confirmation = 'short'
+
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send(data)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Password cofirmation not equal as password', async function () {
+        let data = user()
+        data.password_confirmation = 'somethingelse'
+
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send(data)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Email already registered', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
             .send({
                 first_name: "Carlynne",
                 last_name: "Antonchik",
@@ -104,269 +172,246 @@ describe.skip('Route /user => Method POST', function () {
                 password_confirmation: 'mysecretpassword',
                 usergroup_id: 1
             })
-            .then(function (res) {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(function (err) {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Success registration', function (done) {
-        const data = user().ok()
-        chai.request(baseUrl)
+    it('Success registration', async function () {
+        const data = user()
+        const res = await chai
+            .request(baseUrl)
             .post(route)
             .type('json')
             .send(data)
-            .then(function (res) {
-                expect(res).to.be.json
-                expect(res).to.have.status(201)
-                expect(res.body['success']).to.equal(1)
-                expect(res.body['msg']).to.equal('User registered.')
-                done()
-            })
-            .catch(function (err) {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(201)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['msg']).to.equal('User registered.')
     })
 })
 
-describe.skip('Route /user/:id: Method GET', function () {
+describe.skip('Route /user/:id => Method GET', function () {
     let cookie = ''
     let user = {}
     let route = '/user/'
 
-    before(function (done) {
-        chai
-            .request(baseUrl)
-            .post('/auth/login')
-            .send({
-                email: 'ali@email.com',
-                password: 'secret123'
-            })
-            .then(function (res) {
-                cookie = res.header['set-cookie']
-                user = res.body.data
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
     })
 
-    it('Not sign in', function (done) {
-        chai
+    it('Not sign in', async function () {
+        const res = await chai
             .request(baseUrl)
             .get(route + user.id)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(401)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Please login before continue.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(401)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Please login before continue.')
     })
 
-    it('Trying access another user profile', function (done) {
-        chai
+    it('Trying access another user profile', async function () {
+        const res = await chai
             .request(baseUrl)
             .get(route + '1')
             .set('cookie', cookie)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(403)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Access is forbidden.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(403)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Access is forbidden.')
     })
 
-    it('Success request', function (done) {
-        chai
+    it('Success request', async function () {
+        const res = await chai
             .request(baseUrl)
             .get(route + user.id)
             .set('cookie', cookie)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(200)
-                expect(res.body['success']).to.equal(1)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
     })
 })
 
-describe.skip('Route /user/:id: Method PUT', function () {
+describe.skip('Route /user/:id => Method PUT', function () {
     let cookie = ''
     let user = {}
     let route = '/user/'
 
-    before(function (done) {
-        chai
-            .request(baseUrl)
-            .post('/auth/login')
-            .send({
-                email: 'ali@email.com',
-                password: 'secret123'
-            })
-            .then(function (res) {
-                cookie = res.header['set-cookie']
-                user = res.body.data
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
     })
 
-    it('Not sign in', function (done) {
-        chai
+    it('Not sign in', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
+            .type('json')
             .send({})
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(401)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Please login before continue.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(401)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Please login before continue.')
     })
 
-    it('Updating another user profile', function (done) {
-        chai
+    it('Updating another user profile', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + '1')
             .set('cookie', cookie)
             .send({})
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(403)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Access is forbidden.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(403)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Access is forbidden.')
     })
 
-    it('Missing all required field', function (done) {
-        chai
+    it('Missing all required field', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
             .set('cookie', cookie)
+            .type('json')
             .send({})
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Some fields failed validation', function (done) {
-        chai
+    it('Missing first name', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
             .set('cookie', cookie)
+            .type('json')
             .send({
-                first_name: '',
                 last_name: 'Takeuchi',
                 email: 'ali@email.com',
-                phone_number: ''
+                phone_number: '0111222333'
             })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Email already registered to another user', function (done) {
-        chai
+    it('Missing email', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
             .set('cookie', cookie)
+            .type('json')
+            .send({
+                first_name: 'Ali',
+                last_name: 'Takeuchi',
+                phone_number: '0111222333'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Invalid email', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                first_name: 'Ali',
+                last_name: 'Tiger',
+                email: 'ivalidemail.com',
+                phone_number: '0111222333'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    /**
+     *  TODO:
+     *  missing - last_name, phone_number
+     *  invalid fields case
+     */
+
+    it('Email already registered to another user', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .type('json')
             .send({
                 first_name: 'Ali',
                 last_name: 'Baba v2',
                 email: 'cantonchik0@blogtalkradio.com',
                 phone_number: '111122223333'
             })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Success updating the profile, using old email', function (done) {
-        chai
+    it('Success updating the profile, using same email', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
             .set('cookie', cookie)
+            .type('json')
             .send({
                 first_name: 'Aliy',
                 last_name: 'Baba v2',
                 email: 'ali@email.com',
                 phone_number: '0111222333'
             })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(200)
-                expect(res.body['success']).to.equal(1)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
     })
 
-    it('Success updating the profile, using new email', function (done) {
-        chai
+    it('Success updating the profile, using new email', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
             .set('cookie', cookie)
+            .type('json')
             .send({
                 first_name: 'Aliy',
                 last_name: 'Baba',
                 email: 'ali2@email.com',
                 phone_number: '0111222333'
             })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(200)
-                expect(res.body['success']).to.equal(1)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
+    })
+
+    after(async function () {
+        await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                first_name: 'Ali',
+                last_name: 'Baja',
+                email: 'ali@email.com',
+                phone_number: '0111222333'
             })
     })
 })
@@ -376,262 +421,549 @@ describe.skip('Route /user/:id: Method PUT', function () {
  * __________ Auth controller __________
  * 
  */
-describe.skip('Route /auth/login: Method POST', function () {
+describe.skip('Route /auth/login => Method POST', function () {
     const route = '/auth/login'
 
-    it('Missing email or password or both', function (done) {
-        const email = 'ali@email.com'
-        const password = 'mysecretpassword'
-        const firstData = { email }
-        const secondData = { password }
-        const thirdData = {}
-        const random = Math.floor(Math.random() * 3)
-        let data
-
-        switch (random) {
-            case 1:
-                data = firstData
-                break
-            case 2:
-                data = secondData
-                break
-            default:
-                data = thirdData
-                break
-        }
-
-        chai
+    it('Missing all the required fields', async function () {
+        const res = await chai
             .request(baseUrl)
             .post(route)
-            .send(data)
-            .then(function (res) {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(function (err) {
-                console.log(err)
-            })
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Unregistered email', function (done) {
-        chai
+    it('Missing email', async function () {
+        const res = await chai
             .request(baseUrl)
             .post(route)
+            .type('json')
+            .send({
+                password: 'secret123'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Missing password', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({
+                email: 'ali@email.com'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Unregistered email', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
             .send({
                 email: 'unregistered@email.com',
                 password: 'mysecretpassword'
             })
-            .then(function (res) {
-                expect(res).to.be.json
-                expect(res).to.have.status(404)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Email not found.')
-                done()
-            })
-            .catch(function (err) {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(404)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Email not found.')
     })
 
-    it('Wrong password', function (done) {
-        chai
+    it('Wrong password', async function () {
+        const res = await chai
             .request(baseUrl)
             .post(route)
+            .type('json')
             .send({
                 email: 'ali@email.com',
                 password: 'thewrongpassword'
             })
-            .then(function (res) {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Wrong password.')
-                done()
-            })
-            .catch(function (err) {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Wrong password.')
     })
 
-    it('Success login', function (done) {
-        chai
+    it('Success login', async function () {
+        const res = await chai
             .request(baseUrl)
             .post(route)
+            .type('json')
             .send({
                 email: 'ali@email.com',
                 password: 'secret123'
             })
-            .then(function (res) {
-                expect(res).to.be.json
-                expect(res).to.have.status(200)
-                expect(res).to.have.cookie('the-premium-fruit')
-                expect(res.body['success']).to.equal(1)
-                expect(res.body['msg']).to.equal('Login success.')
-                expect(res.body['data']).to.have.own.property('id')
-                done()
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res).to.have.cookie('the-premium-fruit')
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['msg']).to.equal('Login success.')
+        expect(res.body['data']).to.have.own.property('id')
     })
 })
 
-describe.skip('Route /auth/change-password/:id: Method PUT', function () {
+describe.skip('Route /auth/change-password/:id => Method PUT', function () {
     let cookie = ''
     let user = {}
     let route = '/auth/change-password/'
 
-    before(function (done) {
-        chai
-            .request(baseUrl)
-            .post('/auth/login')
-            .send({
-                email: 'ali@email.com',
-                password: 'secret123'
-            })
-            .then(function (res) {
-                cookie = res.header['set-cookie']
-                user = res.body.data
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
     })
 
-    it('Not sign in', function (done) {
-        chai
+    it('Not sign in', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
+            .type('json')
             .send({})
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(401)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Please login before continue.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(401)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Please login before continue.')
     })
 
-    it('Updating other user password', function (done) {
-        chai
+    it('Updating other user password', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + '1')
             .set('cookie', cookie)
+            .type('json')
             .send({})
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(403)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Access is forbidden.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(403)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Access is forbidden.')
     })
 
-    it('Missing all required fields', function (done) {
-        chai
+    it('Missing all required fields', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
             .set('cookie', cookie)
+            .type('json')
             .send({})
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Password not meet requirement', function (done) {
-        chai
+    it('Password less than 8 characters', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
             .set('cookie', cookie)
+            .type('json')
             .send({
                 currentPassword: 'secret123',
                 newPassword: 'secret',
                 newPasswordConfirmation: 'secret'
             })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Current password is incorrect', function (done) {
-        chai
+    it('Current password is incorrect', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
             .set('cookie', cookie)
+            .type('json')
             .send({
                 currentPassword: 'notmypassword',
                 newPassword: 'secretprolly',
                 newPasswordConfirmation: 'secretprolly'
             })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('New password same as current password', function (done) {
-        chai
+    it('New password same as current password', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
             .set('cookie', cookie)
+            .type('json')
             .send({
                 currentPassword: 'secret123',
                 newPassword: 'secret123',
                 newPasswordConfirmation: 'secret123'
             })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Success password change', function (done) {
-        chai
+    it('Success password change', async function () {
+        const res = await chai
             .request(baseUrl)
             .put(route + user.id)
             .set('cookie', cookie)
+            .type('json')
             .send({
                 currentPassword: 'secret123',
                 newPassword: 'newpassword',
                 newPasswordConfirmation: 'newpassword'
             })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(200)
-                expect(res.body['success']).to.equal(1)
-                done()
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
+    })
+
+    after(async function () {
+        await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'newpassword',
+                newPassword: 'secret123',
+                newPasswordConfirmation: 'secret123'
             })
-            .catch(err => {
-                console.log(err)
+    })
+})
+
+
+/**
+ * __________ Adress controller __________
+ * 
+ */
+describe.skip('Route /address => Method POST', function () {
+    const route = '/address'
+    let cookie = ''
+    let user = {}
+    const address = function (keys) {
+        const data = {
+            tag: 'Home Address #1',
+            address_one: faker.fake('{{address.streetName}}, {{address.streetAddress}}'),
+            address_two: '',
+            city: faker.address.city(),
+            postcode: faker.address.zipCode('#####'),
+            state: faker.address.state()
+        }
+
+        if (keys) {
+            keys.forEach(function (key) {
+                delete data[key]
             })
+        }
+
+        return data
+    }
+
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
+    })
+
+    it('Not sign in', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(401)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Missing all required', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Missing first address', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                user_id: user.id,
+                ...address(['address_one'])
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    /**
+     *  TODO:
+     *  - missing city, postcode, state
+     */
+
+    it('Success address added - address_two empty string', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                user_id: user.id,
+                ...address()
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(201)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['msg']).to.equal('Address added.')
+    })
+
+    it('Success address added - address_two included', async function () {
+        const data = {
+            user_id: user.id,
+            ...address()
+        }
+        data.address_two = faker.address.secondaryAddress()
+
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send(data)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(201)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['msg']).to.equal('Address added.')
+    })
+})
+
+describe.skip('Route /address/ => userId => Method GET', function () {
+    let cookie = ''
+    let user = {}
+    let route = '/address/'
+
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
+    })
+
+    it('Not sign in', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .get(route + user.id)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(401)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Please login before continue.')
+    })
+
+    it('Trying access other user address', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .get(route + '1')
+            .set('cookie', cookie)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(403)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Access is forbidden.')
+    })
+
+    it('Success request', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .get(route + user.id)
+            .set('cookie', cookie)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['data']).to.be.an('array')
+    })
+})
+
+
+/**
+ * __________ Order controller __________
+ * 
+ */
+describe.skip('Route /order: Method POST', function () {
+    let cookie = ''
+    let user = {}
+    const route = '/order'
+
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
+    })
+
+    it('Not sign in', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(401)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Missing all required fields', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Missing user id', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                address_id: 1,
+                total_price_paid: 94.98,
+                orders: [
+                    {
+                        product_id: 1,
+                        product_variation_id: 41,
+                        paying_price: 25.41,
+                        quantity: 2
+                    },
+                    {
+                        product_id: 2,
+                        product_variation_id: 45,
+                        paying_price: 44.16,
+                        quantity: 1
+                    }
+                ]
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    /**
+     *  TODO:
+     *  missing address id, total price paid, orders
+     */
+
+    it('Success order', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                user_id: user.id,
+                address_id: 1,
+                total_price_paid: 94.98,
+                orders: [
+                    {
+                        product_id: 1,
+                        product_variation_id: 41,
+                        paying_price: 25.41,
+                        quantity: 2
+                    },
+                    {
+                        product_id: 2,
+                        product_variation_id: 45,
+                        paying_price: 44.16,
+                        quantity: 1
+                    }
+                ]
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(201)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['msg']).to.equal('Order is placed.')
+    })
+})
+
+describe.skip('Route /order/:id: Method GET', function () {
+    let cookie = ''
+    let user = {}
+    let route = '/order/'
+
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
+    })
+
+    it('Not sign in', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .get(route + user.id)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(401)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Trying access other user order', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .get(route + '1')
+            .set('cookie', cookie)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(403)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Access is forbidden.')
+    })
+
+    it('Success fetch orders', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .get(route + user.id)
+            .set('cookie', cookie)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
     })
 })
 
@@ -642,34 +974,28 @@ describe.skip('Route /auth/change-password/:id: Method PUT', function () {
  */
 describe.skip('Route /product => Method POST', function () {
     const route = '/product'
+
     /**
-     * 1) image is not uploaded -DONE
-     * 2) missing all product informations -DONE
-     * 3) missing partial product informations - KIV
-     * 4) success product creation -DONE
+     *  - must login
+     *  - admin only
      */
 
-    it('Missing product image', function (done) {
-        chai
+    it('Missing product image', async function () {
+        const res = await chai
             .request(baseUrl)
             .post(route)
             .type('form')
             .field('product_name', 'Apple')
             .field('description', faker.hacker.phrase())
-            .then((res) => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Please upload product image.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Please upload product image.')
     })
 
-    it('Missing product information', function (done) {
-        chai
+    it('Missing all product information fields', async function () {
+        const res = await chai
             .request(baseUrl)
             .post(route)
             .type('form')
@@ -678,19 +1004,18 @@ describe.skip('Route /product => Method POST', function () {
                 fs.readFileSync(path.join(__dirname, '1.jpeg')),
                 '1.jpeg'
             )
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Success product creation', function (done) {
-        chai
+    /**
+     *  missing product name, description
+     */
+
+    it('Success product creation', async function () {
+        const res = await chai
             .request(baseUrl)
             .post(route)
             .type('form')
@@ -701,48 +1026,39 @@ describe.skip('Route /product => Method POST', function () {
                 fs.readFileSync(path.join(__dirname, '1.jpeg')),
                 '1.jpeg'
             )
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(201)
-                expect(res.body['success']).to.equal(1)
-                expect(res.body['msg']).to.equal('Product created.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(201)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['msg']).to.equal('Product created.')
     })
 })
 
 describe.skip('Route /product/variation => Method POST', function () {
     const route = '/product/variation'
+
     /**
-     * 1) Missing all required field
-     * 2) Missing some required field
-     * 3) Some required field not meet requirement - KIV
-     * 4) Success create
+     *  - must login
+     *  - admin only
      */
 
-    it('Missing all required fields', function (done) {
-        chai
+    it('Missing all required fields', async function () {
+        const res = await chai
             .request(baseUrl)
             .post(route)
+            .type('json')
             .send({})
-            .then((res) => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Missing some required fields', function (done) {
-        chai
+    it('Missing quantity', async function () {
+        const res = await chai
             .request(baseUrl)
             .post(route)
+            .type('json')
             .send({
                 product_variation: [
                     {
@@ -758,21 +1074,21 @@ describe.skip('Route /product/variation => Method POST', function () {
                     }
                 ]
             })
-            .then((res) => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
     })
 
-    it('Success product variations creation', function (done) {
-        chai
+    /**
+     *  missing product_id, v_description, price
+     */
+
+    it('Success product variations creation', async function () {
+        const res = await chai
             .request(baseUrl)
             .post(route)
+            .type('json')
             .send({
                 product_variation: [
                     {
@@ -795,453 +1111,44 @@ describe.skip('Route /product/variation => Method POST', function () {
                     }
                 ]
             })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(201)
-                expect(res.body['success']).to.equal(1)
-                expect(res.body['msg']).to.equal('Product variations added.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(201)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['msg']).to.equal('Product variations added.')
     })
 })
 
 describe.skip('Route /product => Method GET', function () {
     const route = '/product'
 
-    it('Sucess request', function (done) {
-        chai
+    it('Sucess request', async function () {
+        const res = await chai
             .request(baseUrl)
             .get(route)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(200)
-                expect(res.body['success']).to.equal(1)
-                expect(res.body['data']).to.be.an('array')
-                expect(res.body['data']).not.to.be.empty
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['data']).to.be.an('array')
+        expect(res.body['data']).not.to.be.empty
     })
 })
 
 describe.skip('Route /product/:id => Method GET', function () {
     const route = '/product/1'
 
-    it('Success request', function (done) {
-        chai
+    it('Success request', async function () {
+        const res = await chai
             .request(baseUrl)
             .get(route)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(200)
-                expect(res.body['success']).to.equal(1)
-                expect(res.body['data']).to.have.all.keys([
-                    'product_name', 'image', 'description', 'variations'
-                ])
-                expect(res.body['data']['variations']).to.be.an('array')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-})
 
-
-/**
- * __________ Adress controller __________
- * 
- */
-describe.skip('Route /address: Method POST', function () {
-    /**
-     * 0) Not sign in
-     * 1) Missing all required fields
-     * 2) Missing some of required fields -KIV
-     * 3) Success address added - address_two empty string 
-     * 4) Success address added - address_two included
-     */
-
-    const route = '/address'
-    let cookie = ''
-    let user = {}
-
-    before(function (done) {
-        chai
-            .request(baseUrl)
-            .post('/auth/login')
-            .send({
-                email: 'ali@email.com',
-                password: 'secret123'
-            })
-            .then(function (res) {
-                cookie = res.header['set-cookie']
-                user = res.body.data
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Not sign in', function (done) {
-        chai
-            .request(baseUrl)
-            .post(route)
-            .send({})
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(401)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Missing all required', function (done) {
-        chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .send({})
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Success address added - address_two empty string', function (done) {
-        chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .send({
-                user_id: user.id,
-                tag: 'Home Address #1',
-                address_one: faker.fake('{{address.streetName}}, {{address.streetAddress}}'),
-                address_two: '',
-                city: faker.address.city(),
-                postcode: faker.address.zipCode('#####'),
-                state: faker.address.state()
-            })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(201)
-                expect(res.body['success']).to.equal(1)
-                expect(res.body['msg']).to.equal('Address added.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Success address added - address_two included', function (done) {
-        chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .send({
-                user_id: user.id,
-                tag: 'Home Address #2',
-                address_one: faker.fake('{{address.streetName}}, {{address.streetAddress}}'),
-                address_two: faker.address.secondaryAddress,
-                city: faker.address.city(),
-                postcode: faker.address.zipCode('#####'),
-                state: faker.address.state()
-            })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(201)
-                expect(res.body['success']).to.equal(1)
-                expect(res.body['msg']).to.equal('Address added.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-})
-
-describe.skip('Route /address/:userId: Method GET', function () {
-    let cookie = ''
-    let user = {}
-    let route = '/address/'
-
-    before(function (done) {
-        chai
-            .request(baseUrl)
-            .post('/auth/login')
-            .send({
-                email: 'ali@email.com',
-                password: 'secret123'
-            })
-            .then(function (res) {
-                cookie = res.header['set-cookie']
-                user = res.body.data
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Not sign in', function (done) {
-        chai
-            .request(baseUrl)
-            .get(route + user.id)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(401)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Please login before continue.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Forbidden: trying access other user address', function (done) {
-        chai
-            .request(baseUrl)
-            .get(route + '1')
-            .set('cookie', cookie)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(403)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Access is forbidden.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Success request', function (done) {
-        chai
-            .request(baseUrl)
-            .get(route + user.id)
-            .set('cookie', cookie)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(200)
-                expect(res.body['success']).to.equal(1)
-                expect(res.body['data']).to.be.an('array')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-})
-
-
-/**
- * __________ Order controller __________
- * 
- */
-describe.skip('Route /order: Method POST', function () {
-    /**
-     * 0) Not sign in
-     * 1) Missing all required fields
-     * 2) Incomplete/requirements failed required fields - KIV
-     * 3) Success order
-     */
-
-    let cookie = ''
-    let user = {}
-    const route = '/order'
-
-    before(function (done) {
-        chai
-            .request(baseUrl)
-            .post('/auth/login')
-            .send({
-                email: 'ali@email.com',
-                password: 'secret123'
-            })
-            .then(function (res) {
-                cookie = res.header['set-cookie']
-                user = res.body.data
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Not sign in', function (done) {
-        chai
-            .request(baseUrl)
-            .post(route)
-            .send({})
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(401)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Missing all required fields', function (done) {
-        chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .send({})
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Incomplete/requirements failed for required field', function (done) {
-        chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .send({
-                user_id: user.id,
-                address_id: 1
-            })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(400)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Success order', function (done) {
-        chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .send({
-                user_id: user.id,
-                address_id: 1,
-                total_price_paid: 94.98,
-                orders: [
-                    {
-                        product_id: 1,
-                        product_variation_id: 41,
-                        paying_price: 25.41,
-                        quantity: 2
-                    },
-                    {
-                        product_id: 2,
-                        product_variation_id: 45,
-                        paying_price: 44.16,
-                        quantity: 1
-                    }
-                ]
-            })
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(201)
-                expect(res.body['success']).to.equal(1)
-                expect(res.body['msg']).to.equal('Order is placed.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-})
-
-describe.skip('Route /order/:id: Method GET', function () {
-
-    let cookie = ''
-    let user = {}
-    let route = '/order/'
-
-    before(function (done) {
-        chai
-            .request(baseUrl)
-            .post('/auth/login')
-            .send({
-                email: 'ali@email.com',
-                password: 'secret123'
-            })
-            .then(function (res) {
-                cookie = res.header['set-cookie']
-                user = res.body.data
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Not sign in', function (done) {
-        chai
-            .request(baseUrl)
-            .get(route + user.id)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(401)
-                expect(res.body['success']).to.equal(0)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Forbidden: trying access other user order', function (done) {
-        chai
-            .request(baseUrl)
-            .get(route + '1')
-            .set('cookie', cookie)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(403)
-                expect(res.body['success']).to.equal(0)
-                expect(res.body['msg']).to.equal('Access is forbidden.')
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
-    })
-
-    it('Success fetch orders', function (done) {
-        chai
-            .request(baseUrl)
-            .get(route + user.id)
-            .set('cookie', cookie)
-            .then(res => {
-                expect(res).to.be.json
-                expect(res).to.have.status(200)
-                expect(res.body['success']).to.equal(1)
-                done()
-            })
-            .catch(err => {
-                console.log(err)
-            })
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['data']).to.have.all.keys([
+            'product_name', 'image', 'description', 'variations'
+        ])
+        expect(res.body['data']['variations']).to.be.an('array')
     })
 })
