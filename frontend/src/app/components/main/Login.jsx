@@ -40,7 +40,7 @@ class Login extends React.Component {
 
         axios({
             method: 'POST',
-            url: '/user/login',
+            url: '/auth/login',
             data: {
                 email,
                 password

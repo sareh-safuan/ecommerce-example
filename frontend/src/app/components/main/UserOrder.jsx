@@ -8,7 +8,8 @@ class Order extends React.Component {
         this.state = {
             orders: [],
             alertType: '',
-            alertText: ''
+            alertText: '',
+            isLoading: true
         }
     }
 
@@ -17,6 +18,7 @@ class Order extends React.Component {
 
         if (!userId) {
             this.setState({
+                isLoading: false,
                 alertType: 'alert-danger',
                 alertText: 'Unexpected error.'
             })
@@ -31,7 +33,10 @@ class Order extends React.Component {
                     throw new Error()
                 }
 
-                this.setState({ orders: res.data.data })
+                this.setState({
+                    isLoading: false,
+                    orders: res.data.data
+                })
             })
             .catch(err => {
                 this.setState({
@@ -42,10 +47,14 @@ class Order extends React.Component {
     }
 
     render() {
-        const { orders, alertType, alertText } = this.state
+        const { orders, alertType, alertText, isLoading } = this.state
 
-        if (!orders.length && alertType === '') {
+        if (isLoading && alertType === '') {
             return <div>Loading...</div>
+        }
+
+        if (!orders.length) {
+            return <h4>You don't have any order yet.</h4>
         }
 
         return (

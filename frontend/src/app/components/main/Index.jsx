@@ -76,7 +76,7 @@ const FruitList = ({ fruits }) => {
         return (
             <Card className="card-shadow width-20" key={i}>
                 <CardImage>
-                    <Image src={`http://localhost:4000/${fruit.image}`} alt="temporary" />
+                    <Image src={`${process.env.REACT_APP_IMAGE_URL}${fruit.image}`} alt="temporary" />
                 </CardImage>
                 <CardBody className="product-card-height">
                     <CardTitle>{fruit.product_name}</CardTitle>

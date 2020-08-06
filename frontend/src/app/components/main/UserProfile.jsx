@@ -1,10 +1,15 @@
 import React from 'react'
-import { Label, BlockInput, Button, Card, CardBody, CardTitle } from '../../Core.jsx'
+import axios from 'axios'
+import { Label, BlockInput, Button, Card, CardBody, CardTitle, Alert }
+    from '../../Core.jsx'
 
 class Profile extends React.Component {
     constructor() {
         super()
         this.state = {
+            alertType: '',
+            alertText: '',
+            isLoading: true,
             first_name: { value: '', error: '' },
             last_name: { value: '', error: '' },
             email: { value: '', error: '' },
@@ -16,18 +21,46 @@ class Profile extends React.Component {
     }
 
     componentDidMount() {
-        
+        const userId = localStorage.getItem('userId')
+
+        if (!userId) {
+            this.setState({
+                alertType: 'alert-danger',
+                alertText: 'Unexpected error.'
+            })
+            return
+        }
+
+        axios({
+            method: 'GET',
+            url: '/user/' + userId
+        })
+            .then(res => {
+                console.log(res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 
     clickHandler() { }
     inputHandler() { }
 
     render() {
-        const { first_name, last_name, email, phone_number } = this.state
+        const {
+            first_name, last_name, email, phone_number, alertType, alertText, isLoading
+        } = this.state
+
+        if (isLoading && alertType === '') {
+            return <div>Loading...</div>
+        }
 
         return (
             <div className="width-80">
                 <div className="my-profile">
+                    <Alert className={alertType}>
+                        {alertText}
+                    </Alert>
                     <Card>
                         <CardTitle>
                             My Profile

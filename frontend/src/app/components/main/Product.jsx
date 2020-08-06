@@ -34,7 +34,7 @@ class Product extends React.Component {
                     throw new Error()
                 }
 
-                    const fruit = res.data.data
+                const fruit = res.data.data
                 const product_variation_id = fruit.variations[0].id
                 const paying_price = fruit.variations[0].price
                 const variations = fruit.variations.map(f => {
@@ -147,7 +147,7 @@ class Product extends React.Component {
             <Wrapper>
                 <Card className="width-40">
                     <CardImage>
-                        <Image src={`http://localhost:4000/${fruit.image}`} />
+                        <Image src={`${process.env.REACT_APP_IMAGE_URL}${fruit.image}`} />
                     </CardImage>
                 </Card>
                 <Card className="width-60">

@@ -11,7 +11,6 @@ import ProtectedRoute from './ProtectedRoute'
 class Main extends React.Component {
 
     render() {
-
         return (
             <Wrapper>
                 <Switch>

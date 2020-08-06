@@ -8,7 +8,8 @@ class Address extends React.Component {
         this.state = {
             addresses: [],
             alertType: '',
-            alertText: ''
+            alertText: '',
+            isLoading: true
         }
     }
 
@@ -32,10 +33,14 @@ class Address extends React.Component {
                     throw new Error()
                 }
 
-                this.setState({ addresses: res.data.data })
+                this.setState({
+                    isLoading: false,
+                    addresses: res.data.data
+                })
             })
             .catch(err => {
                 this.setState({
+                    isLoading: false,
                     alertType: 'alert-danger',
                     alertText: 'Access forbidden.'
                 })
@@ -43,10 +48,14 @@ class Address extends React.Component {
     }
 
     render() {
-        const { addresses, alertType, alertText } = this.state
+        const { addresses, alertType, alertText, isLoading } = this.state
 
-        if (!addresses.length && alertType === '') {
+        if (isLoading && alertType === '') {
             return <div>Loading...</div>
+        }
+
+        if (!addresses.length) {
+            return <h4>You don't have any address set up yet.</h4>
         }
 
         return (
