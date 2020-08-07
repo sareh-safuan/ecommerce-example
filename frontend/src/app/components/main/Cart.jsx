@@ -98,7 +98,7 @@ class Cart extends React.Component {
 
         axios({
             method: 'POST',
-            url: '/order/create',
+            url: '/order',
             data: {
                 user_id,
                 address_id,
@@ -185,7 +185,7 @@ class Cart extends React.Component {
             return (
                 <Alert
                     className={alertType}
-                    clickHandler={this.closeModal}    
+                    clickHandler={this.closeModal}
                 >
                     {alertText}
                 </Alert>
@@ -380,7 +380,10 @@ const Summary = ({ cart, total, shipping }) => {
                             return (
                                 <div className="row" key={i}>
                                     <div className="width-20">
-                                        <img src={c.image} alt="yes" className="img-responsive" />
+                                        <img src={process.env.REACT_APP_IMAGE_URL + c.image}
+                                            alt="yes"
+                                            className="img-responsive"
+                                        />
                                     </div>
                                     <div className="width-50">
                                         <p>{c.product_name}</p>

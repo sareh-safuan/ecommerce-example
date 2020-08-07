@@ -76,7 +76,7 @@ class Order extends React.Component {
                                             <div className="row" key={j}>
                                                 <div className="width-10">
                                                     <img alt="Not Found" className="img-responsive"
-                                                        src={'http://localhost:4000/' + product.image}
+                                                        src={process.env.REACT_APP_IMAGE_URL + product.image}
                                                     />
                                                 </div>
                                                 <div className="width-90">
