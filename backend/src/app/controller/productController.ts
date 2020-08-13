@@ -5,7 +5,6 @@ import ProductVariationModel from '../../database/models/productvariationModel'
 import errorHandler from '../../utils/errorHandler'
 
 class Product {
-
     async list(req: Request, res: Response) {
         try {
             const Product = new ProductModel()

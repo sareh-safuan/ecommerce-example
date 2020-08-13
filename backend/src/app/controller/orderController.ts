@@ -5,11 +5,17 @@ import errorHandler from '../../utils/errorHandler'
 
 class Order {
     async list(req: Request, res: Response) {
-        const { userId } = req.params
-        
-        try {        
+        const {
+            filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
+        } = req.query
+        const limit = req.query.limit || 100
+
+        try {
             const Order = new OrderModel()
-            const orders = await Order.findBy('user_id', userId)
+            const orders = await Order.find({
+                filterColumn, filterValue, sortColumn, sortValue,
+                pgColumn, pgOperator, pgLastItem, limit
+            })
             const orderIds = orders.map(_ => _.id)
             const OrderDetail = new OrderDetailModel()
 

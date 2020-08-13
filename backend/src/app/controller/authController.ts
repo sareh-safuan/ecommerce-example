@@ -4,12 +4,14 @@ import errorHandler from '../../utils/errorHandler'
 import UserModel from '../../database/models/userModel'
 
 class Auth {
-
     async login(req: Request, res: Response) {
         const { email, password } = req.body
         try {
             const User = new UserModel()
-            const user = await User.findBy('email', email)
+            const user = await User.find({
+                filterColumn: 'email',
+                filterValue: email
+            })
             if (!user.length) {
                 return res.status(404).json({
                     success: 0,

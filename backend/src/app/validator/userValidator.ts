@@ -23,7 +23,10 @@ export const vUserRegister = (req: Request, res: Response, next: NextFunction) =
             .isEmail().withMessage('Invalid email format.')
             .bail()
             .custom(value => {
-                return new UserModel().findBy('email', value)
+                return new UserModel().find({
+                    filterColumn: 'email',
+                    filterValue: value
+                })
                     .then(user => {
                         if (user.length) {
                             return Promise.reject('Email already registered.')
@@ -116,7 +119,10 @@ export const vUserChangePassword = (req: Request, res: Response, next: NextFunct
             .notEmpty().withMessage('Password is required')
             .isLength({ min: 8 }).withMessage('Password should have more than 8 characters')
             .custom((value) => {
-                return new UserModel().findBy('id', id)
+                return new UserModel().find({
+                    filterColumn: 'email',
+                    filterValue: value
+                })
                     .then(user => {
                         const { hash } = user[0]
 
@@ -191,7 +197,10 @@ export const vUserUpdateProfile = (req: Request, res: Response, next: NextFuncti
                 .isEmail().withMessage('Invalid email format.')
                 .bail()
                 .custom(value => {
-                    return new UserModel().findBy('email', value)
+                    return new UserModel().find({
+                        filterColumn: 'email',
+                        filterValue: value
+                    })
                         .then(user => {
                             if (user.length) {
                                 const { id } = user[0]

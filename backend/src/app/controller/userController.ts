@@ -4,14 +4,37 @@ import UserModel from '../../database/models/userModel'
 import errorHandler from '../../utils/errorHandler'
 
 class User {
+    async find(req: Request, res: Response) {
+        const {
+            filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
+        } = req.query
+        const limit = req.query.limit || 100
 
-    async find(req: Request, res: Response) {}
+        try {
+            const User = new UserModel()
+            const user = await User.find({
+                filterColumn, filterValue, sortColumn, sortValue,
+                pgColumn, pgOperator, pgLastItem, limit
+            })
+
+            res.status(200).json({
+                success: 1,
+                data: user
+            })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)
+        }
+    }
 
     async profile(req: Request, res: Response) {
         const { id } = req.params
         try {
             const User = new UserModel()
-            const user = await User.findBy('id', id)
+            const user = await User.find({
+                filterColumn: 'id',
+                filterValue: id
+            })
 
             if (!user.length) {
                 throw new Error('User not found.')
@@ -78,7 +101,7 @@ class User {
         }
     }
 
-    async delete(req: Request, res: Response) {}
+    async delete(req: Request, res: Response) { }
 }
 
 export default new User

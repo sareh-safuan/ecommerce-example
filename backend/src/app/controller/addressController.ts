@@ -4,11 +4,17 @@ import errorHandler from '../../utils/errorHandler'
 
 class Address {
     async list(req: Request, res: Response) {
-        const { userId } = req.params
+        const {
+            filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
+        } = req.query
+        const limit = req.query.limit || 100
 
         try {
             const Address = new AddressModel()
-            const addresses = await Address.findBy('user_id', userId)
+            const addresses = await Address.find({
+                filterColumn, filterValue, sortColumn, sortValue,
+                pgColumn, pgOperator, pgLastItem, limit
+            })
 
             res.status(200).json({
                 success: 1,

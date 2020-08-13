@@ -25,6 +25,12 @@ Route.register({
 Route.register('/user', [
     {
         method: 'GET',
+        path: '/',
+        handler: User.find
+        // need to add middleware
+    },
+    {
+        method: 'GET',
         path: '/:id',
         handler: User.profile,
         middleware: [isLogin, selfAccess]
@@ -61,13 +67,13 @@ Route.register('/auth', [
 Route.register('/address', [
     {
         method: 'GET',
-        path: '/:userId',
+        path: '/',
         handler: Address.list,
         middleware: [isLogin, selfAccess]
     },
     {
         method: 'POST',
-        path: '',
+        path: '/',
         handler: Address.create,
         middleware: [isLogin, vAddAddress]
     }
@@ -76,9 +82,9 @@ Route.register('/address', [
 Route.register('/order', [
     {
         method: 'GET',
-        path: '/:userId',
+        path: '/',
         handler: Order.list,
-        middleware: [isLogin, selfAccess]
+        // middleware: [isLogin, selfAccess]
     },
     {
         method: 'POST',
