@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import slugify from 'slugify'
 import ProductModel from '../../database/models/productModel'
-import ProductVariationModel from '../../database/models/productvariationModel'
 import errorHandler from '../../utils/errorHandler'
 
 class Product {
@@ -94,26 +93,7 @@ class Product {
         }
     }
 
-    async createVariation(req: Request, res: Response) {
-        const { product_variation } = req.body
-
-        try {
-            const ProductVariation = new ProductVariationModel()
-            await ProductVariation.save(product_variation)
-
-            res.status(201).json({
-                success: 1,
-                msg: 'Product variations added.'
-            })
-
-        } catch (err) {
-            errorHandler(req, res, err.message)
-        }
-    }
-
     async update(req: Request, res: Response) { }
-
-    async updateVariation(req: Request, res: Response) { }
 }
 
 export default new Product

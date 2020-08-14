@@ -4,6 +4,7 @@ import Auth from './app/controller/authController'
 import Address from './app/controller/addressController'
 import Order from './app/controller/orderController'
 import Product from  './app/controller/productController'
+import ProductVariation from './app/controller/productVariationController'
 
 import { isLogin, selfAccess } from './app/middleware/auth'
 import imageUploader from './app/middleware/imageUploader'
@@ -23,12 +24,6 @@ Route.register({
 })
 
 Route.register('/user', [
-    {
-        method: 'GET',
-        path: '/',
-        handler: User.find
-        // need to add middleware
-    },
     {
         method: 'GET',
         path: '/:id',
@@ -104,18 +99,52 @@ Route.register('/product', [
         method: 'GET',
         path: '/:id',
         handler: Product.detail
-    },
+    }
+])
+
+/**
+ * Routes for administration task
+ */
+
+Route.register('/ad/user', [
+    {
+        method: 'GET',
+        path: '/',
+        handler: User.find
+        // need to add middleware
+    }
+])
+
+Route.register('/ad/product', [
     {
         method: 'POST',
         path: '/',
         handler: Product.create,
         middleware: [imageUploader, vAddProduct]
+    }
+])
+
+Route.register('/ad/product-variation', [
+    {
+        method: 'GET',
+        path: '/',
+        handler: ProductVariation.list
+    },
+    {
+        method: 'GET',
+        path: '/:id',
+        handler: ProductVariation.show
     },
     {
         method: 'POST',
-        path: '/variation',
-        handler: Product.createVariation,
+        path: '/',
+        handler: ProductVariation.create,
         middleware: [vAddProductVariation]
+    },
+    {
+        method: 'PUT',
+        path: '/:id',
+        handler: ProductVariation.update
     }
 ])
 
