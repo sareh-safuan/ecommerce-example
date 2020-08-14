@@ -14,9 +14,9 @@ export const isLogin = (req: Request, res: Response, next: NextFunction) => {
 
 export const selfAccess = (req: Request, res: Response, next: NextFunction) => {
     const { id } = req!.session!.user
-    const paramId = req.params.id || req.params.userId
+    const userId = req.params.id || req.query.filterValue as string
 
-    if (id !== +paramId) {
+    if (id !== +userId) {
         return res.status(403).json({
             success: 0,
             msg: 'Access is forbidden.'

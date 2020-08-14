@@ -84,7 +84,7 @@ Route.register('/order', [
         method: 'GET',
         path: '/',
         handler: Order.list,
-        // middleware: [isLogin, selfAccess]
+        middleware: [isLogin, selfAccess]
     },
     {
         method: 'POST',
