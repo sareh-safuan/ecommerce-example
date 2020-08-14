@@ -4,19 +4,48 @@ import ProductModel from '../../database/models/productModel'
 import errorHandler from '../../utils/errorHandler'
 
 class Product {
-    async list(req: Request, res: Response) {
+    async index(req: Request, res: Response) {
+        const limit = parseInt(req.query.limit as string) || 20
+
         try {
             const Product = new ProductModel()
             const products = await Product
                 .query()
-                .join('productvariations', 'products.id', '=', 'productvariations.product_id')
+                .join(
+                    'productvariations', 'products.id',
+                    '=', 'productvariations.product_id'
+                )
                 .select(
-                    'products.id', 'products.product_name', 'products.slug',
-                    'products.image', 'products.description'
+                    'products.id', 'products.product_name', 
+                    'products.slug','products.image',
+                    'products.description'
                 )
                 .min('productvariations.price as price')
                 .groupBy('products.id')
-                .limit(12)
+                .limit(limit)
+
+            res.status(200).json({
+                success: 1,
+                data: products
+            })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)
+        }
+    }
+
+    async list(req: Request, res: Response) {
+        const {
+            filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
+        } = req.query
+        const limit = req.query.limit || 100
+
+        try {
+            const Product = new ProductModel()
+            const products = await Product.find({
+                filterColumn, filterValue, sortColumn, sortValue,
+                pgColumn, pgOperator, pgLastItem, limit
+            })
 
             res.status(200).json({
                 success: 1,

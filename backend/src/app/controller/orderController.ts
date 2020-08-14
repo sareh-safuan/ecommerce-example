@@ -4,11 +4,11 @@ import OrderDetailModel from '../../database/models/orderDetailModel'
 import errorHandler from '../../utils/errorHandler'
 
 class Order {
-    async list(req: Request, res: Response) {
+    async index(req: Request, res: Response) {
         const {
             filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
         } = req.query
-        const limit = req.query.limit || 100
+        const limit = req.query.limit || 10
 
         try {
             const Order = new OrderModel()
@@ -50,6 +50,29 @@ class Order {
             res.status(200).json({
                 success: 1,
                 data: result
+            })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)
+        }
+    }
+
+    async list(req: Request, res: Response) {
+        const {
+            filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
+        } = req.query
+        const limit = req.query.limit || 100
+
+        try {
+            const Order = new OrderModel()
+            const orders = await Order.find({
+                filterColumn, filterValue, sortColumn, sortValue,
+                pgColumn, pgOperator, pgLastItem, limit
+            })
+
+            res.status(200).json({
+                success: 1,
+                data: orders
             })
 
         } catch (err) {

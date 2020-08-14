@@ -83,7 +83,7 @@ Route.register('/order', [
     {
         method: 'GET',
         path: '/',
-        handler: Order.list,
+        handler: Order.index,
         middleware: [isLogin, selfAccess]
     },
     {
@@ -98,7 +98,7 @@ Route.register('/product', [
     {
         method: 'GET',
         path: '/',
-        handler: Product.list
+        handler: Product.index
     },
     {
         method: 'GET',
@@ -120,7 +120,20 @@ Route.register('/ad/user', [
     }
 ])
 
+Route.register('/ad/order', [
+    {
+        method: 'GET',
+        path: '/',
+        handler: Order.list
+    }
+])
+
 Route.register('/ad/product', [
+    {
+        method: 'GET',
+        path: '/',
+        handler: Product.list
+    },
     {
         method: 'POST',
         path: '/',
