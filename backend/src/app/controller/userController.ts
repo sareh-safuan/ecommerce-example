@@ -85,15 +85,29 @@ class User {
     }
 
     async update(req: Request, res: Response) {
-        const id = req.params.id
-        const data = req.body
+        const { id } = req.params
+        const { update } = req.query
+        let data
+        let msg
+
+        if (update === "profile") {
+            data = req.body
+            msg = "Profile updated."
+        } else {
+            const saltRound = process.env.SALT_ROUND as string
+            const password = req.body.newPassword
+            const hash = await bcrypt.hash(password, +saltRound)
+            data = { hash }
+            msg = "Password changed."
+        }
+
         try {
             const User = new UserModel()
             await User.update({ id }, data)
 
             res.status(200).json({
                 success: 1,
-                msg: 'Profile updated.'
+                msg
             })
 
         } catch (err) {

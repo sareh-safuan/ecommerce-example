@@ -41,6 +41,12 @@ Route.register('/user', [
         path: '/:id',
         handler: User.update,
         middleware: [isLogin, selfAccess, vUserUpdateProfile]
+    },
+    {
+        method: 'PUT',
+        path: '/change-password/:id',
+        handler: User.update,
+        middleware: [isLogin, selfAccess, vUserChangePassword]
     }
 ])
 
@@ -52,10 +58,9 @@ Route.register('/auth', [
         middleware: [vUserLogin]
     },
     {
-        method: 'PUT',
-        path: '/change-password/:id',
-        handler: Auth.changePassword,
-        middleware: [isLogin, selfAccess, vUserChangePassword]
+        method: 'GET',
+        path: '/logout',
+        handler: Auth.logout
     }
 ])
 

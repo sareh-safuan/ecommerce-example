@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { body, validationResult } from 'express-validator'
+import { body, query, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
 import UserModel from '../../database/models/userModel'
 import errorHandler from '../../utils/errorHandler'
@@ -114,14 +114,17 @@ export const vUserLogin = (req: Request, res: Response, next: NextFunction) => {
 export const vUserChangePassword = (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
     Promise.all([
+        query('update', 'Update action is not allowed')
+            .matches('password')
+            .run(req),
         body('currentPassword')
             .trim()
             .notEmpty().withMessage('Password is required')
             .isLength({ min: 8 }).withMessage('Password should have more than 8 characters')
             .custom((value) => {
                 return new UserModel().find({
-                    filterColumn: 'email',
-                    filterValue: value
+                    filterColumn: 'id',
+                    filterValue: id
                 })
                     .then(user => {
                         const { hash } = user[0]
@@ -181,6 +184,9 @@ export const vUserUpdateProfile = (req: Request, res: Response, next: NextFuncti
 
     Promise
         .all([
+            query('update', 'Update action is not allowed')
+                .matches('profile')
+                .run(req),
             body('first_name', 'First name is required.')
                 .notEmpty()
                 .isLength({ max: 20 })

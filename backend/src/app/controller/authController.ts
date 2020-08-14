@@ -40,27 +40,6 @@ class Auth {
         }
     }
 
-    async changePassword(req: Request, res: Response) {
-        const saltRound = process.env.SALT_ROUND as string
-        const password = req.body.newPassword
-        try {
-            const hash = await bcrypt.hash(password, +saltRound)
-            const User = new UserModel()
-            await User.update(
-                { id: req.params.id },
-                { hash }
-            )
-
-            res.status(200).json({
-                success: 1,
-                msg: 'Password changed.'
-            })
-
-        } catch (err) {
-            errorHandler(req, res, err.message)
-        }
-    }
-
     logout(req: Request, res: Response) { }
 }
 
