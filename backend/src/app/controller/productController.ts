@@ -16,8 +16,8 @@ class Product {
                     '=', 'productvariations.product_id'
                 )
                 .select(
-                    'products.id', 'products.product_name', 
-                    'products.slug','products.image',
+                    'products.id', 'products.product_name',
+                    'products.slug', 'products.image',
                     'products.description'
                 )
                 .min('productvariations.price as price')
@@ -34,60 +34,22 @@ class Product {
         }
     }
 
-    async list(req: Request, res: Response) {
-        const {
-            filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
-        } = req.query
-        const limit = req.query.limit || 100
+    async show(req: Request, res: Response) {
+        const { product } = req.params
 
         try {
             const Product = new ProductModel()
-            const products = await Product.find({
-                filterColumn, filterValue, sortColumn, sortValue,
-                pgColumn, pgOperator, pgLastItem, limit
-            })
-
-            res.status(200).json({
-                success: 1,
-                data: products
-            })
-
-        } catch (err) {
-            errorHandler(req, res, err.message)
-        }
-    }
-
-    async detail(req: Request, res: Response) {
-        try {
-            const { id } = req.params
-            const Product = new ProductModel()
-            const products = await Product
-                .query()
-                .join('productvariations as b', 'products.id', '=', 'b.product_id')
-                .select(
-                    'products.product_name', 'products.image', 'products.description',
-                    'b.id', 'b.price', 'b.variation_description', 'b.quantity'
+            const query = Product.query()
+                .select()
+                .join(
+                    'productvariations', 'products.id',
+                    '=', 'productvariations.product_id'
                 )
-                .where('products.id', id)
-
-            const { product_name, image, description } = products[0]
-            const variations = products.map(el => {
-                return {
-                    id: el.id,
-                    price: el.price,
-                    variation_description: el.variation_description,
-                    quantity: el.quantity
-                }
-            })
+                .where('products.id', product)
+            const data = await query
 
             res.status(200).json({
-                success: 1,
-                data: {
-                    product_name,
-                    image,
-                    description,
-                    variations
-                }
+                data
             })
 
         } catch (err) {

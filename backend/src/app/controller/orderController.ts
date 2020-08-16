@@ -5,52 +5,61 @@ import errorHandler from '../../utils/errorHandler'
 
 class Order {
     async index(req: Request, res: Response) {
-        const {
-            filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
-        } = req.query
-        const limit = req.query.limit || 10
+        const { user } = req.params
+        const limit = parseInt(req.query.limit as string) || 50
+        const last = parseInt(req.query.last as string)
 
         try {
             const Order = new OrderModel()
-            const orders = await Order.find({
-                filterColumn, filterValue, sortColumn, sortValue,
-                pgColumn, pgOperator, pgLastItem, limit
-            })
-            const orderIds = orders.map(_ => _.id)
-            const OrderDetail = new OrderDetailModel()
+            const query = Order.query()
+                .join('orderdetails', 'orderdetails.order_id', '=', 'orders.id')
 
-            const orderDetails = await OrderDetail
-                .query()
+            if (user) {
+                query
+                    .join(
+                        'productvariations', 'productvariations.id',
+                        '=', 'orderdetails.product_variation_id'
+                    )
+                    .join('products', 'productvariations.product_id', '=', 'products.id')
+                    .where('user_id', user)
+            }
+
+            if (last) {
+                query.where('orders.id', '>', last)
+            }
+
+            const orders = await query.limit(limit)
+            res.json({ data: orders })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)
+        }
+    }
+
+    async show(req: Request, res: Response) {
+        const { order } = req.params
+
+        try {
+            const Order = new OrderModel()
+            const query = Order.query()
                 .select(
-                    'orderdetails.order_id', 'orderdetails.paying_price', 'orderdetails.quantity',
-                    'b.image', 'b.product_name',
-                    'c.variation_description',
+                    'orders.*', 'orderdetails.*', 'addresses.*',
+                    'productvariations.variation_description'
                 )
-                .leftJoin('products as b', 'b.id', 'orderdetails.product_id')
-                .leftJoin('productvariations as c', 'c.id', 'orderdetails.product_variation_id')
-                .whereIn('orderdetails.order_id', orderIds)
+                .leftJoin('orderdetails', 'orderdetails.order_id', '=', 'orders.id')
+                .leftJoin(
+                    'productvariations', 'productvariations.id',
+                    '=', 'orderdetails.product_variation_id'
+                )
+                .leftJoin('products', 'productvariations.product_id', '=', 'products.id')
+                .leftJoin('addresses', 'addresses.user_id', '=', 'orders.user_id')
+                .where('orders.id', order)
 
-            const result = orders.map(o => {
-                let products: any = []
+            console.log(query.toSQL().sql)
 
-                orderDetails.forEach(od => {
-                    if (o.id === od.order_id) {
-                        products.push(od)
-                    }
-                })
+            const data = await query
 
-                return {
-                    id: o.id,
-                    total_price_paid: o.total_price_paid,
-                    created_at: o.created_at,
-                    products
-                }
-            })
-
-            res.status(200).json({
-                success: 1,
-                data: result
-            })
+            res.json({ data })
 
         } catch (err) {
             errorHandler(req, res, err.message)

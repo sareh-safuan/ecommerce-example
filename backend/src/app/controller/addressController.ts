@@ -3,23 +3,17 @@ import AddressModel from '../../database/models/addressModel'
 import errorHandler from '../../utils/errorHandler'
 
 class Address {
-    async list(req: Request, res: Response) {
-        const {
-            filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
-        } = req.query
-        const limit = req.query.limit || 100
+    async index(req: Request, res: Response) {
+        const { user } = req.params
 
         try {
             const Address = new AddressModel()
-            const addresses = await Address.find({
-                filterColumn, filterValue, sortColumn, sortValue,
-                pgColumn, pgOperator, pgLastItem, limit
-            })
+            const addresses = await Address.query()
+                .join('users', 'addresses.user_id', '=', 'users.id')
+                .select()
+                .where('addresses.user_id', user)
 
-            res.status(200).json({
-                success: 1,
-                data: addresses
-            })
+            res.json({ data: addresses })
 
         } catch (err) {
             errorHandler(req, res, err.message)

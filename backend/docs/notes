@@ -1,93 +1,39 @@
 ___________________________________________________________________________________________________
 USER
+- has one profile
+- has multiple address
+- has multiple order
 
-UserController
-    - /register POST
-    - /login POST
-    - /:id GET
-    - /update-profile/:id PUT
-    - /change-password/:id PUT
-    - /delete-account/:id POST
-
-UserDB
-    - id
-    - first_name
-    - last_name
-    - email
-    - phone_number
-    - hash
-    - avatar
-    - usergroup_id
-    - created_at
-    - updated_at
-
-UserAddressDB
-    - id
-    - user_id
-    - tag
-    - address_one
-    - address_two
-    - city
-    - postcode
-    - state
-    - country *drop
-    - created_at
-    - updated_at
-___________________________________________________________________________________________________
 PRODUCT
+- has one information
+- has multiple variation
 
-ProductController
-    - /create POST
-    - / GET
-    - /:id GET
-    - /update/:id POST
-    - /delete/:id POST
+ADDRESS
+- has one user
 
-ProductDB
-    - id
-    - product_name
-    - slug
-    - description 
-    - image 
-    - created_at
-    - updated_at
-
-ProductVariationDB
-    - id
-    - product_id
-    - variation_description
-    - price
-    - quantity
-    - created_at
-    - updated_at
-___________________________________________________________________________________________________
 ORDER
+- has multiple user
+- has multiple address
+- has multiple product (order details)
 
-OrderController
-    - /create POST
-    - / GET
-    - /:id GET
-    - /update/:id POST
-    - /delete/:id POST
 
-OrderDB
-    - id
-    - user_id
-    - address_id
-    - total_price_paid
-    - created_at
-    - updated_at
+route
 
-OrderDetailDB
-    - id
-    - order_id
-    - product_id
-    - product_variation_id
-    - paying_price
-    - quantity
-    - status_id
-    - created_at
-    - updated_at
+/user
+/user/:id
+/user/:id/address
+/user/:id/order
+/user/:id/order/:id
+
+/product
+/product/:id/product-variation
+
+/address
+
+/order
+/order/:id/
+
+
 
 ___________________________________________________________________________________________________
 LOOKUP
