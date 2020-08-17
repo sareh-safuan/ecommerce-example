@@ -1,43 +1,33 @@
 |   Access  |         URL                          |     Handler                 | Method |
-|-----------|----------------------                |-----------------------------|--------|       
-| Public    | /user/:id                            | User.profile                | GET    |
-|           | /user?                               | User.create                 | POST   |
-|           | /user/:id                            | User.update                 | PUT    |
-|           | /change-password/:id                 | User.update                 | PUT    |
-|           | /user/:id                            | User.destroy                | DELETE |
+|-----------|--------------------------------------|-----------------------------|--------|       
+| admin     | /user                                | User.index                  | GET    |
+| public    | /user                                | User.create                 | POST   |
+|           | /user/:user                          | User.show                   | GET    |
+|           | /user/:user/profile                  | User.update                 | PUT    |
+|           | /user/:user/password                 | User.update                 | PUT    |
+|           | /user/:user                          | User.destroy                | DELETE |
+|           | /user/:user/address                  | Address.index               | GET    |
+|           | /user/:user/address                  | Address.create              | POST   |
+|           | /user/:user/address/:address         | Address.update              | PUT    |
+|           | /user/:user/address/:address         | Address.destroy             | DELETE |
+|           | /user/:user/order                    | Order.index                 | GET    |
+|           | /user/:user/order                    | Order.create                | POST   |
+|           | /user/:user/order/:order             | OrderDetail.index           | GET    |
+|           | /user/:user/order/:order             | OrderDetail.update          | PUT    |
 |           |                                      |                             |        |        
 |           | /auth/login                          | Auth.login                  | POST   |
 |           | /auth/logout                         | Auth.logout                 | GET    |
 |           |                                      |                             |        |
-|           | /address?                            | Address.list                | GET    |
-|           | /address                             | Address.create              | POST   |
-|           | /address/:id (KIV)                   | Address.update              | PUT    |
-|           | /address/:id (KIV)                   | Address.destroy             | DELETE |
+| admin     | /address                             | Address.index               | GET    |
 |           |                                      |                             |        |
-|           | /order?                              | Order.index                 | GET    |
-|           | /order                               | Order.create                | POST   |
-|           | /order/:id? (KIV)                    | Order.update                | PUT    |
-|           |                                      |                             |        |
-|           | /order-detail/:id (KIV)              | OrderDetail.update          | PUT    |
+|           | /order                               | Order.index                 | GET    |
+|           | /order/:order                        | OrderDetail.index           | GET    |
+|           | /order/:order                        | OrderDetail.update          | PUT    |
 |           |                                      |                             |        | 
-|           | /product?                            | Product.index               | GET    |
-|           | /product/:id                         | Product.detail              | GET    |
+| public    | /product                             | Product.index               | GET    |
+|           | /product/:product                    | ProductVariation.detail     | GET    |
+| admin     | /product                             | Product.create              | POST   |
+|           | /product/:product                    | Product.update              | PUT    |
+|           | /product/:product/pv/:pv             | ProductVariation.update     | PUT    |
+|           | /product/:product                    | Product.destroy             | DELETE |
 |           |                                      |                             |        |
-| Admin     | /ad/user?                            | User.find                   | GET    |
-|           | /ad/user/:id (KIV)                   | User.destroy                | DELETE |
-|           |                                      |                             |        |
-|           | /ad/order?                           | Order.list                  | GET    |
-|           |                                      |                             |        |
-|           | /ad/order-detail? (KIV)              | Order.list                  | GET    |
-|           | /ad/order-detail/:id (KIV)           | Order.update                | PUT    |
-|           |                                      |                             |        |
-|           | /ad/product?                         | Product.list                | GET    |
-|           | /ad/product                          | Product.create              | POST   |
-|           | /ad/product/:id (KIV)                | Product.update              | PUT    |
-|           | /ad/product/:id (KIV)                | Product.destroy             | DELETE |
-|           |                                      |                             |        |
-|           | /ad/product-variation                | ProductVariation.list       | GET    |
-|           | /ad/product-variation/:id            | ProductVariation.show       | GET    |
-|           | /ad/product-variation/               | ProductVariation.create     | POST   |
-|           | /ad/product-variation/:id (KIV)      | ProductVariation.update     | PUT    |
-|           | /ad/product-variation/:id (KIV)      | ProductVariation.destroy    | DELETE |
