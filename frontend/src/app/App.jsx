@@ -1,16 +1,19 @@
 import React from 'react'
-import Header from './components/Header.jsx'
-import Main from './components/main/Main.jsx'
-import Footer from './components/Footer.jsx'
+import Container from 'react-bootstrap/Container'
+import Header from './Header.jsx'
+import Body from './Body.jsx'
+import Footer from './Footer.jsx'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 
 function App() {
   return (
-    <div className="App">
-      <Header />
-      <Main />
-      <Footer />
-    </div>
-  );
+    <Container>
+      <Header></Header>
+      <Body></Body>
+      <Footer></Footer>
+    </Container>
+  )
 }
 
 export default App;
