@@ -4,6 +4,7 @@ import AddressModel from './database/models/addressModel'
 // import Auth from './app/controller/authController'
 import Address from './app/controller/addressController'
 import Order from './app/controller/orderController'
+import OrderDetail from './app/controller/orderDetailController'
 import Product from  './app/controller/productController'
 // import ProductVariation from './app/controller/productVariationController'
 
@@ -44,10 +45,20 @@ Route.register('/user', [
         method: 'GET',
         path: '/:user/order',
         handler: Order.index
+    },
+    {
+        method: 'GET',
+        path: '/:user/order/:order',
+        handler: OrderDetail.index
     }
 ])
 
 Route.register('/product', [
+    {
+        method: 'GET',
+        path: '/',
+        handler: Product.index
+    },
     {
         method: 'GET',
         path: '/:product',
@@ -64,7 +75,15 @@ Route.register('/order', [
     {
         method: 'GET',
         path: '/:order',
-        handler: Order.show
+        handler: OrderDetail.index
+    }
+])
+
+Route.register('/address', [
+    {
+        method: 'GET',
+        path: '/',
+        handler: Address.index
     }
 ])
 

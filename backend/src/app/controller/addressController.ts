@@ -5,13 +5,19 @@ import errorHandler from '../../utils/errorHandler'
 class Address {
     async index(req: Request, res: Response) {
         const { user } = req.params
+        const limit = parseInt(req.query.limit as string) || 50
 
         try {
             const Address = new AddressModel()
-            const addresses = await Address.query()
-                .join('users', 'addresses.user_id', '=', 'users.id')
+            const query = Address.query()
                 .select()
-                .where('addresses.user_id', user)
+
+            if (user) {
+                query
+                    .where('user_id', user)
+            }
+                
+            const addresses = await query.limit(limit)
 
             res.json({ data: addresses })
 

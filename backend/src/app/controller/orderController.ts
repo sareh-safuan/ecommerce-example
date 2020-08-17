@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import OrderModel from '../../database/models/orderModel'
-import OrderDetailModel from '../../database/models/orderDetailModel'
 import errorHandler from '../../utils/errorHandler'
 
 class Order {
@@ -12,15 +11,9 @@ class Order {
         try {
             const Order = new OrderModel()
             const query = Order.query()
-                .join('orderdetails', 'orderdetails.order_id', '=', 'orders.id')
 
             if (user) {
                 query
-                    .join(
-                        'productvariations', 'productvariations.id',
-                        '=', 'orderdetails.product_variation_id'
-                    )
-                    .join('products', 'productvariations.product_id', '=', 'products.id')
                     .where('user_id', user)
             }
 
@@ -29,60 +22,8 @@ class Order {
             }
 
             const orders = await query.limit(limit)
+
             res.json({ data: orders })
-
-        } catch (err) {
-            errorHandler(req, res, err.message)
-        }
-    }
-
-    async show(req: Request, res: Response) {
-        const { order } = req.params
-
-        try {
-            const Order = new OrderModel()
-            const query = Order.query()
-                .select(
-                    'orders.*', 'orderdetails.*', 'addresses.*',
-                    'productvariations.variation_description'
-                )
-                .leftJoin('orderdetails', 'orderdetails.order_id', '=', 'orders.id')
-                .leftJoin(
-                    'productvariations', 'productvariations.id',
-                    '=', 'orderdetails.product_variation_id'
-                )
-                .leftJoin('products', 'productvariations.product_id', '=', 'products.id')
-                .leftJoin('addresses', 'addresses.user_id', '=', 'orders.user_id')
-                .where('orders.id', order)
-
-            console.log(query.toSQL().sql)
-
-            const data = await query
-
-            res.json({ data })
-
-        } catch (err) {
-            errorHandler(req, res, err.message)
-        }
-    }
-
-    async list(req: Request, res: Response) {
-        const {
-            filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
-        } = req.query
-        const limit = req.query.limit || 100
-
-        try {
-            const Order = new OrderModel()
-            const orders = await Order.find({
-                filterColumn, filterValue, sortColumn, sortValue,
-                pgColumn, pgOperator, pgLastItem, limit
-            })
-
-            res.status(200).json({
-                success: 1,
-                data: orders
-            })
 
         } catch (err) {
             errorHandler(req, res, err.message)

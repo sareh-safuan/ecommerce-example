@@ -11,17 +11,6 @@ class Product {
             const Product = new ProductModel()
             const products = await Product
                 .query()
-                .join(
-                    'productvariations', 'products.id',
-                    '=', 'productvariations.product_id'
-                )
-                .select(
-                    'products.id', 'products.product_name',
-                    'products.slug', 'products.image',
-                    'products.description'
-                )
-                .min('productvariations.price as price')
-                .groupBy('products.id')
                 .limit(limit)
 
             res.status(200).json({
