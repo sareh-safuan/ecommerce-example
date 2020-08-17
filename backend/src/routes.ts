@@ -1,7 +1,6 @@
 import Route from './bootstrap/router'
 import User from './app/controller/userController'
-import AddressModel from './database/models/addressModel'
-// import Auth from './app/controller/authController'
+import Auth from './app/controller/authController'
 import Address from './app/controller/addressController'
 import Order from './app/controller/orderController'
 import OrderDetail from './app/controller/orderDetailController'
@@ -17,13 +16,18 @@ import Product from  './app/controller/productController'
 // import { vUserRegister, vUserLogin, vUserChangePassword, vUserUpdateProfile } 
 //     from './app/validator/userValidator'
 
-Route.register({
-    method: 'GET',
-    path: '/',
-    handler: (req: any, res: any) => {
-        res.send('Hello from typescript route.')
+Route.register('/auth', [
+    {
+        method: 'POST',
+        path: '/login',
+        handler: Auth.login
+    },
+    {
+        method: 'GET',
+        path: 'logout',
+        handler: Auth.logout
     }
-})
+])
 
 Route.register('/user', [
     {
@@ -86,5 +90,13 @@ Route.register('/address', [
         handler: Address.index
     }
 ])
+
+Route.register({
+    method: '*',
+    path: '*',
+    handler: (req: any, res: any) => {
+        res.send('Not Found.')
+    }
+})
 
 export default Route

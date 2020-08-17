@@ -28,9 +28,256 @@ const login = async function (_email, _password) {
 }
 
 /**
- * __________ User controller __________
+ * __________ Auth controller __________
  * 
  */
+describe.skip('Route /auth/login => Method POST', function () {
+    const route = '/auth/login'
+
+    it.skip('Missing all the required fields', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it.skip('Missing email', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({
+                password: 'secret123'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it.skip('Missing password', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({
+                email: 'ali@email.com'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it.skip('Unregistered email', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({
+                email: 'unregistered@email.com',
+                password: 'mysecretpassword'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(404)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Email not found.')
+    })
+
+    it.skip('Wrong password', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({
+                email: 'ali@email.com',
+                password: 'thewrongpassword'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Wrong password.')
+    })
+
+    it('Success login', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({
+                email: 'ali@email.com',
+                password: 'secret123'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res).to.have.cookie('the-premium-fruit')
+        expect(res.body['msg']).to.equal('Login success.')
+        expect(res.body['data']).to.have.own.property('id')
+    })
+})
+
+describe.skip('Route /auth/change-password/:id => Method PUT', function () {
+    let cookie = ''
+    let user = {}
+    let route = '/auth/change-password/'
+
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
+    })
+
+    it('Not sign in', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(401)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Please login before continue.')
+    })
+
+    it('Updating other user password', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + '1')
+            .set('cookie', cookie)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(403)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Access is forbidden.')
+    })
+
+    it('Missing all required fields', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Password less than 8 characters', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'secret123',
+                newPassword: 'secret',
+                newPasswordConfirmation: 'secret'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Current password is incorrect', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'notmypassword',
+                newPassword: 'secretprolly',
+                newPasswordConfirmation: 'secretprolly'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('New password same as current password', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'secret123',
+                newPassword: 'secret123',
+                newPasswordConfirmation: 'secret123'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Success password change', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'secret123',
+                newPassword: 'newpassword',
+                newPasswordConfirmation: 'newpassword'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
+    })
+
+    after(async function () {
+        await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'newpassword',
+                newPassword: 'secret123',
+                newPasswordConfirmation: 'secret123'
+            })
+    })
+})
+
+
+/**
+ * __________ User Route __________
+ * 
+ */
+describe.skip('Route /user => Method GET', function () {
+    const route = '/user'
+
+    // not login, access control
+
+    it('Success request', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .get(route)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body).to.have.property('data')
+    })
+})
+
 describe.skip('Route /user => Method POST', function () {
     const route = '/user'
     const user = function (keys) {
@@ -193,7 +440,7 @@ describe.skip('Route /user => Method POST', function () {
     })
 })
 
-describe.skip('Route /user/:id => Method GET', function () {
+describe.skip('Route /user/:user => Method GET', function () {
     let cookie = ''
     let user = {}
     let route = '/user/'
@@ -204,7 +451,7 @@ describe.skip('Route /user/:id => Method GET', function () {
         user = temp.user
     })
 
-    it('Not sign in', async function () {
+    it.skip('Not sign in', async function () {
         const res = await chai
             .request(baseUrl)
             .get(route + user.id)
@@ -215,7 +462,7 @@ describe.skip('Route /user/:id => Method GET', function () {
         expect(res.body['msg']).to.equal('Please login before continue.')
     })
 
-    it('Trying access another user profile', async function () {
+    it.skip('Trying access another user profile', async function () {
         const res = await chai
             .request(baseUrl)
             .get(route + '1')
@@ -231,15 +478,14 @@ describe.skip('Route /user/:id => Method GET', function () {
         const res = await chai
             .request(baseUrl)
             .get(route + user.id)
-            .set('cookie', cookie)
 
         expect(res).to.be.json
         expect(res).to.have.status(200)
-        expect(res.body['success']).to.equal(1)
+        expect(res.body).to.have.property('data')
     })
 })
 
-describe.skip('Route /user/:id => Method PUT', function () {
+describe.skip('Route /user/:user => Method PUT', function () {
     let cookie = ''
     let user = {}
     let route = '/user/'
@@ -416,109 +662,10 @@ describe.skip('Route /user/:id => Method PUT', function () {
     })
 })
 
-
-/**
- * __________ Auth controller __________
- * 
- */
-describe.skip('Route /auth/login => Method POST', function () {
-    const route = '/auth/login'
-
-    it('Missing all the required fields', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .type('json')
-            .send({})
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Missing email', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .type('json')
-            .send({
-                password: 'secret123'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Missing password', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .type('json')
-            .send({
-                email: 'ali@email.com'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Unregistered email', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .type('json')
-            .send({
-                email: 'unregistered@email.com',
-                password: 'mysecretpassword'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(404)
-        expect(res.body['success']).to.equal(0)
-        expect(res.body['msg']).to.equal('Email not found.')
-    })
-
-    it('Wrong password', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .type('json')
-            .send({
-                email: 'ali@email.com',
-                password: 'thewrongpassword'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-        expect(res.body['msg']).to.equal('Wrong password.')
-    })
-
-    it('Success login', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .type('json')
-            .send({
-                email: 'ali@email.com',
-                password: 'secret123'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(200)
-        expect(res).to.have.cookie('the-premium-fruit')
-        expect(res.body['success']).to.equal(1)
-        expect(res.body['msg']).to.equal('Login success.')
-        expect(res.body['data']).to.have.own.property('id')
-    })
-})
-
-describe.skip('Route /auth/change-password/:id => Method PUT', function () {
+describe.skip('Route /user/:user/address => Method: GET', function () {
     let cookie = ''
     let user = {}
-    let route = '/auth/change-password/'
+    let route = '/user/'
 
     before(async function () {
         const temp = await login()
@@ -526,125 +673,58 @@ describe.skip('Route /auth/change-password/:id => Method PUT', function () {
         user = temp.user
     })
 
-    it('Not sign in', async function () {
+    it('Success request', async function () {
         const res = await chai
             .request(baseUrl)
-            .put(route + user.id)
-            .type('json')
-            .send({})
-
-        expect(res).to.be.json
-        expect(res).to.have.status(401)
-        expect(res.body['success']).to.equal(0)
-        expect(res.body['msg']).to.equal('Please login before continue.')
-    })
-
-    it('Updating other user password', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + '1')
-            .set('cookie', cookie)
-            .type('json')
-            .send({})
-
-        expect(res).to.be.json
-        expect(res).to.have.status(403)
-        expect(res.body['success']).to.equal(0)
-        expect(res.body['msg']).to.equal('Access is forbidden.')
-    })
-
-    it('Missing all required fields', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({})
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Password less than 8 characters', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                currentPassword: 'secret123',
-                newPassword: 'secret',
-                newPasswordConfirmation: 'secret'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Current password is incorrect', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                currentPassword: 'notmypassword',
-                newPassword: 'secretprolly',
-                newPasswordConfirmation: 'secretprolly'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('New password same as current password', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                currentPassword: 'secret123',
-                newPassword: 'secret123',
-                newPasswordConfirmation: 'secret123'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Success password change', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                currentPassword: 'secret123',
-                newPassword: 'newpassword',
-                newPasswordConfirmation: 'newpassword'
-            })
+            .get(route + user.id + '/address')
 
         expect(res).to.be.json
         expect(res).to.have.status(200)
-        expect(res.body['success']).to.equal(1)
+        expect(res.body).to.have.property('data')
+    })
+})
+
+describe.skip('Route /user/:user/order => Method: GET', function () {
+    let cookie = ''
+    let user = {}
+    let route = '/user/'
+
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
     })
 
-    after(async function () {
-        await chai
+    it('Success request', async function () {
+        const res = await chai
             .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                currentPassword: 'newpassword',
-                newPassword: 'secret123',
-                newPasswordConfirmation: 'secret123'
-            })
+            .get(route + user.id + '/order')
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body).to.have.property('data')
+    })
+})
+
+describe.skip('Route /user/:user/order/:order => Method: GET', function () {
+    let cookie = ''
+    let user = {}
+    let route = '/user/'
+
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
+    })
+
+    it('Success request', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .get(route + user.id + '/order/1')
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body).to.have.property('data')
     })
 })
 
@@ -766,10 +846,10 @@ describe.skip('Route /address => Method POST', function () {
     })
 })
 
-describe.skip('Route /address/ => userId => Method GET', function () {
+describe.skip('Route /address/ =>  Method GET', function () {
     let cookie = ''
     let user = {}
-    let route = '/address/'
+    let route = '/address'
 
     before(async function () {
         const temp = await login()
@@ -777,7 +857,7 @@ describe.skip('Route /address/ => userId => Method GET', function () {
         user = temp.user
     })
 
-    it('Not sign in', async function () {
+    it.skip('Not sign in', async function () {
         const res = await chai
             .request(baseUrl)
             .get(route + user.id)
@@ -788,7 +868,7 @@ describe.skip('Route /address/ => userId => Method GET', function () {
         expect(res.body['msg']).to.equal('Please login before continue.')
     })
 
-    it('Trying access other user address', async function () {
+    it.skip('Trying access other user address', async function () {
         const res = await chai
             .request(baseUrl)
             .get(route + '1')
@@ -803,12 +883,11 @@ describe.skip('Route /address/ => userId => Method GET', function () {
     it('Success request', async function () {
         const res = await chai
             .request(baseUrl)
-            .get(route + user.id)
-            .set('cookie', cookie)
+            .get(route)
 
         expect(res).to.be.json
         expect(res).to.have.status(200)
-        expect(res.body['success']).to.equal(1)
+        expect(res.body).to.have.property('data')
         expect(res.body['data']).to.be.an('array')
     })
 })
@@ -818,7 +897,7 @@ describe.skip('Route /address/ => userId => Method GET', function () {
  * __________ Order controller __________
  * 
  */
-describe.skip('Route /order: Method POST', function () {
+describe.skip('Route /order => Method POST', function () {
     let cookie = ''
     let user = {}
     const route = '/order'
@@ -922,10 +1001,24 @@ describe.skip('Route /order: Method POST', function () {
     })
 })
 
-describe.skip('Route /order/:id: Method GET', function () {
+describe.skip('Route /order => Method GET', function () {
+    let route = '/order'
+
+    it('Success reqest', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .get(route)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body).to.have.property('data')
+    })
+})
+
+describe.skip('Route /order/:order => Method GET', function () {
     let cookie = ''
     let user = {}
-    let route = '/order/'
+    let route = '/order/1'
 
     before(async function () {
         const temp = await login()
@@ -933,7 +1026,7 @@ describe.skip('Route /order/:id: Method GET', function () {
         user = temp.user
     })
 
-    it('Not sign in', async function () {
+    it.skip('Not sign in', async function () {
         const res = await chai
             .request(baseUrl)
             .get(route + user.id)
@@ -943,7 +1036,7 @@ describe.skip('Route /order/:id: Method GET', function () {
         expect(res.body['success']).to.equal(0)
     })
 
-    it('Trying access other user order', async function () {
+    it.skip('Trying access other user order', async function () {
         const res = await chai
             .request(baseUrl)
             .get(route + '1')
@@ -955,21 +1048,20 @@ describe.skip('Route /order/:id: Method GET', function () {
         expect(res.body['msg']).to.equal('Access is forbidden.')
     })
 
-    it('Success fetch orders', async function () {
+    it('Success reqest', async function () {
         const res = await chai
             .request(baseUrl)
-            .get(route + user.id)
-            .set('cookie', cookie)
+            .get(route)
 
         expect(res).to.be.json
         expect(res).to.have.status(200)
-        expect(res.body['success']).to.equal(1)
+        expect(res.body).to.have.property('data')
     })
 })
 
 
 /**
- * _________ Product controller __________ (KIV)
+ * _________ Product routes __________ (KIV)
  * 
  */
 describe.skip('Route /product => Method POST', function () {
@@ -1129,13 +1221,12 @@ describe.skip('Route /product => Method GET', function () {
 
         expect(res).to.be.json
         expect(res).to.have.status(200)
-        expect(res.body['success']).to.equal(1)
         expect(res.body['data']).to.be.an('array')
         expect(res.body['data']).not.to.be.empty
     })
 })
 
-describe.skip('Route /product/:id => Method GET', function () {
+describe.skip('Route /product/:product => Method GET', function () {
     const route = '/product/1'
 
     it('Success request', async function () {
@@ -1145,10 +1236,7 @@ describe.skip('Route /product/:id => Method GET', function () {
 
         expect(res).to.be.json
         expect(res).to.have.status(200)
-        expect(res.body['success']).to.equal(1)
-        expect(res.body['data']).to.have.all.keys([
-            'product_name', 'image', 'description', 'variations'
-        ])
-        expect(res.body['data']['variations']).to.be.an('array')
+        expect(res.body['data']).to.be.an('array')
+        expect(res.body['data']).not.to.be.empty
     })
 })

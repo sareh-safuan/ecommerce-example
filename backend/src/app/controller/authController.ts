@@ -6,6 +6,7 @@ import UserModel from '../../database/models/userModel'
 class Auth {
     async login(req: Request, res: Response) {
         const { email, password } = req.body
+        
         try {
             const User = new UserModel()
             const user = await User.find({

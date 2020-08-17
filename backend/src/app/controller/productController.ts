@@ -13,10 +13,7 @@ class Product {
                 .query()
                 .limit(limit)
 
-            res.status(200).json({
-                success: 1,
-                data: products
-            })
+            res.status(200).json({ data: products })
 
         } catch (err) {
             errorHandler(req, res, err.message)
@@ -28,18 +25,15 @@ class Product {
 
         try {
             const Product = new ProductModel()
-            const query = Product.query()
+            const data = await Product.query()
                 .select()
                 .join(
                     'productvariations', 'products.id',
                     '=', 'productvariations.product_id'
                 )
                 .where('products.id', product)
-            const data = await query
 
-            res.status(200).json({
-                data
-            })
+            res.status(200).json({ data })
 
         } catch (err) {
             errorHandler(req, res, err.message)
