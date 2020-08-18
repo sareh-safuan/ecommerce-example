@@ -24,7 +24,7 @@ const List = ({ list }) => {
                                     {product.description.slice(0, 80)}
                                 </Card.Text>
                                 <Link
-                                    to={'product/' + product.slug}
+                                    to={'product/' +  product.id + '/' + product.slug}
                                     className="btn btn-success"
                                 >
                                     Buy Now
