@@ -19,7 +19,7 @@ const Header = () => {
                     <Link to="/cart">Cart (0)</Link>
                 </Nav.Item>
                 <Nav.Item className="mr-4">
-                    <Link to="/login">Login</Link>
+                    <Link to="/user">Login</Link>
                 </Nav.Item>
             </Nav>
         </Fragment>

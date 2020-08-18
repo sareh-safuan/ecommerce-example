@@ -6,6 +6,7 @@ import Register from './pages/Register.jsx'
 import Cart from './pages/Cart'
 import Index from './pages/Index'
 import Product from './pages/Product'
+import User from './pages/User'
 
 const Body = () => {
     return (
@@ -16,6 +17,7 @@ const Body = () => {
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
                 <Route path="/cart" component={Cart} />
+                <Route path="/user" component={User} />
             </Switch>
         </Container>
     )
