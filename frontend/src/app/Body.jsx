@@ -3,13 +3,13 @@ import { Switch, Route } from 'react-router-dom'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Cart from './pages/Cart'
-import Product from './pages/Product'
+import Index from './pages/Index'
 
 const Body = () => {
     return (
         <Switch>
             <Route path="/" exact>
-                <Product />
+                <Index />
             </Route>
             <Route path="/login">
                 <Login />
