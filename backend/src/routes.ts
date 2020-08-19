@@ -88,6 +88,11 @@ Route.register('/address', [
         method: 'GET',
         path: '/',
         handler: Address.index
+    },
+    {
+        method: 'GET',
+        path: '/:address',
+        handler: Address.show
     }
 ])
 

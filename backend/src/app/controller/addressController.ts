@@ -26,6 +26,22 @@ class Address {
         }
     }
 
+    async show(req: Request, res: Response) {
+        const { address } = req.params
+
+        try {
+            const Address = new AddressModel()
+            const addr = await Address.query()
+                .select()
+                .where('id', address)
+
+            res.status(200).json({ data: addr })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)
+        }
+    }
+
     async create(req: Request, res: Response) {
         const {
             user_id, tag, address_one, address_two,

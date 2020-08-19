@@ -10,6 +10,11 @@ class OrderDetail {
             const OrderDetail = new OrderDetailModel()
             const orderDetails = await OrderDetail.query()
                 .select()
+                .leftJoin('products', 'orderdetails.product_id', '=', 'products.id')
+                .leftJoin(
+                    'productvariations', 'orderdetails.product_variation_id',
+                    '=', 'productvariations.id'
+                )
                 .where('order_id', order)
 
             res.status(200).json({ data: orderDetails })
