@@ -21,6 +21,9 @@ const Header = () => {
                 <Nav.Item className="mr-4">
                     <Link to="/user">Login</Link>
                 </Nav.Item>
+                <Nav.Item className="mr-4">
+                    <Link to="/admin">admin</Link>
+                </Nav.Item>
             </Nav>
         </Fragment>
     )

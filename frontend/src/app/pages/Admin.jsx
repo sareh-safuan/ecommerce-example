@@ -1,15 +1,12 @@
 import React, { Fragment } from 'react'
-import Row from 'react-bootstrap/Row'
 import { Switch, Route } from 'react-router-dom'
+import Row from 'react-bootstrap/Row'
 
 import Alert from '../components/core/Alert'
-import UserMenu from '../components/main/UserMenu'
-import UserHome from './UserHome'
-import UserProfile from './UserProfile'
-import UserAddress from './UserAddress'
-import UserOrder from './UserOrder'
+import AdminMenu from '../components/main/AdminMenu'
+import AdminDashboard from './AdminDashboard.jsx'
 
-class User extends React.Component {
+class Admin extends React.Component {
     constructor() {
         super()
 
@@ -46,19 +43,10 @@ class User extends React.Component {
             <Fragment>
                 <Alert alert={alert} closeAlert={this.closeAlert} />
                 <Row>
-                    <UserMenu />
+                    <AdminMenu />
                     <Switch>
-                        <Route path="/user" exact>
-                            <UserHome showAlert={this.showAlert} />
-                        </Route>
-                        <Route path="/user/profile">
-                            <UserProfile showAlert={this.showAlert} />
-                        </Route>
-                        <Route path="/user/address">
-                            <UserAddress showAlert={this.showAlert} />
-                        </Route>
-                        <Route path="/user/order">
-                            <UserOrder showAlert={this.showAlert} />
+                        <Route path="/admin">
+                            <AdminDashboard  showAlert={this.showAlert} />
                         </Route>
                     </Switch>
                 </Row>
@@ -67,4 +55,4 @@ class User extends React.Component {
     }
 }
 
-export default User
+export default Admin

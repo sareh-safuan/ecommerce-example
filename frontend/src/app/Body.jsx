@@ -7,6 +7,7 @@ import Cart from './pages/Cart'
 import Index from './pages/Index'
 import Product from './pages/Product'
 import User from './pages/User'
+import Admin from './pages/Admin'
 
 const Body = () => {
     return (
@@ -18,6 +19,7 @@ const Body = () => {
                 <Route path="/register" component={Register} />
                 <Route path="/cart" component={Cart} />
                 <Route path="/user" component={User} />
+                <Route path="/admin" component={Admin} />
             </Switch>
         </Container>
     )

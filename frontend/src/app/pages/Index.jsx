@@ -18,6 +18,7 @@ class Product extends React.Component {
                 text: ''
             }
         }
+        this.closeAlert = this.closeAlert.bind(this)
     }
 
     componentDidMount() {
@@ -45,13 +46,23 @@ class Product extends React.Component {
             })
     }
 
+    closeAlert() {
+        this.setState({
+            alert: {
+                show: false,
+                variant: '',
+                text: ''
+            }
+        })
+    }
+
     render() {
         const { alert, loading, products } = this.state
 
         return (
             <Fragment>
                 <Spinner loading={loading} />
-                <Alert alert={alert} />
+                <Alert alert={alert} closeAlert={this.closeAlert} />
                 <IndexDisplay products={products} />
             </Fragment>
         )
