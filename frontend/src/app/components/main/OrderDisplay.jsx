@@ -1,5 +1,5 @@
-import React from 'react'
-// import Card from 'react-bootstrap/Card'
+import React, { Fragment } from 'react'
+import Media from 'react-bootstrap/Media'
 import axios from 'axios'
 
 import Spinner from '../core/Spinner'
@@ -24,7 +24,10 @@ class OrderDisplay extends React.Component {
             .then(res => {
                 const orderDetails = res.data.data
 
-                console.log(orderDetails)
+                this.setState({
+                    orderDetails,
+                    loading: false
+                })
             })
             .catch(err => {
                 console.log(err)
@@ -32,11 +35,48 @@ class OrderDisplay extends React.Component {
     }
 
     render() {
-        const { loading } = this.state
+        const { loading, orderDetails } = this.state
 
-        return (
-            <Spinner loading={loading} />
-        )
+        if (loading) {
+            return (
+                <Spinner loading={loading} />
+            )
+        }
+
+        if (orderDetails.length) {
+            return (
+                <Fragment>
+                    {
+                        orderDetails.map((odr, idx) => (
+                            <Media key={idx} className="mt-2">
+                                <img
+                                    src={process.env.REACT_APP_IMAGE_URL + odr.image}
+                                    width={64}
+                                    height={50}
+                                    alt="image_not_found"
+                                    className="ml-2"
+                                />
+                                <Media.Body className="ml-3">
+                                    <div>
+                                        <small>
+                                            {
+                                                odr.product_name + ' (' +
+                                                odr.variation_description + ')'
+                                            }
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <small>
+                                            {'RM ' + odr.paying_price + ' x ' + odr.quantity}
+                                        </small>
+                                    </div>
+                                </Media.Body>
+                            </Media>
+                        ))
+                    }
+                </Fragment>
+            )
+        }
     }
 }
 
