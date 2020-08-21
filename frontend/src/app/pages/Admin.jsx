@@ -4,7 +4,8 @@ import Row from 'react-bootstrap/Row'
 
 import Alert from '../components/core/Alert'
 import AdminMenu from '../components/main/AdminMenu'
-import AdminDashboard from './AdminDashboard.jsx'
+import AdminDashboard from './AdminDashboard'
+import AdminOrder from './AdminOrder'
 
 class Admin extends React.Component {
     constructor() {
@@ -45,8 +46,11 @@ class Admin extends React.Component {
                 <Row>
                     <AdminMenu />
                     <Switch>
-                        <Route path="/admin">
+                        <Route path="/admin" exact>
                             <AdminDashboard  showAlert={this.showAlert} />
+                        </Route>
+                        <Route path="/admin/order">
+                            <AdminOrder showAlert={this.showAlert} />
                         </Route>
                     </Switch>
                 </Row>
