@@ -34,7 +34,7 @@ const login = async function (_email, _password) {
 describe.skip('Route /auth/login => Method POST', function () {
     const route = '/auth/login'
 
-    it.skip('Missing all the required fields', async function () {
+    it('Missing all the required fields', async function () {
         const res = await chai
             .request(baseUrl)
             .post(route)
@@ -46,7 +46,7 @@ describe.skip('Route /auth/login => Method POST', function () {
         expect(res.body['success']).to.equal(0)
     })
 
-    it.skip('Missing email', async function () {
+    it('Missing email', async function () {
         const res = await chai
             .request(baseUrl)
             .post(route)
@@ -60,7 +60,7 @@ describe.skip('Route /auth/login => Method POST', function () {
         expect(res.body['success']).to.equal(0)
     })
 
-    it.skip('Missing password', async function () {
+    it('Missing password', async function () {
         const res = await chai
             .request(baseUrl)
             .post(route)
@@ -74,7 +74,7 @@ describe.skip('Route /auth/login => Method POST', function () {
         expect(res.body['success']).to.equal(0)
     })
 
-    it.skip('Unregistered email', async function () {
+    it('Unregistered email', async function () {
         const res = await chai
             .request(baseUrl)
             .post(route)
@@ -90,7 +90,7 @@ describe.skip('Route /auth/login => Method POST', function () {
         expect(res.body['msg']).to.equal('Email not found.')
     })
 
-    it.skip('Wrong password', async function () {
+    it('Wrong password', async function () {
         const res = await chai
             .request(baseUrl)
             .post(route)

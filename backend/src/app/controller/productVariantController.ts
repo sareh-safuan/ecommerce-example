@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import ProductVariationModel from '../../database/models/productvariationModel'
+import ProductVariationModel from '../../database/models/productVariantModel'
 import errorHandler from '../../utils/errorHandler'
 
-class ProductVariation {
+class ProductVariant {
     async list(req: Request, res: Response) {
         const {
             filterColumn, filterValue, sortColumn, sortValue, pgColumn, pgOperator, pgLastItem
@@ -65,4 +65,4 @@ class ProductVariation {
     async update(req: Request, res: Response) { }
 }
 
-export default new ProductVariation
+export default new ProductVariant

@@ -13,14 +13,15 @@ import Product from  './app/controller/productController'
 // import { vAddAddress } from './app/validator/addressValidator'
 // import { vCreateOrder } from './app/validator/orderValidator'
 // import { vAddProduct, vAddProductVariation } from './app/validator/productValidator'
-// import { vUserRegister, vUserLogin, vUserChangePassword, vUserUpdateProfile } 
-//     from './app/validator/userValidator'
+import { vUserRegister, vUserLogin, /*vUserChangePassword, vUserUpdateProfile */ } 
+    from './app/validator/userValidator'
 
 Route.register('/auth', [
     {
         method: 'POST',
         path: '/login',
-        handler: Auth.login
+        handler: Auth.login,
+        middleware: [vUserLogin]
     },
     {
         method: 'GET',
@@ -36,6 +37,12 @@ Route.register('/user', [
         handler: User.index
     },
     {
+        method: 'POST',
+        path: '/',
+        handler: User.create,
+        middleware: [vUserRegister]
+    },
+    {
         method: 'GET',
         path: '/:user',
         handler: User.show
@@ -44,6 +51,11 @@ Route.register('/user', [
         method: 'GET',
         path: '/:user/address',
         handler: Address.index
+    },
+    {
+        method: 'POST',
+        path: '/:user/address',
+        handler: Address.create
     },
     {
         method: 'GET',
