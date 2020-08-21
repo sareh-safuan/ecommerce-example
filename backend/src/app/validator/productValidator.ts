@@ -8,17 +8,24 @@ export const vAddProduct = (req: Request, res: Response, next: NextFunction) => 
         .all([
             body('product_name')
                 .trim()
-                .notEmpty()
+                .notEmpty().withMessage('product name can\'t empty')
                 .isLength({ min: 2, max: 20 })
+                .withMessage('description should more than 2, less than 20')
                 .run(req),
             body('description')
                 .trim()
-                .notEmpty().withMessage('kenot')
-                .isLength({ min: 10, max: 250 }).withMessage('why')
+                .notEmpty().withMessage('product description can\'t empty')
+                .isLength({ min: 10, max: 250 })
+                .withMessage('description should more than 10, less than 250')
+                .run(req),
+            body('display_price')
+                .trim()
+                .notEmpty().withMessage('display price can\'t empty')
+                .isNumeric().withMessage('must be in number')
                 .run(req),
             body('image')
                 .trim()
-                .notEmpty()
+                .notEmpty().withMessage('image can\'t empty')
                 .run(req)
         ])
         .then(() => {
@@ -44,8 +51,8 @@ export const vAddProductVariation = (req: Request, res: Response, next: NextFunc
     Promise
         .all([
             body('product_variation')
-            .notEmpty()
-            .run(req),
+                .notEmpty()
+                .run(req),
             body('product_variation.*.product_id')
                 .trim()
                 .notEmpty()

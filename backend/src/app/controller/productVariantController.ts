@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import ProductVariationModel from '../../database/models/productVariantModel'
+import ProductVariantModel from '../../database/models/productVariantModel'
 import errorHandler from '../../utils/errorHandler'
 
 class ProductVariant {
@@ -10,7 +10,7 @@ class ProductVariant {
         const limit = req.query.limit || 100
 
         try {
-            const ProductVariation = new ProductVariationModel()
+            const ProductVariation = new ProductVariantModel()
             const productVariations = await ProductVariation.find({
                 filterColumn, filterValue, sortColumn, sortValue,
                 pgColumn, pgOperator, pgLastItem, limit
@@ -29,7 +29,7 @@ class ProductVariant {
         const { id } = req.params
 
         try {
-            const ProductVariation = new ProductVariationModel()
+            const ProductVariation = new ProductVariantModel()
             const productVariation = await ProductVariation.find({
                 filterColumn: 'id',
                 filterValue: id
@@ -46,15 +46,15 @@ class ProductVariant {
     }
 
     async create(req: Request, res: Response) {
-        const { product_variation } = req.body
+        const { product_variants } = req.body
 
         try {
-            const ProductVariation = new ProductVariationModel()
-            await ProductVariation.save(product_variation)
+            const ProductVariant = new ProductVariantModel()
+            await ProductVariant.save(product_variants)
 
             res.status(201).json({
                 success: 1,
-                msg: 'Product variations added.'
+                msg: 'Product variants added.'
             })
 
         } catch (err) {

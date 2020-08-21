@@ -1,41 +1,36 @@
 import { Request, Response, NextFunction } from 'express'
+import multer from 'multer'
 import path from 'path'
 import errorHandler from '../../utils/errorHandler'
-// @ts-ignore  
-import { IncomingForm } from 'formidable'
 
-/**
- * Better solution is upload to external services to handle file
- */
+const dest = path.join(__dirname, '../../../../upload')
+const storage = multer.diskStorage({
+    destination(req, file, cb) {
+        cb(null, dest)
+    },
+    filename(req, file, cb) {
+        const ext = path.extname(file.originalname)
+        const filename = Date.now()
+        cb(null, filename + ext)
+    }
+})
+const upload = multer({ storage }).single('image')
 
 const imageUploader = (req: Request, res: Response, next: NextFunction) => {
-    const uploadDir = path.join(__dirname, '../../../../upload')
-    const form = new IncomingForm({
-        uploadDir,
-        multiples: true,
-        keepExtensions: true
-    })
-
-    form.parse(req, (err: any, fields:any, files: any) => {
+    upload(req, res, (err: any) => {
         if (err) {
             errorHandler(req, res, err.message)
         }
 
-        if (Object.keys(files).length === 0) {
+        if (!req.file) {
             return res.status(400).json({
                 success: 0,
                 msg: 'Please upload product image.'
             })
         }
 
-        /*
-            TODO: Only works with one image with field name image
-        */
-        const image = path.win32.basename(files.image.path)
-        req.body = {
-            ...fields,
-            image
-        }        
+        req.body.image = req.file.filename
+
         next()
     })
 }

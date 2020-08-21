@@ -8,11 +8,11 @@ import Product from  './app/controller/productController'
 // import ProductVariation from './app/controller/productVariationController'
 
 // import { isLogin, selfAccess } from './app/middleware/auth'
-// import imageUploader from './app/middleware/imageUploader'
+import imageUploader from './app/middleware/imageUploader'
 
 import { vAddAddress } from './app/validator/addressValidator'
 import { vCreateOrder } from './app/validator/orderValidator'
-// import { vAddProduct, vAddProductVariation } from './app/validator/productValidator'
+import { vAddProduct, vAddProductVariation } from './app/validator/productValidator'
 import { vUserRegister, vUserLogin, /*vUserChangePassword, vUserUpdateProfile */ } 
     from './app/validator/userValidator'
 
@@ -81,6 +81,12 @@ Route.register('/product', [
         method: 'GET',
         path: '/',
         handler: Product.index
+    },
+    {
+        method: 'POST',
+        path: '/',
+        handler: Product.create,
+        middleware: [imageUploader, vAddProduct]
     },
     {
         method: 'GET',

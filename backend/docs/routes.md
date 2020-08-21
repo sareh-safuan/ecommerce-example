@@ -11,7 +11,7 @@
 |           | /user/:user/address/:address         | Address.update              | PUT    | kiv
 |           | /user/:user/address/:address         | Address.destroy             | DELETE | kiv
 |           | /user/:user/order                    | Order.index                 | GET    | done
-|           | /user/:user/order                    | Order.create                | POST   | wo
+|           | /user/:user/order                    | Order.create                | POST   | done
 |           | /user/:user/order/:order             | OrderDetail.index           | GET    | done
 |           | /user/:user/order/:order             | OrderDetail.update          | PUT    | KIV
 |           |                                      |                             |        |        
@@ -27,7 +27,8 @@
 |           |                                      |                             |        | 
 | public    | /product                             | Product.index               | GET    | done
 |           | /product/:product                    | ProductVariant.detail       | GET    | done
-| admin     | /product                             | Product.create              | POST   | wo
+| admin     | /product                             | Product.create              | POST   | done
+|           | /product/:product                    | ProductVariant.create       | POST   | wo
 |           | /product/:product/image              | Product.update              | PUT    | kiv
 |           | /product/:product/info               | Product.update              | PUT    | kiv
 |           | /product/:product/variant/:variant   | ProductVariant.update       | PUT    | kiv

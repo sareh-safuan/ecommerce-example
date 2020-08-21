@@ -41,11 +41,7 @@ class Product {
     }
 
     async create(req: Request, res: Response) {
-        const {
-            product_name,
-            description,
-            image
-        } = req.body
+        const { product_name, display_price, description, image } = req.body
         const slug = slugify(product_name, { lower: true })
 
         try {
@@ -53,8 +49,9 @@ class Product {
             await Product.save({
                 product_name,
                 slug,
+                display_price,
                 description,
-                image
+                image,
             })
 
             res.status(201).json({

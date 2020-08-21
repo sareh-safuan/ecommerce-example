@@ -28,7 +28,7 @@ const login = async function (_email, _password) {
 }
 
 /**
- * __________ Auth controller __________
+ * __________ Auth route __________
  * 
  */
 describe.skip('Route /auth/login => Method POST', function () {
@@ -811,7 +811,7 @@ describe.skip('Route /user/:user/order => Method: GET', function () {
     })
 })
 
-describe('Route /user/:user/order => Method: POST', function () {
+describe.skip('Route /user/:user/order => Method: POST', function () {
     let cookie = ''
     let user = {}
     let route = ''
@@ -941,7 +941,7 @@ describe.skip('Route /user/:user/order/:order => Method: GET', function () {
 
 
 /**
- * __________ Adress controller __________
+ * __________ Adress route __________
  * 
  */
 
@@ -992,25 +992,13 @@ describe.skip('Route /address/ =>  Method GET', function () {
 })
 
 
+// TODO address/:address
+
+
 /**
- * __________ Order controller __________
+ * __________ Order route __________
  * 
  */
-describe.skip('Route /order => Method POST', function () {
-    let cookie = ''
-    let user = {}
-    const route = '/order'
-
-    before(async function () {
-        const temp = await login()
-        cookie = temp.cookie
-        user = temp.user
-    })
-
-
-
-
-})
 
 describe.skip('Route /order => Method GET', function () {
     let route = '/order'
@@ -1124,6 +1112,7 @@ describe.skip('Route /product => Method POST', function () {
             .type('form')
             .field('product_name', faker.commerce.color())
             .field('description', faker.hacker.phrase())
+            .field('display_price', 50.15)
             .attach(
                 'image',
                 fs.readFileSync(path.join(__dirname, '1.jpeg')),
