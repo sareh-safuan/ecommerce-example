@@ -46,11 +46,11 @@ class ProductVariant {
     }
 
     async create(req: Request, res: Response) {
-        const { product_variants } = req.body
+        const { product_variation } = req.body
 
         try {
             const ProductVariant = new ProductVariantModel()
-            await ProductVariant.save(product_variants)
+            await ProductVariant.save(product_variation)
 
             res.status(201).json({
                 success: 1,

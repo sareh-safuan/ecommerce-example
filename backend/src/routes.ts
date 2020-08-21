@@ -5,14 +5,14 @@ import Address from './app/controller/addressController'
 import Order from './app/controller/orderController'
 import OrderDetail from './app/controller/orderDetailController'
 import Product from  './app/controller/productController'
-// import ProductVariation from './app/controller/productVariationController'
+import ProductVariant from './app/controller/productVariantController'
 
 // import { isLogin, selfAccess } from './app/middleware/auth'
 import imageUploader from './app/middleware/imageUploader'
 
 import { vAddAddress } from './app/validator/addressValidator'
 import { vCreateOrder } from './app/validator/orderValidator'
-import { vAddProduct, vAddProductVariation } from './app/validator/productValidator'
+import { vAddProduct, vAddProductVariant } from './app/validator/productValidator'
 import { vUserRegister, vUserLogin, /*vUserChangePassword, vUserUpdateProfile */ } 
     from './app/validator/userValidator'
 
@@ -92,6 +92,12 @@ Route.register('/product', [
         method: 'GET',
         path: '/:product',
         handler: Product.show
+    },
+    {
+        method: 'POST',
+        path: '/:product',
+        handler: ProductVariant.create,
+        middleware: [vAddProductVariant]
     }
 ])
 

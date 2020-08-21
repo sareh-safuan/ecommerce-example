@@ -47,7 +47,7 @@ export const vAddProduct = (req: Request, res: Response, next: NextFunction) => 
         })
 }
 
-export const vAddProductVariation = (req: Request, res: Response, next: NextFunction) => {
+export const vAddProductVariant = (req: Request, res: Response, next: NextFunction) => {
     Promise
         .all([
             body('product_variation')

@@ -1126,8 +1126,8 @@ describe.skip('Route /product => Method POST', function () {
     })
 })
 
-describe.skip('Route /product/variation => Method POST', function () {
-    const route = '/product/variation'
+describe('Route /product/:product => Method POST', function () {
+    const route = '/product/14'
 
     /**
      *  - must login
@@ -1184,19 +1184,19 @@ describe.skip('Route /product/variation => Method POST', function () {
             .send({
                 product_variation: [
                     {
-                        product_id: 15,
+                        product_id: 14,
                         variation_description: faker.commerce.color(),
                         price: 30,
                         quantity: 100,
                     },
                     {
-                        product_id: 15,
+                        product_id: 14,
                         variation_description: faker.commerce.color(),
                         price: 40,
                         quantity: 120,
                     },
                     {
-                        product_id: 15,
+                        product_id: 14,
                         variation_description: faker.commerce.color(),
                         price: 40,
                         quantity: 80,
@@ -1207,7 +1207,7 @@ describe.skip('Route /product/variation => Method POST', function () {
         expect(res).to.be.json
         expect(res).to.have.status(201)
         expect(res.body['success']).to.equal(1)
-        expect(res.body['msg']).to.equal('Product variations added.')
+        expect(res.body['msg']).to.equal('Product variants added.')
     })
 })
 
