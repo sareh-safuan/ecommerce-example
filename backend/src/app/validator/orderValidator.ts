@@ -21,6 +21,10 @@ export const vCreateOrder = (req: Request, res: Response, next: NextFunction) =>
                 .notEmpty().withMessage('total price can\'t empty')
                 .isNumeric().withMessage('total price must be numeric')
                 .run(req),
+            body('status_id')
+                .notEmpty().withMessage('status id can\'t be empty')
+                .isNumeric().withMessage('must be numeric')
+                .run(req),
             body('orders', 'Orders can\'t be empty')
                 .notEmpty()
                 .run(req),

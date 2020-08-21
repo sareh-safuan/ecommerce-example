@@ -31,13 +31,14 @@ class Order {
     }
 
     async create(req: Request, res: Response) {
-        const { user_id, address_id, total_price_paid, orders } = req.body
+        const { user_id, address_id, total_price_paid, orders, status_id } = req.body
 
         try {
             const Order = new OrderModel()
+            
             await Order.transaction(async (trx: any) => {
                 const id = await trx.insert({
-                    user_id, address_id, total_price_paid
+                    user_id, address_id, total_price_paid, status_id
                 }).into('orders')
 
                 orders.forEach((order: any) => order.order_id = id[0])

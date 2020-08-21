@@ -811,6 +811,112 @@ describe.skip('Route /user/:user/order => Method: GET', function () {
     })
 })
 
+describe('Route /user/:user/order => Method: POST', function () {
+    let cookie = ''
+    let user = {}
+    let route = ''
+
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
+        route = '/user/' + user.id + '/order'
+    })
+
+    it.skip('Not sign in', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(401)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Missing all required fields', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Missing user id', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                address_id: 1,
+                total_price_paid: 94.98,
+                orders: [
+                    {
+                        product_id: 1,
+                        product_variation_id: 41,
+                        paying_price: 25.41,
+                        quantity: 2
+                    },
+                    {
+                        product_id: 2,
+                        product_variation_id: 45,
+                        paying_price: 44.16,
+                        quantity: 1
+                    }
+                ]
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    /**
+     *  TODO:
+     *  missing address id, total price paid, status_id, orders
+     */
+
+    it('Success order', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .post(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                user_id: user.id,
+                address_id: 1,
+                total_price_paid: 94.98,
+                status_id: 1,
+                orders: [
+                    {
+                        product_id: 1,
+                        product_variation_id: 41,
+                        paying_price: 25.41,
+                        quantity: 2
+                    },
+                    {
+                        product_id: 2,
+                        product_variation_id: 45,
+                        paying_price: 44.16,
+                        quantity: 1
+                    }
+                ]
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(201)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['msg']).to.equal('Order is placed.')
+    })
+})
+
 describe.skip('Route /user/:user/order/:order => Method: GET', function () {
     let cookie = ''
     let user = {}
@@ -838,118 +944,6 @@ describe.skip('Route /user/:user/order/:order => Method: GET', function () {
  * __________ Adress controller __________
  * 
  */
-describe.skip('Route /address => Method POST', function () {
-    const route = '/address'
-    let cookie = ''
-    let user = {}
-    const address = function (keys) {
-        const data = {
-            tag: 'Home Address #1',
-            address_one: faker.fake('{{address.streetName}}, {{address.streetAddress}}'),
-            address_two: '',
-            city: faker.address.city(),
-            postcode: faker.address.zipCode('#####'),
-            state: faker.address.state()
-        }
-
-        if (keys) {
-            keys.forEach(function (key) {
-                delete data[key]
-            })
-        }
-
-        return data
-    }
-
-    before(async function () {
-        const temp = await login()
-        cookie = temp.cookie
-        user = temp.user
-    })
-
-    it('Not sign in', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .type('json')
-            .send({})
-
-        expect(res).to.be.json
-        expect(res).to.have.status(401)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Missing all required', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .type('json')
-            .send({})
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Missing first address', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                user_id: user.id,
-                ...address(['address_one'])
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    /**
-     *  TODO:
-     *  - missing city, postcode, state
-     */
-
-    it('Success address added - address_two empty string', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                user_id: user.id,
-                ...address()
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(201)
-        expect(res.body['success']).to.equal(1)
-        expect(res.body['msg']).to.equal('Address added.')
-    })
-
-    it('Success address added - address_two included', async function () {
-        const data = {
-            user_id: user.id,
-            ...address()
-        }
-        data.address_two = faker.address.secondaryAddress()
-
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .type('json')
-            .send(data)
-
-        expect(res).to.be.json
-        expect(res).to.have.status(201)
-        expect(res.body['success']).to.equal(1)
-        expect(res.body['msg']).to.equal('Address added.')
-    })
-})
 
 describe.skip('Route /address/ =>  Method GET', function () {
     let cookie = ''
@@ -1013,97 +1007,9 @@ describe.skip('Route /order => Method POST', function () {
         user = temp.user
     })
 
-    it('Not sign in', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .type('json')
-            .send({})
 
-        expect(res).to.be.json
-        expect(res).to.have.status(401)
-        expect(res.body['success']).to.equal(0)
-    })
 
-    it('Missing all required fields', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .type('json')
-            .send({})
 
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Missing user id', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                address_id: 1,
-                total_price_paid: 94.98,
-                orders: [
-                    {
-                        product_id: 1,
-                        product_variation_id: 41,
-                        paying_price: 25.41,
-                        quantity: 2
-                    },
-                    {
-                        product_id: 2,
-                        product_variation_id: 45,
-                        paying_price: 44.16,
-                        quantity: 1
-                    }
-                ]
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    /**
-     *  TODO:
-     *  missing address id, total price paid, orders
-     */
-
-    it('Success order', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .post(route)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                user_id: user.id,
-                address_id: 1,
-                total_price_paid: 94.98,
-                orders: [
-                    {
-                        product_id: 1,
-                        product_variation_id: 41,
-                        paying_price: 25.41,
-                        quantity: 2
-                    },
-                    {
-                        product_id: 2,
-                        product_variation_id: 45,
-                        paying_price: 44.16,
-                        quantity: 1
-                    }
-                ]
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(201)
-        expect(res.body['success']).to.equal(1)
-        expect(res.body['msg']).to.equal('Order is placed.')
-    })
 })
 
 describe.skip('Route /order => Method GET', function () {

@@ -11,7 +11,7 @@ import Product from  './app/controller/productController'
 // import imageUploader from './app/middleware/imageUploader'
 
 import { vAddAddress } from './app/validator/addressValidator'
-// import { vCreateOrder } from './app/validator/orderValidator'
+import { vCreateOrder } from './app/validator/orderValidator'
 // import { vAddProduct, vAddProductVariation } from './app/validator/productValidator'
 import { vUserRegister, vUserLogin, /*vUserChangePassword, vUserUpdateProfile */ } 
     from './app/validator/userValidator'
@@ -62,6 +62,12 @@ Route.register('/user', [
         method: 'GET',
         path: '/:user/order',
         handler: Order.index
+    },
+    {
+        method: 'POST',
+        path: '/:user/order',
+        handler: Order.create,
+        middleware: [vCreateOrder]
     },
     {
         method: 'GET',

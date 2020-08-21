@@ -13,7 +13,7 @@
 |           | /user/:user/order                    | Order.index                 | GET    | done
 |           | /user/:user/order                    | Order.create                | POST   | wo
 |           | /user/:user/order/:order             | OrderDetail.index           | GET    | done
-|           | /user/:user/order/:order             | OrderDetail.update          | PUT    | kiv
+|           | /user/:user/order/:order             | OrderDetail.update          | PUT    | KIV
 |           |                                      |                             |        |        
 |           | /auth/login                          | Auth.login                  | POST   | done
 |           | /auth/logout                         | Auth.logout                 | GET    | kiv
