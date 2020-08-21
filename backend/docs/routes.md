@@ -28,7 +28,8 @@
 | public    | /product                             | Product.index               | GET    | done
 |           | /product/:product                    | ProductVariant.detail       | GET    | done
 | admin     | /product                             | Product.create              | POST   | wo
-|           | /product/:product                    | Product.update              | PUT    | kiv
+|           | /product/:product/image              | Product.update              | PUT    | kiv
+|           | /product/:product/info               | Product.update              | PUT    | kiv
 |           | /product/:product/variant/:variant   | ProductVariant.update       | PUT    | kiv
 |           | /product/:product                    | Product.destroy             | DELETE | kiv
 |           | /product/:product/variant/:variant   | ProductVariant.destroy      | DELETE | kiv
