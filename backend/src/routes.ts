@@ -10,7 +10,7 @@ import Product from  './app/controller/productController'
 // import { isLogin, selfAccess } from './app/middleware/auth'
 // import imageUploader from './app/middleware/imageUploader'
 
-// import { vAddAddress } from './app/validator/addressValidator'
+import { vAddAddress } from './app/validator/addressValidator'
 // import { vCreateOrder } from './app/validator/orderValidator'
 // import { vAddProduct, vAddProductVariation } from './app/validator/productValidator'
 import { vUserRegister, vUserLogin, /*vUserChangePassword, vUserUpdateProfile */ } 
@@ -55,7 +55,8 @@ Route.register('/user', [
     {
         method: 'POST',
         path: '/:user/address',
-        handler: Address.create
+        handler: Address.create,
+        middleware: [vAddAddress]
     },
     {
         method: 'GET',

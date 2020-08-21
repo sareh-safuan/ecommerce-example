@@ -1,8 +1,9 @@
+import { Request, Response, NextFunction } from 'express'
 import { body, validationResult } from 'express-validator'
 import erroHandler from '../../utils/errorHandler'
 import { failedValidationLogger } from '../../utils/logger'
 
-export const vAddAddress = (req: any, res: any, next: any) => {
+export const vAddAddress = (req: Request, res: Response, next: NextFunction) => {
     Promise
         .all([
             body('user_id')
@@ -10,7 +11,7 @@ export const vAddAddress = (req: any, res: any, next: any) => {
                 .notEmpty().withMessage('userId can\'t empty')
                 .isNumeric().withMessage('userId should be numeric')
                 .custom(val => {
-                    // To check if same as session
+                    // To check if same as req.local.user
                     return true
                 }).withMessage('userId not same as in session')
                 .run(req),
@@ -43,6 +44,11 @@ export const vAddAddress = (req: any, res: any, next: any) => {
                 .trim()
                 .notEmpty().withMessage('state can\'t empty')
                 .isLength({ min: 5, max: 50 }).withMessage('between 5 to 50 characters')
+                .run(req),
+            body('country_id')
+                .trim()
+                .notEmpty().withMessage('country can\'t empty')
+                .isNumeric().withMessage('must be numeric')
                 .run(req)
         ])
         .then(() => {

@@ -7,7 +7,7 @@
 |           | /user/:user/password                 | User.update                 | PUT    | kiv
 |           | /user/:user                          | User.destroy                | DELETE | kiv
 |           | /user/:user/address                  | Address.index               | GET    | done
-|           | /user/:user/address                  | Address.create              | POST   | wo
+|           | /user/:user/address                  | Address.create              | POST   | done
 |           | /user/:user/address/:address         | Address.update              | PUT    | kiv
 |           | /user/:user/address/:address         | Address.destroy             | DELETE | kiv
 |           | /user/:user/order                    | Order.index                 | GET    | done

@@ -45,7 +45,7 @@ class Address {
     async create(req: Request, res: Response) {
         const {
             user_id, tag, address_one, address_two,
-            city, postcode, state
+            city, postcode, state, country_id
         } = req.body
 
         try {
@@ -57,7 +57,8 @@ class Address {
                 address_two,
                 city,
                 postcode,
-                state
+                state,
+                country_id
             })
 
             res.status(201).json({
