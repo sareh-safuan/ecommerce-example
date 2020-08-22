@@ -124,139 +124,6 @@ describe.skip('Route /auth/login => Method POST', function () {
     })
 })
 
-describe.skip('Route /auth/change-password/:id => Method PUT', function () {
-    let cookie = ''
-    let user = {}
-    let route = '/auth/change-password/'
-
-    before(async function () {
-        const temp = await login()
-        cookie = temp.cookie
-        user = temp.user
-    })
-
-    it('Not sign in', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .type('json')
-            .send({})
-
-        expect(res).to.be.json
-        expect(res).to.have.status(401)
-        expect(res.body['success']).to.equal(0)
-        expect(res.body['msg']).to.equal('Please login before continue.')
-    })
-
-    it('Updating other user password', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + '1')
-            .set('cookie', cookie)
-            .type('json')
-            .send({})
-
-        expect(res).to.be.json
-        expect(res).to.have.status(403)
-        expect(res.body['success']).to.equal(0)
-        expect(res.body['msg']).to.equal('Access is forbidden.')
-    })
-
-    it('Missing all required fields', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({})
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Password less than 8 characters', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                currentPassword: 'secret123',
-                newPassword: 'secret',
-                newPasswordConfirmation: 'secret'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Current password is incorrect', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                currentPassword: 'notmypassword',
-                newPassword: 'secretprolly',
-                newPasswordConfirmation: 'secretprolly'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('New password same as current password', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                currentPassword: 'secret123',
-                newPassword: 'secret123',
-                newPasswordConfirmation: 'secret123'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(400)
-        expect(res.body['success']).to.equal(0)
-    })
-
-    it('Success password change', async function () {
-        const res = await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                currentPassword: 'secret123',
-                newPassword: 'newpassword',
-                newPasswordConfirmation: 'newpassword'
-            })
-
-        expect(res).to.be.json
-        expect(res).to.have.status(200)
-        expect(res.body['success']).to.equal(1)
-    })
-
-    after(async function () {
-        await chai
-            .request(baseUrl)
-            .put(route + user.id)
-            .set('cookie', cookie)
-            .type('json')
-            .send({
-                currentPassword: 'newpassword',
-                newPassword: 'secret123',
-                newPasswordConfirmation: 'secret123'
-            })
-    })
-})
-
 
 /**
  * __________ User Route __________
@@ -659,6 +526,140 @@ describe.skip('Route /user/:user/profile => Method PUT', function () {
                 last_name: 'Baba',
                 email: 'ali@email.com',
                 phone_number: '5109301032'
+            })
+    })
+})
+
+describe('Route  /user/:user/password => Method: PUT', function () {
+    let cookie = ''
+    let user = {}
+    let route = ''
+
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
+        route = '/user/' + user.id + '/password'
+    })
+
+    it.skip('Not sign in', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + user.id)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(401)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Please login before continue.')
+    })
+
+    it.skip('Updating other user password', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route + '1')
+            .set('cookie', cookie)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(403)
+        expect(res.body['success']).to.equal(0)
+        expect(res.body['msg']).to.equal('Access is forbidden.')
+    })
+
+    it('Missing all required fields', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Password less than 8 characters', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'secret123',
+                newPassword: 'secret',
+                newPasswordConfirmation: 'secret'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Current password is incorrect', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'notmypassword',
+                newPassword: 'secretprolly',
+                newPasswordConfirmation: 'secretprolly'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('New password same as current password', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'secret123',
+                newPassword: 'secret123',
+                newPasswordConfirmation: 'secret123'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Success password change', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'secret123',
+                newPassword: 'newpassword',
+                newPasswordConfirmation: 'newpassword'
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
+    })
+
+    after(async function () {
+        await chai
+            .request(baseUrl)
+            .put(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                currentPassword: 'newpassword',
+                newPassword: 'secret123',
+                newPasswordConfirmation: 'secret123'
             })
     })
 })
