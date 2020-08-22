@@ -23,4 +23,10 @@ export const changePassword = async (req: Request, res: Response, next: NextFunc
     } catch (err) {
         errorHandler(req, res, err.message)
     }
-} 
+}
+
+export const cancelOrderDetail = (req: Request, res: Response, next: NextFunction) => {
+    req.body.status_id = 6
+
+    next()
+}

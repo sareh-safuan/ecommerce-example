@@ -9,7 +9,8 @@ import ProductVariant from './app/controller/productVariantController'
 
 // import { isLogin, selfAccess } from './app/middleware/auth'
 import imageUploader from './app/middleware/imageUploader'
-import { updateProfile, changePassword } from './app/middleware/transformUserUpdateData'
+import { updateProfile, changePassword, cancelOrderDetail }
+    from './app/middleware/transformUserUpdateData'
 
 import { vAddAddress, vUpdateAddress } from './app/validator/addressValidator'
 import { vCreateOrder } from './app/validator/orderValidator'
@@ -92,6 +93,12 @@ Route.register('/user', [
         method: 'GET',
         path: '/:user/order/:order',
         handler: Order.show
+    },
+    {
+        method: 'PUT',
+        path: '/:user/order/:order_detail/cancel',
+        handler: OrderDetail.update,
+        middleware: [cancelOrderDetail]
     }
 ])
 
