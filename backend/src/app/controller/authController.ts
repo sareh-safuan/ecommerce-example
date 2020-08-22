@@ -6,13 +6,14 @@ import UserModel from '../../database/models/userModel'
 class Auth {
     async login(req: Request, res: Response) {
         const { email, password } = req.body
-        
+
         try {
             const User = new UserModel()
-            const user = await User.find({
-                filterColumn: 'email',
-                filterValue: email
-            })
+            const user = await User
+                .query()
+                .select()
+                .where('email', email)
+
             if (!user.length) {
                 return res.status(404).json({
                     success: 0,

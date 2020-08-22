@@ -9,11 +9,12 @@ import ProductVariant from './app/controller/productVariantController'
 
 // import { isLogin, selfAccess } from './app/middleware/auth'
 import imageUploader from './app/middleware/imageUploader'
+import { updateProfile, changePassword } from './app/middleware/transformUserUpdateData'
 
 import { vAddAddress } from './app/validator/addressValidator'
 import { vCreateOrder } from './app/validator/orderValidator'
 import { vAddProduct, vAddProductVariant } from './app/validator/productValidator'
-import { vUserRegister, vUserLogin, /*vUserChangePassword, vUserUpdateProfile */ } 
+import { vUserRegister, vUserLogin, vUserChangePassword, vUserUpdateProfile } 
     from './app/validator/userValidator'
 
 Route.register('/auth', [
@@ -46,6 +47,18 @@ Route.register('/user', [
         method: 'GET',
         path: '/:user',
         handler: User.show
+    },
+    {
+        method: 'PUT',
+        path: '/:user/profile',
+        handler: User.update,
+        middleware: [vUserUpdateProfile, updateProfile]
+    },
+    {
+        method: 'PUT',
+        path: '/:user/password',
+        handler: User.update,
+        middleware: [vUserChangePassword, changePassword]
     },
     {
         method: 'GET',

@@ -23,10 +23,10 @@ export const vUserRegister = (req: Request, res: Response, next: NextFunction) =
             .isEmail().withMessage('Invalid email format.')
             .bail()
             .custom(value => {
-                return new UserModel().find({
-                    filterColumn: 'email',
-                    filterValue: value
-                })
+                return new UserModel()
+                    .query()
+                    .select()
+                    .where('email', value)
                     .then(user => {
                         if (user.length) {
                             return Promise.reject('Email already registered.')
@@ -112,20 +112,14 @@ export const vUserLogin = (req: Request, res: Response, next: NextFunction) => {
 }
 
 export const vUserChangePassword = (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id
+    const userId = +req.params.user
     Promise.all([
-        query('update', 'Update action is not allowed')
-            .matches('password')
-            .run(req),
         body('currentPassword')
             .trim()
             .notEmpty().withMessage('Password is required')
             .isLength({ min: 8 }).withMessage('Password should have more than 8 characters')
             .custom((value) => {
-                return new UserModel().find({
-                    filterColumn: 'id',
-                    filterValue: id
-                })
+                return new UserModel().find(userId)
                     .then(user => {
                         const { hash } = user[0]
 
@@ -180,13 +174,10 @@ export const vUserChangePassword = (req: Request, res: Response, next: NextFunct
 }
 
 export const vUserUpdateProfile = (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.id
+    const userId = req.params.user
 
     Promise
         .all([
-            query('update', 'Update action is not allowed')
-                .matches('profile')
-                .run(req),
             body('first_name', 'First name is required.')
                 .notEmpty()
                 .isLength({ max: 20 })
@@ -203,10 +194,10 @@ export const vUserUpdateProfile = (req: Request, res: Response, next: NextFuncti
                 .isEmail().withMessage('Invalid email format.')
                 .bail()
                 .custom(value => {
-                    return new UserModel().find({
-                        filterColumn: 'email',
-                        filterValue: value
-                    })
+                    return new UserModel()
+                        .query()
+                        .select()
+                        .where('email', value)
                         .then(user => {
                             if (user.length) {
                                 const { id } = user[0]

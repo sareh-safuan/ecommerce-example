@@ -485,21 +485,22 @@ describe.skip('Route /user/:user => Method GET', function () {
     })
 })
 
-describe.skip('Route /user/:user => Method PUT', function () {
+describe.skip('Route /user/:user/profile => Method PUT', function () {
     let cookie = ''
     let user = {}
-    let route = '/user/'
+    let route = ''
 
     before(async function () {
         const temp = await login()
         cookie = temp.cookie
         user = temp.user
+        route = '/user/' + user.id + '/profile'
     })
 
-    it('Not sign in', async function () {
+    it.skip('Not sign in', async function () {
         const res = await chai
             .request(baseUrl)
-            .put(route + user.id)
+            .put(route)
             .type('json')
             .send({})
 
@@ -509,7 +510,7 @@ describe.skip('Route /user/:user => Method PUT', function () {
         expect(res.body['msg']).to.equal('Please login before continue.')
     })
 
-    it('Updating another user profile', async function () {
+    it.skip('Updating another user profile', async function () {
         const res = await chai
             .request(baseUrl)
             .put(route + '1')
@@ -525,7 +526,7 @@ describe.skip('Route /user/:user => Method PUT', function () {
     it('Missing all required field', async function () {
         const res = await chai
             .request(baseUrl)
-            .put(route + user.id)
+            .put(route)
             .set('cookie', cookie)
             .type('json')
             .send({})
@@ -538,7 +539,7 @@ describe.skip('Route /user/:user => Method PUT', function () {
     it('Missing first name', async function () {
         const res = await chai
             .request(baseUrl)
-            .put(route + user.id)
+            .put(route)
             .set('cookie', cookie)
             .type('json')
             .send({
@@ -555,7 +556,7 @@ describe.skip('Route /user/:user => Method PUT', function () {
     it('Missing email', async function () {
         const res = await chai
             .request(baseUrl)
-            .put(route + user.id)
+            .put(route)
             .set('cookie', cookie)
             .type('json')
             .send({
@@ -572,7 +573,7 @@ describe.skip('Route /user/:user => Method PUT', function () {
     it('Invalid email', async function () {
         const res = await chai
             .request(baseUrl)
-            .put(route + user.id)
+            .put(route)
             .set('cookie', cookie)
             .type('json')
             .send({
@@ -596,7 +597,7 @@ describe.skip('Route /user/:user => Method PUT', function () {
     it('Email already registered to another user', async function () {
         const res = await chai
             .request(baseUrl)
-            .put(route + user.id)
+            .put(route)
             .set('cookie', cookie)
             .type('json')
             .send({
@@ -614,7 +615,7 @@ describe.skip('Route /user/:user => Method PUT', function () {
     it('Success updating the profile, using same email', async function () {
         const res = await chai
             .request(baseUrl)
-            .put(route + user.id)
+            .put(route)
             .set('cookie', cookie)
             .type('json')
             .send({
@@ -632,7 +633,7 @@ describe.skip('Route /user/:user => Method PUT', function () {
     it('Success updating the profile, using new email', async function () {
         const res = await chai
             .request(baseUrl)
-            .put(route + user.id)
+            .put(route)
             .set('cookie', cookie)
             .type('json')
             .send({
@@ -650,14 +651,14 @@ describe.skip('Route /user/:user => Method PUT', function () {
     after(async function () {
         await chai
             .request(baseUrl)
-            .put(route + user.id)
+            .put(route)
             .set('cookie', cookie)
             .type('json')
             .send({
                 first_name: 'Ali',
-                last_name: 'Baja',
+                last_name: 'Baba',
                 email: 'ali@email.com',
-                phone_number: '0111222333'
+                phone_number: '5109301032'
             })
     })
 })
@@ -1126,7 +1127,7 @@ describe.skip('Route /product => Method POST', function () {
     })
 })
 
-describe('Route /product/:product => Method POST', function () {
+describe.skip('Route /product/:product => Method POST', function () {
     const route = '/product/14'
 
     /**

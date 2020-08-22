@@ -26,9 +26,9 @@
 |           | /order/:order                        | OrderDetail.update          | PUT    | kiv
 |           |                                      |                             |        | 
 | public    | /product                             | Product.index               | GET    | done
-|           | /product/:product                    | ProductVariant.detail       | GET    | done
+|           | /product/:product                    | Product.show                | GET    | done
 | admin     | /product                             | Product.create              | POST   | done
-|           | /product/:product                    | ProductVariant.create       | POST   | wo
+|           | /product/:product                    | ProductVariant.create       | POST   | done
 |           | /product/:product/image              | Product.update              | PUT    | kiv
 |           | /product/:product/info               | Product.update              | PUT    | kiv
 |           | /product/:product/variant/:variant   | ProductVariant.update       | PUT    | kiv

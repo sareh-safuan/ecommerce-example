@@ -8,32 +8,8 @@ class BaseModel {
         this._table = table
     }
 
-    find(options: any) {
-        const query = connection.select().table(this._table)
-
-        const {
-            filterColumn, filterValue, sortColumn, sortValue,
-            pgColumn, pgOperator, pgLastItem, limit
-        } = options
-
-        if (filterColumn && filterValue) {
-            query.where(filterColumn, filterValue)
-        }
-
-        if (sortColumn && sortValue) {
-            query.orderBy(sortColumn, sortValue)
-        }
-
-        if (pgColumn && pgOperator && pgLastItem) {
-            const operator = pgOperator === "gt" ? ">" : "<"
-            query.where(pgColumn, operator, pgLastItem)
-        }
-
-        if (limit) {
-            query.limit(limit)
-        }
-
-        return query
+    find(id: number) {
+        return connection(this._table).select().where('id', id)
     }
 
     save(data: any) {
