@@ -3,12 +3,12 @@
 | admin     | /user                                | User.index                  | GET    | done
 | public    | /user                                | User.create                 | POST   | done
 |           | /user/:user                          | User.show                   | GET    | done
-|           | /user/:user/profile                  | User.update                 | PUT    | kiv
-|           | /user/:user/password                 | User.update                 | PUT    | kiv
+|           | /user/:user/profile                  | User.update                 | PUT    | done
+|           | /user/:user/password                 | User.update                 | PUT    | done
 |           | /user/:user                          | User.destroy                | DELETE | kiv
 |           | /user/:user/address                  | Address.index               | GET    | done
 |           | /user/:user/address                  | Address.create              | POST   | done
-|           | /user/:user/address/:address         | Address.update              | PUT    | kiv
+|           | /user/:user/address/:address         | Address.update              | PUT    | done
 |           | /user/:user/address/:address         | Address.destroy             | DELETE | kiv
 |           | /user/:user/order                    | Order.index                 | GET    | done
 |           | /user/:user/order                    | Order.create                | POST   | done

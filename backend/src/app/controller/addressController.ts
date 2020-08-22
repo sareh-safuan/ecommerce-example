@@ -16,7 +16,7 @@ class Address {
                 query
                     .where('user_id', user)
             }
-                
+
             const addresses = await query.limit(limit)
 
             res.json({ data: addresses })
@@ -71,7 +71,34 @@ class Address {
         }
     }
 
-    // TODO: async update(req: Request, res: Response) {} 
+    async update(req: Request, res: Response) {
+        const id = req.params.address
+        const {
+            tag, address_one, address_two,
+            city, postcode, state, country_id
+        } = req.body
+
+        try {
+            const Address = new AddressModel()
+            await Address.update({ id }, {
+                tag,
+                address_one,
+                address_two,
+                city,
+                postcode,
+                state,
+                country_id
+            })
+
+            res.status(200).json({
+                success: 1,
+                msg: 'Address updated.'
+            })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)
+        }
+    }
 }
 
 export default new Address

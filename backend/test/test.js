@@ -530,7 +530,7 @@ describe.skip('Route /user/:user/profile => Method PUT', function () {
     })
 })
 
-describe('Route  /user/:user/password => Method: PUT', function () {
+describe.skip('Route  /user/:user/password => Method: PUT', function () {
     let cookie = ''
     let user = {}
     let route = ''
@@ -788,6 +788,104 @@ describe.skip('Route /user/:user/address => Method: POST', function () {
         expect(res).to.have.status(201)
         expect(res.body['success']).to.equal(1)
         expect(res.body['msg']).to.equal('Address added.')
+    })
+})
+
+describe.skip('Route /user/:user/address/:address => Method PUT', function () {
+    let route = ''
+    let cookie = ''
+    let user = {}
+    const address = function (keys) {
+        const data = {
+            tag: 'Home Address #2',
+            address_one: faker.fake('{{address.streetName}}, {{address.streetAddress}}'),
+            address_two: '',
+            city: faker.address.city(),
+            postcode: faker.address.zipCode('#####'),
+            state: faker.address.state(),
+            country_id: 1
+        }
+
+        if (keys) {
+            keys.forEach(function (key) {
+                delete data[key]
+            })
+        }
+
+        return data
+    }
+
+    before(async function () {
+        const temp = await login()
+        cookie = temp.cookie
+        user = temp.user
+        route = '/user/' + user.id + '/address/' + 28
+    })
+
+    // TODO: not sign
+
+    it('Missing all required', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({})
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    it('Missing first address', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send({
+                ...address(['address_one'])
+            })
+
+        expect(res).to.be.json
+        expect(res).to.have.status(400)
+        expect(res.body['success']).to.equal(0)
+    })
+
+    /**
+     *  TODO:
+     *  - missing city, postcode, state, country_id
+     */
+
+    it('Success address added - address_two empty string', async function () {
+        const res = await chai
+            .request(baseUrl)
+            .put(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send(address())
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['msg']).to.equal('Address updated.')
+    })
+
+    it('Success address added - address_two included', async function () {
+        const data = address()
+        data.address_two = faker.address.secondaryAddress()
+
+        const res = await chai
+            .request(baseUrl)
+            .put(route)
+            .set('cookie', cookie)
+            .type('json')
+            .send(data)
+
+        expect(res).to.be.json
+        expect(res).to.have.status(200)
+        expect(res.body['success']).to.equal(1)
+        expect(res.body['msg']).to.equal('Address updated.')
     })
 })
 

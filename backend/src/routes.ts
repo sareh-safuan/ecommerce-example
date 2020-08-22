@@ -11,7 +11,7 @@ import ProductVariant from './app/controller/productVariantController'
 import imageUploader from './app/middleware/imageUploader'
 import { updateProfile, changePassword } from './app/middleware/transformUserUpdateData'
 
-import { vAddAddress } from './app/validator/addressValidator'
+import { vAddAddress, vUpdateAddress } from './app/validator/addressValidator'
 import { vCreateOrder } from './app/validator/orderValidator'
 import { vAddProduct, vAddProductVariant } from './app/validator/productValidator'
 import { vUserRegister, vUserLogin, vUserChangePassword, vUserUpdateProfile } 
@@ -70,6 +70,12 @@ Route.register('/user', [
         path: '/:user/address',
         handler: Address.create,
         middleware: [vAddAddress]
+    },
+    {
+        method: 'PUT',
+        path: '/:user/address/:address',
+        handler: Address.update,
+        middleware: [vUpdateAddress]
     },
     {
         method: 'GET',
