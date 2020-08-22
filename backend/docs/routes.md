@@ -13,7 +13,7 @@
 |           | /user/:user/order                    | Order.index                 | GET    | done
 |           | /user/:user/order                    | Order.create                | POST   | done
 |           | /user/:user/order/:order             | Order.show                  | GET    | done
-|           | /user/:user/order/:O_D/cancel        | OrderDetail.update         | PUT    | done
+|           | /user/:user/order/:O_D/cancel        | OrderDetail.update          | PUT    | done
 |           |                                      |                             |        |        
 |           | /auth/login                          | Auth.login                  | POST   | done
 |           | /auth/logout                         | Auth.logout                 | GET    | kiv
@@ -22,8 +22,8 @@
 |           | /address/:address                    | Address.show                | GET    | done
 |           |                                      |                             |        |
 |           | /order                               | Order.index                 | GET    | done
-|           | /order/:order                        | OrderDetail.index           | GET    | done
-|           | /order/:order                        | OrderDetail.update          | PUT    | done
+|           | /order/:order                        | Order.show                  | GET    | done
+|           | /order/:order                        | Order.update                | PUT    | done
 |           |                                      |                             |        | 
 | public    | /product                             | Product.index               | GET    | done
 |           | /product/:product                    | Product.show                | GET    | done

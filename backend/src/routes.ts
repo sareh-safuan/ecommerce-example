@@ -7,11 +7,10 @@ import OrderDetail from './app/controller/orderDetailController'
 import Product from  './app/controller/productController'
 import ProductVariant from './app/controller/productVariantController'
 
-// import { isLogin, selfAccess } from './app/middleware/auth'
 import imageUploader from './app/middleware/imageUploader'
-import { updateProfile, changePassword, cancelOrderDetail }
-    from './app/middleware/transformUserUpdateData'
-import { updateProductInfo } from './app/middleware/updateProduct'
+import { updatePassword, cancelOrderDetail, updateProfile }
+    from './app/middleware/userUpdate'
+import { updateProductInfo } from './app/middleware/productUpdate'
 
 import { vAddAddress, vUpdateAddress } from './app/validator/addressValidator'
 import { vCreateOrder, vUpdateOrderStatus } from './app/validator/orderValidator'
@@ -61,7 +60,7 @@ Route.register('/user', [
         method: 'PUT',
         path: '/:user/password',
         handler: User.update,
-        middleware: [vUserChangePassword, changePassword]
+        middleware: [vUserChangePassword, updatePassword]
     },
     {
         method: 'GET',

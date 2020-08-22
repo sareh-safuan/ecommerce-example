@@ -66,7 +66,7 @@ class User {
 
     async update(req: Request, res: Response) {
         const id = req.params.user
-        const { data } = req.body
+        const data = req.body
 
         try {
             const User = new UserModel()
