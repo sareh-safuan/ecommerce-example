@@ -91,7 +91,7 @@ Route.register('/user', [
     {
         method: 'GET',
         path: '/:user/order/:order',
-        handler: OrderDetail.index
+        handler: Order.show
     }
 ])
 
@@ -129,7 +129,7 @@ Route.register('/order', [
     {
         method: 'GET',
         path: '/:order',
-        handler: OrderDetail.index
+        handler: Order.show
     }
 ])
 
