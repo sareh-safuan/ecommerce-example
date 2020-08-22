@@ -77,6 +77,24 @@ class Order {
             errorHandler(req, res, err.message)
         }
     }
+
+    async update(req: Request, res: Response) {
+        const id = req.params.order
+        const { status_id } = req.body
+
+        try {
+            const Order = new OrderModel()
+            await Order.update({ id }, { status_id })
+
+            res.status(200).json({
+                success: 1,
+                msg: 'Order updated.'
+            })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)
+        }
+    }
 }
 
 export default new Order

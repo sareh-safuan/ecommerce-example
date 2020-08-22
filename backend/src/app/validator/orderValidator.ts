@@ -69,13 +69,12 @@ export const vCreateOrder = (req: Request, res: Response, next: NextFunction) =>
 }
 
 export const vUpdateOrderStatus = (req: Request, res: Response, next: NextFunction) => {
-
-}
-
-export const vUpdateOrderDetailStatus = (req: Request, res: Response, next: NextFunction) => {
     Promise
         .all([
-            
+            body('status_id')
+                .notEmpty().withMessage('status id can\'t empty')
+                .isNumeric().withMessage('status id must be numeric')
+                .run(req)
         ])
         .then(() => {
             const errors = validationResult(req)

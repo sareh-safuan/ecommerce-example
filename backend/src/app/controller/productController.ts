@@ -64,7 +64,23 @@ class Product {
         }
     }
 
-    async update(req: Request, res: Response) { }
+    async update(req: Request, res: Response) {
+        const data = req.body
+        const id = req.params.product
+
+        try {
+            const Product = new ProductModel()
+            await Product.update({ id }, data)
+
+            res.status(200).json({
+                success: 1,
+                msg: 'Product updated.'
+            })
+
+        } catch (err) {
+            errorHandler(req, res, err.message)   
+        }
+    }
 }
 
 export default new Product

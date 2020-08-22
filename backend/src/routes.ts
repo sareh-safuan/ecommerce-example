@@ -11,10 +11,12 @@ import ProductVariant from './app/controller/productVariantController'
 import imageUploader from './app/middleware/imageUploader'
 import { updateProfile, changePassword, cancelOrderDetail }
     from './app/middleware/transformUserUpdateData'
+import { updateProductInfo } from './app/middleware/updateProduct'
 
 import { vAddAddress, vUpdateAddress } from './app/validator/addressValidator'
-import { vCreateOrder } from './app/validator/orderValidator'
-import { vAddProduct, vAddProductVariant } from './app/validator/productValidator'
+import { vCreateOrder, vUpdateOrderStatus } from './app/validator/orderValidator'
+import { vAddProduct, vAddProductVariant, vUpdateProductInfo, vUpdateProductImage }
+    from './app/validator/productValidator'
 import { vUserRegister, vUserLogin, vUserChangePassword, vUserUpdateProfile } 
     from './app/validator/userValidator'
 
@@ -124,6 +126,24 @@ Route.register('/product', [
         path: '/:product',
         handler: ProductVariant.create,
         middleware: [vAddProductVariant]
+    },
+    {
+        method: 'PUT',
+        path: '/:product/image',
+        handler: Product.update,
+        middleware: [imageUploader, vUpdateProductImage]
+    },
+    {
+        method: 'PUT',
+        path: '/:product/info',
+        handler: Product.update,
+        middleware: [vUpdateProductInfo, updateProductInfo]
+    },
+    {
+        method: 'PUT',
+        path: '/:product/variant/:variant',
+        handler: ProductVariant.update,
+        middleware: []
     }
 ])
 
@@ -137,6 +157,12 @@ Route.register('/order', [
         method: 'GET',
         path: '/:order',
         handler: Order.show
+    },
+    {
+        method: 'PUT',
+        path: '/:order',
+        handler: Order.update,
+        middleware: [vUpdateOrderStatus]
     }
 ])
 
