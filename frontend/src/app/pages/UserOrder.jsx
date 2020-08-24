@@ -1,7 +1,6 @@
 import React from 'react'
 import axios from 'axios'
 import Col from 'react-bootstrap/Col'
-import Card from 'react-bootstrap/Card'
 
 import Spinner from '../components/core/Spinner'
 import OrderDisplay from '../components/main/OrderDisplay'
@@ -53,14 +52,10 @@ class UserOrder extends React.Component {
                 <Spinner loading={loading} />
                 {
                     orders.map((odr, idx) => (
-                        <Card key={idx} className="mb-2 card-shadow">
-                            <Card.Header>Order No: {odr.id}</Card.Header>
-                            <Card.Body>
-                                <div>Placed On: {odr.created_at}</div>
-                                <div>Paid: RM {odr.total_price_paid}</div>
-                                <OrderDisplay id={odr.id} />
-                            </Card.Body>
-                        </Card>
+                        <OrderDisplay
+                            url={`/user/5/order/${odr.id}`}
+                            key={idx}    
+                        />
                     ))
                 }
             </Col>

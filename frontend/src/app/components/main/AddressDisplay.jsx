@@ -3,6 +3,8 @@ import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
+import Spinner from '../core/Spinner'
+
 class AddressDisplay extends React.Component {
     constructor(props) {
         super(props)
@@ -21,6 +23,10 @@ class AddressDisplay extends React.Component {
     render() {
         const { addr } = this.props
         const { update } = this.state
+
+        if (!Object.keys(addr).length) {
+            return <Spinner loading={true} />
+        }
 
         if (!update) {
             return (

@@ -6,6 +6,9 @@ import Alert from '../components/core/Alert'
 import AdminMenu from '../components/main/AdminMenu'
 import AdminDashboard from './AdminDashboard'
 import AdminOrder from './AdminOrder'
+import AdminOrderDetail from './AdminOrderDetail'
+import AdminProduct from './AdminProduct'
+import AdminProductDetail from './AdminProductDetail'
 
 class Admin extends React.Component {
     constructor() {
@@ -49,9 +52,20 @@ class Admin extends React.Component {
                         <Route path="/admin" exact>
                             <AdminDashboard  showAlert={this.showAlert} />
                         </Route>
-                        <Route path="/admin/order">
+                        <Route path="/admin/order" exact>
                             <AdminOrder showAlert={this.showAlert} />
                         </Route>
+                        <Route 
+                            path="/admin/order/:order/:user/:address"
+                            component={AdminOrderDetail}
+                        />
+                        <Route path="/admin/product" exact>
+                            <AdminProduct showAlert={this.showAlert} />
+                        </Route>
+                        <Route
+                            path="/admin/product/:id"
+                            component={AdminProductDetail}
+                        />
                     </Switch>
                 </Row>
             </Fragment>
